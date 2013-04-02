@@ -8278,8 +8278,8 @@ var Aima_AimaniConfigManager = {
       tmp.replace
         (/([^&,]*)&([^&,]*)&([^&,]*)&([^&,]*)&([^&,]*)&?([^&,]*)?,?/g,
          function (matched, word, r, target, dummy1, dummy2, expire) {
-          var word = unescape (word);
-          var r = unescape (r) == "o";
+          word = unescape (word);
+          r = unescape (r) == "o";
           target = parseInt (unescape (target));
           if (dummy1 == "o") {
             target |= 0x0500;
