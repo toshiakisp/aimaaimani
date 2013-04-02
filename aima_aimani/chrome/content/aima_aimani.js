@@ -6977,7 +6977,7 @@ var Aima_Aimani = {
       file.initWithPath (dirname + separator + "Aima_Aimani"
                          + separator + "userContent.css");
       if (!file.exists ()) {
-        file.create (0x00, 0664);
+        file.create (0x00, 0x01b4);
       }
             
       var styleSheetService
@@ -7120,7 +7120,7 @@ var Aima_Aimani = {
         = Components
         .classes ["@mozilla.org/network/file-output-stream;1"]
         .createInstance (Components.interfaces.nsIFileOutputStream);
-        fstream.init (file, 0x02 | 0x08 | 0x20, 0664, 0);
+        fstream.init (file, 0x02 | 0x08 | 0x20, 0x01b4, 0);
         fstream.write (style, style.length);
         fstream.close ();
                 
