@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://aima_aimani/content/aima_aimani.css"
+                 type="text/css"?>
+
+<overlay id="aima_aimaniOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript"
+          src="chrome://aima_aimani/content/version.js" />
+  <script type="application/x-javascript"
+          src="chrome://aima_aimani/content/server.js" />
+  <script type="application/x-javascript"
+          src="chrome://aima_aimani/content/aima_aimani.js" />
+  
+  <menupopup id="menu_ToolsPopup">
+    <menuitem id="aima_aimani-tools-preferences"
+              label="合間合間に 設定"
+              insertafter="javascriptConsole,unmht-tools-preferences,akahuku-tools-preferences"
+              insertbefore="aima_aimani-tools-ng_word"
+              oncommand="Aima_AimaniUIManager.showPreferences (arguments [0]);" />
+    <menuitem id="aima_aimani-tools-ng_word"
+              label="合間合間に NG ワード"
+              insertafter="javascriptConsole,unmht-tools-preferences,akahuku-tools-preferences,aima_aimani-tools-preferences"
+              oncommand="Aima_AimaniUIManager.showNGWordDialog (arguments [0]);" />
+  </menupopup>
+  
+  <popup id="contentAreaContextMenu">
+    <menuseparator id="aima_aimani-menuitem-content-separator"
+                   insertbefore="context-sep-bidi"
+                   hidden="true" />
+    <menuitem id="aima_aimani-menuitem-content-ngnumber-selection-add"
+              insertbefore="context-sep-bidi"
+              hidden="true" label="[消]" enabled="true"
+              oncommand="Aima_Aimani.hideSelectedRes (true);" />
+    <menuitem id="aima_aimani-menuitem-content-ngnumber-selection-delete"
+              insertbefore="context-sep-bidi"
+              hidden="true" label="[解除]" enabled="true"
+              oncommand="Aima_Aimani.hideSelectedRes (false);" />
+  </popup>
+  
+  <statusbar id="status-bar" class="chromeclass-status">
+    <statusbarpanel id="aima_aimani-statusbarpanel-preferences"
+                    class="statusbarpanel-iconic"
+                    insertbefore="aima_aimani-statusbarpanel-ng_word,statusbar-updates"
+                    status="enabled"
+                    context="aima_aimani-statusbar-popup"
+                    tooltiptext="合間合間に"
+                    onclick="Aima_AimaniUIManager.showPreferences (arguments [0]);" />
+    <statusbarpanel id="aima_aimani-statusbarpanel-ng_word"
+                    class="statusbarpanel-iconic"
+                    insertbefore="statusbar-updates"
+                    status="enabled"
+                    tooltiptext="NG ワード"
+                    onclick="Aima_AimaniUIManager.showNGWordDialog (arguments [0]);" />
+  </statusbar>
+  
+  <toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton id="aima_aimani-toolbarbutton-preferences"
+                   oncommand="Aima_AimaniUIManager.showPreferences (arguments [0]);"
+                   class=""
+                   status="enabled"
+                   label="合間合間に"
+                   context="aima_aimani-statusbar-popup"
+                   tooltiptext="合間合間に" />
+    <toolbarbutton id="aima_aimani-toolbarbutton-ng_word"
+                   oncommand="Aima_AimaniUIManager.showNGWordDialog (arguments [0]);"
+                   class=""
+                   status="enabled"
+                   label="NG ワード"
+                   tooltiptext="NG ワード" />
+  </toolbarpalette>
+  
+  <popupset id="mainPopupSet">
+    <menupopup id="aima_aimani-statusbar-popup" position="after_start"
+           onpopupshowing="Aima_AimaniUIManager.setStatusbarPopup ();">
+      <menuitem id="aima_aimani-statusbar-popup-all"
+                label="全機能を OFF"
+                oncommand="Aima_AimaniUIManager.switchDisabled (1);" />
+      <menuitem id="aima_aimani-statusbar-preferences"
+                label="設定"
+                onclick="Aima_AimaniUIManager.showPreferences (arguments [0]);" />
+      <menuseparator id="aima_aimani-menuitem-separator" />
+      <menuitem id="aima_aimani-statusbar-popup-ngword"
+                label="NG ワードを OFF"
+                oncommand="Aima_AimaniUIManager.switchDisabled (2);" />
+      <menuitem id="aima_aimani-statusbar-popup-ngthumbnail"
+                label="NG サムネを OFF"
+                oncommand="Aima_AimaniUIManager.switchDisabled (3);" />
+      <menuitem id="aima_aimani-statusbar-popup-ngnumber"
+                label="NG 番号を OFF"
+                oncommand="Aima_AimaniUIManager.switchDisabled (4);" />
+      <menuitem id="aima_aimani-statusbar-popup-ngcat"
+                label="NG カタログを OFF"
+                oncommand="Aima_AimaniUIManager.switchDisabled (5);" />
+      <menuitem id="aima_aimani-statusbar-popup-threadrule"
+                label="スレッドルールを OFF"
+                oncommand="Aima_AimaniUIManager.switchDisabled (6);" />
+      <menuitem id="aima_aimani-statusbar-popup-minithumb"
+                label="小サムネを OFF"
+                oncommand="Aima_AimaniUIManager.switchDisabled (8);" />
+      <menuitem id="aima_aimani-statusbar-popup-text"
+                label="文字スレ非表示を OFF"
+                oncommand="Aima_AimaniUIManager.switchDisabled (7);" />
+      <menuseparator id="aima_aimani-menuitem-separator" />
+      <menuitem label="外部板に登録"
+                oncommand="Aima_AimaniUIManager.addExternal ();" />
+      <menuseparator id="aima_aimani-menuitem-separator" />
+      <menuitem label="サイトを開く"
+                oncommand="Aima_AimaniUIManager.openWebsite ();" />
+    </menupopup>
+  </popupset>
+</overlay>

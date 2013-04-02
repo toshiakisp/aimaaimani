@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://aima_aimani/content/options.css"
+                 type="text/css"?>
+
+<dialog class="dialog"
+        id="aima_aimani_preferences_dialog"
+        title="合間合間に 設定"
+        persist="screenX screenY"
+        buttons="accept,cancel,extra1"
+        buttonlabelextra1="適用"
+        onload="Aima_AimaniOptions.init ();"
+        ondialogaccept="return Aima_AimaniOptions.term ();"
+        orient="vertical"
+        flex="1"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <script type="application/x-javascript"
+          src="chrome://aima_aimani/content/version.js" />
+  <script type="application/x-javascript"
+          src="chrome://aima_aimani/content/server.js" />
+  <script type="application/x-javascript"
+          src="chrome://aima_aimani/content/options.js" />
+  
+  <box orient="horizontal" align="center">
+    <checkbox id="all" checked="false" label="全機能" />
+    <spacer flex="1" />
+    <label id="link" class="text-link" value="合間合間に"
+           onclick="Aima_AimaniOptions2.openWebsite ();" />
+    <label id="version" value="Ver." />
+  </box>
+  <groupbox orient="horizontal">
+    <checkbox id="ng_word" checked="false" label="NG ワード" />
+    <checkbox id="ng_thumbnail" checked="false" label="NG サムネ" />
+    <checkbox id="ng_cat" checked="false" label="NG カタログ" />
+    <checkbox id="ng_number" checked="false" label="NG 番号" />
+    <checkbox id="thread_rule" checked="false" label="スレッドルール" />
+    <checkbox id="mini_thumb" checked="false" label="小サムネ" />
+    <checkbox id="text_thread" checked="false" label="文字スレ非表示" />
+  </groupbox>
+  <tabbox flex="1">
+    <tabs>
+      <tab linkedpanel="tab_general" label="一般" />
+      <tab linkedpanel="tab_ng_word" label="NG ワード" />
+      <tab linkedpanel="tab_ng_thumbnail" label="NG サムネ" />
+      <tab linkedpanel="tab_ng_cat" label="NG カタログ" />
+      <tab linkedpanel="tab_ng_number" label="NG 番号" />
+      <tab linkedpanel="tab_thread_rule" label="スレッドルール" />
+      <tab linkedpanel="tab_board" label="板" />
+      <tab linkedpanel="tab_other" label="その他" />
+    </tabs>
+    <tabpanels flex="1">
+      <tabpanel flex="1" id="tab_general" orient="horizontal">
+        <box orient="vertical" flex="1">
+          <groupbox orient="vertical">
+            <caption label="消し方" />
+            <checkbox id="hide_warning" checked="false"
+                      label="警告を表示しない" />
+            <checkbox id="hide_style" checked="false"
+                      label="NG 番号で本文をロード中にも表示しない" />
+            <checkbox id="hide_thread_style" checked="false"
+                      label="ロード完了するまでスレを表示しない" />
+            <checkbox id="hide_cat_style" checked="false"
+                      label="ロード完了するまでカタログを表示しない" />
+            <checkbox id="catalogue_unlink" checked="false"
+                      label="カタログで消したスレのリンクも消す" />
+            <checkbox id="show_textthread_reply" checked="false"
+                      label="レス送信モードでは文字スレを表示する" />
+          </groupbox>
+          <groupbox orient="vertical">
+            <caption label="ポップアップ" />
+            <checkbox id="popup_message" checked="false"
+                      label="本文をポップアップする"
+                      oncommand="Aima_AimaniOptions.checkPopupMessage ();" />
+            <box class="sub" orient="horizontal" align="center">
+              <label id="popup_message_delay_show_label1"
+                     control="popupquote_delay_show" value="表示まで" />
+              <textbox id="popup_message_delay_show" size="6" />
+              <label id="popup_message_delay_show_label2"
+                     control="popupquote_delay_show" value="[ms]" />
+            </box>
+          </groupbox>
+        </box>
+        <box orient="vertical" flex="1">
+          <groupbox orient="vertical">
+            <caption label="NG 番号の操作" />
+            <checkbox id="ng_number_catalogue" checked="false"
+                      label="カタログに [消] ボタン" />
+            <checkbox id="bracket" checked="false"
+                      label="カタログのボタンに括弧を付ける" />
+            <checkbox id="easyng" checked="false"
+                      label="カタログに [一括 NG] ボタン"
+                      oncommand="Aima_AimaniOptions.checkEasyNG ();" />
+            <box class="sub" orient="vertical">
+              <radiogroup id="easyng_type" orient="vertical">
+                <radio value="all_open" label="全部" selected="true" />
+                <radio value="all_close" label="全部 (閉じておく)" />
+                <radio value="num_cat" label="NG 番号、NG カタログの [消] のみ" />
+                <radio value="num" label="NG 番号の [消] のみ" />
+              </radiogroup>
+              <checkbox id="easyng_startup" checked="false"
+                        label="ロード時に NG 番号オン" />
+            </box>
+            <checkbox id="ng_number_bottom" checked="false"
+                      label="0 〜 10 ページでスレの末尾に [消] ボタン" />
+            <checkbox id="ng_number_selection" checked="false"
+                      label="選択範囲を [消]／[削除]" />
+          </groupbox>
+          <groupbox orient="vertical">
+            <caption label="無かった事にする" />
+            <checkbox id="hide_entire_thread" checked="false"
+                      label="スレを無かった事にする" />
+            <checkbox id="hide_entire_res" checked="false"
+                      label="レスを無かった事にする"
+                      oncommand="Aima_AimaniOptions.checkHideEntireRes ();" />
+            <box class="sub" orient="vertical">
+              <checkbox id="hide_entire_res_instant" checked="false"
+                        label="即無かった事にする" />
+            </box>
+            <label value="無かった事にした場合、自分には見えていないスレや"
+                   class="warning" />
+            <label value="見えていないレスが存在する事になります"
+                   class="warning" />
+          </groupbox>
+        </box>
+      </tabpanel>
+      <tabpanel flex="1" id="tab_ng_word" orient="vertical">
+        <box orient="horizontal" flex="1">
+          <box orient="vertical" flex="1">
+            <textbox id="ng_word_word" flex="1" />
+            <box orient="horizontal">
+              <checkbox id="ng_word_regexp" checked="false" label="正規表現" />
+              <checkbox id="ng_word_ignore_case" checked="false"
+                        label="大文字/小文字を区別しない" />
+            </box>
+            <box orient="horizontal" align="center">
+              <label value="範囲:" />
+              <checkbox id="ng_word_message" checked="false" label="本文" />
+              <checkbox id="ng_word_mail" checked="false" label="メル欄など" />
+            </box>
+            <box orient="horizontal" align="center">
+              <label value="対象:" />
+              <checkbox id="ng_word_thread" checked="false" label="スレ" />
+              <checkbox id="ng_word_res" checked="false" label="レス" />
+              <checkbox id="ng_word_cat" checked="false" label="カタログ" />
+            </box>
+            <box orient="horizontal" align="center">
+              <label value="期限:" />
+              <radiogroup id="ng_word_expire" orient="horizontal">
+                <radio value="none" label="なし" selected="true" />
+                <radio value="1day" label="1日" />
+                <radio value="3day" label="3日" />
+                <radio value="date" label="時間:" />
+                <textbox id="ng_word_expire_date" flex="1" />
+              </radiogroup>
+            </box>
+            <label value="時間の例: 2007/01/01 00:00:00, 1 日 (1 日後, 1 d), 1 時間 (1 h), 1 分 (1 m), 1 秒 (1 s)" />
+            <label id="ng_word_illegal" value="" class="warning" />
+            <listbox id="ng_word_list" flex="1"
+                     onselect="Aima_AimaniOptions.onSelectNGWord ();"
+                     onkeydown="Aima_AimaniOptions.onKeyDown (arguments [0], Aima_AimaniOptions.onDeleteNGWord);"
+                     seltype="multiple">
+              <listhead>
+                <listheader label="NG ワード" />
+                <listheader label="正規" />
+                <listheader label="i" />
+                <listheader label="本文" />
+                <listheader label="メ欄" />
+                <listheader label="スレ" />
+                <listheader label="レス" />
+                <listheader label="カタ" />
+                <listheader label="期限" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol style="min-width: 4em;" />
+                <listcol style="min-width: 4em;" />
+                <listcol style="min-width: 4em;" />
+                <listcol style="min-width: 4em;" />
+                <listcol style="min-width: 4em;" />
+                <listcol style="min-width: 4em;" />
+                <listcol style="min-width: 4em;" />
+                <listcol style="min-width: 8em;" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="vertical">
+            <button id="ng_word_add" label="追加"
+                    oncommand="Aima_AimaniOptions.onAddNGWord (false);" />
+            <button id="ng_word_modify" label="修正"
+                    oncommand="Aima_AimaniOptions.onAddNGWord (true);" />
+            <button id="ng_word_moveup" label="上に"
+                    oncommand="Aima_AimaniOptions.onMoveupList ('ng_word_list');" />
+            <button id="ng_word_movedown" label="下に"
+                    oncommand="Aima_AimaniOptions.onMovedownList ('ng_word_list');" />
+            <button id="ng_word_delete" label="削除"
+                    oncommand="Aima_AimaniOptions.onDeleteNGWord ();" />
+          </box>
+        </box>
+        <box orient="horizontal" flex="1">
+          <box orient="vertical" flex="1">
+            <label id="ng_word_board_select_in_label" value="動作する" />
+            <listbox id="ng_word_board_select_in_list" flex="1"
+                     rows="5" seltype="multiple">
+              <listhead>
+                <listheader label="板" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="horizontal" align="center">
+            <box orient="vertical">
+              <button id="ng_word_board_select_add" label="←"
+                      oncommand="Aima_AimaniOptions.onBoardSelectAdd ('ng_word_');" />
+              <button id="ng_word_board_select_delete" label="→"
+                      oncommand="Aima_AimaniOptions.onBoardSelectDelete ('ng_word_');" />
+            </box>
+          </box>
+          <box orient="vertical" flex="1">
+            <label id="ng_word_board_select_ex_label" value="動作しない" />
+            <listbox id="ng_word_board_select_ex_list" flex="1"
+                     rows="5" seltype="multiple">
+              <listhead>
+                <listheader label="板" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+        </box>
+        <checkbox id="ng_word_cont" checked="false"
+                  label="本文で同じ言葉の繰り返しを NG ワードにする" />
+        <box class="sub" orient="horizontal" align="center">
+          <textbox id="ng_word_cont_length" size="6" />
+          <label id="ng_word_cont_length_label"
+                 control="ng_word_cont_length" value="文字以上が" />
+          <textbox id="ng_word_cont_count" size="6" />
+          <label id="ng_word_cont_count_label"
+                 control="ng_word_cont_count" value="回以上" />
+        </box>
+      </tabpanel>
+      <tabpanel flex="1" id="tab_ng_thumbnail" orient="vertical">
+        <box orient="horizontal" flex="1">
+          <box orient="vertical" flex="1">
+            <box orient="horizontal" align="center">
+              <label control="ng_thumbnail_width" value="幅" />
+              <textbox id="ng_thumbnail_width" size="6" />
+              <label control="ng_thumbnail_height" value="高さ" />
+              <textbox id="ng_thumbnail_height" size="6" />
+              <label control="ng_thumbnail_bytes" value="バイト数" />
+              <textbox id="ng_thumbnail_bytes" size="6" />
+              <label control="ng_thumbnail_bytes2" value="-" />
+              <textbox id="ng_thumbnail_bytes2" size="6" />
+              <label control="ng_thumbnail_ext" value="拡張子" />
+              <textbox id="ng_thumbnail_ext" size="6" />
+            </box>
+            <box orient="horizontal" align="center">
+              <label control="ng_thumbnail_comment" value="コメント" />
+              <textbox id="ng_thumbnail_comment" size="24" />
+              <label control="ng_thumbnail_count" value="回数" />
+              <textbox id="ng_thumbnail_count" size="6" />
+              <label control="ng_thumbnail_date" value="最終更新日時" />
+              <textbox readonly="true" id="ng_thumbnail_date" flex="1" />
+              <textbox hidden="true" id="ng_thumbnail_date_value" flex="1" />
+            </box>
+            <label id="ng_thumbnail_illegal" value="" class="warning" />
+            <listbox id="ng_thumbnail_list" flex="1"
+                     onselect="Aima_AimaniOptions.onSelectNGThumbnail ();"
+                     onkeydown="Aima_AimaniOptions.onKeyDown (arguments [0], Aima_AimaniOptions.onDeleteNGThumbnail);"
+                     seltype="multiple">
+              <listhead>
+                <listheader label="幅" />
+                <listheader label="高さ" />
+                <listheader label="バイト数" />
+                <listheader label="拡張子" />
+                <listheader label="コメント" />
+                <listheader label="回数" />
+                <listheader label="更新" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 10em;" flex="1" />
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="vertical">
+            <button id="ng_thumbnail_add" label="追加"
+                    oncommand="Aima_AimaniOptions.onAddNGThumbnail (false);" />
+            <button id="ng_thumbnail_modify" label="修正"
+                    oncommand="Aima_AimaniOptions.onAddNGThumbnail (true);" />
+            <button id="ng_thumbnail_moveup" label="上に"
+                    oncommand="Aima_AimaniOptions.onMoveupList ('ng_thumbnail_list');" />
+            <button id="ng_thumbnail_movedown" label="下に"
+                    oncommand="Aima_AimaniOptions.onMovedownList ('ng_thumbnail_list');" />
+            <button id="ng_thumbnail_delete" label="削除"
+                    oncommand="Aima_AimaniOptions.onDeleteNGThumbnail ();" />
+            <button id="ng_thumbnail_sort" label="回数でソート"
+                    oncommand="Aima_AimaniOptions.onSortNGThumbnail (0);" />
+            <button id="ng_thumbnail_sort_1" label="幅でソート"
+                    oncommand="Aima_AimaniOptions.onSortNGThumbnail (1);" />
+            <button id="ng_thumbnail_sort_2" label="高さでソート"
+                    oncommand="Aima_AimaniOptions.onSortNGThumbnail (2);" />
+            <button id="ng_thumbnail_sort_3" label="サイズでソート"
+                    oncommand="Aima_AimaniOptions.onSortNGThumbnail (3);" />
+            <button id="ng_thumbnail_sort_4" label="バイト数でソート"
+                    oncommand="Aima_AimaniOptions.onSortNGThumbnail (4);" />
+            <button id="ng_thumbnail_sort_5" label="更新でソート"
+                    oncommand="Aima_AimaniOptions.onSortNGThumbnail (5);" />
+            <button id="ng_thumbnail_sort_10" label="並びを反転"
+                    oncommand="Aima_AimaniOptions.onSortNGThumbnail (10);" />
+          </box>
+        </box>
+        <box orient="horizontal" flex="1">
+          <box orient="vertical" flex="1">
+            <label id="ng_thumbnail_board_select_in_label" value="動作する" />
+            <listbox id="ng_thumbnail_board_select_in_list" flex="1"
+                     rows="5" seltype="multiple">
+              <listhead>
+                <listheader label="板" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="horizontal" align="center">
+            <box orient="vertical">
+              <button id="ng_thumbnail_board_select_add" label="←"
+                      oncommand="Aima_AimaniOptions.onBoardSelectAdd ('ng_thumbnail_');" />
+              <button id="ng_thumbnail_board_select_delete" label="→"
+                      oncommand="Aima_AimaniOptions.onBoardSelectDelete ('ng_thumbnail_');" />
+            </box>
+          </box>
+          <box orient="vertical" flex="1">
+            <label id="ng_thumbnail_board_select_ex_label" value="動作しない" />
+            <listbox id="ng_thumbnail_board_select_ex_list" flex="1"
+                     rows="5" seltype="multiple">
+              <listhead>
+                <listheader label="板" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+        </box>
+      </tabpanel>
+      <tabpanel flex="1" id="tab_ng_cat" orient="vertical">
+        <box orient="horizontal" flex="1">
+          <box orient="vertical" flex="1">
+            <box orient="horizontal" align="center">
+              <label control="ng_cat_width" value="幅" />
+              <textbox id="ng_cat_width" size="6" />
+              <label control="ng_cat_height" value="高さ" />
+              <textbox id="ng_cat_height" size="6" />
+              <label control="ng_cat_hash" value="MD5 ハッシュ" />
+              <textbox id="ng_cat_hash" flex="1" />
+            </box>
+            <box orient="horizontal" align="center">
+              <label control="ng_cat_comment" value="コメント" />
+              <textbox id="ng_cat_comment" size="24" />
+              <label control="ng_cat_count" value="回数" />
+              <textbox id="ng_cat_count" size="6" />
+              <label control="ng_cat_date" value="最終更新日時" />
+              <textbox readonly="true" id="ng_cat_date" flex="1" />
+              <textbox hidden="true" id="ng_cat_date_value" flex="1" />
+            </box>
+            <label id="ng_cat_illegal" value="" class="warning" />
+            <listbox id="ng_cat_list" flex="1"
+                     onselect="Aima_AimaniOptions.onSelectNGCat ();"
+                     onkeydown="Aima_AimaniOptions.onKeyDown (arguments [0], Aima_AimaniOptions.onDeleteNGCat);"
+                     seltype="multiple">
+              <listhead>
+                <listheader label="幅" />
+                <listheader label="高さ" />
+                <listheader label="MD5 ハッシュ" />
+                <listheader label="コメント" />
+                <listheader label="回数" />
+                <listheader label="更新" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 20em;" flex="1" />
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 6em;" flex="1" />
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="vertical">
+            <button id="ng_cat_add" label="追加"
+                    oncommand="Aima_AimaniOptions.onAddNGCat (false);" />
+            <button id="ng_cat_modify" label="修正"
+                    oncommand="Aima_AimaniOptions.onAddNGCat (true);" />
+            <button id="ng_cat_moveup" label="上に"
+                    oncommand="Aima_AimaniOptions.onMoveupList ('ng_cat_list');" />
+            <button id="ng_cat_movedown" label="下に"
+                    oncommand="Aima_AimaniOptions.onMovedownList ('ng_cat_list');" />
+            <button id="ng_cat_delete" label="削除"
+                    oncommand="Aima_AimaniOptions.onDeleteNGCat ();" />
+            <button id="ng_cat_sort_0" label="回数でソート"
+                    oncommand="Aima_AimaniOptions.onSortNGCat (0);" />
+            <button id="ng_cat_sort_1" label="幅でソート"
+                    oncommand="Aima_AimaniOptions.onSortNGCat (1);" />
+            <button id="ng_cat_sort_2" label="高さでソート"
+                    oncommand="Aima_AimaniOptions.onSortNGCat (2);" />
+            <button id="ng_cat_sort_3" label="サイズでソート"
+                    oncommand="Aima_AimaniOptions.onSortNGCat (3);" />
+            <button id="ng_cat_sort_4" label="更新でソート"
+                    oncommand="Aima_AimaniOptions.onSortNGCat (4);" />
+            <button id="ng_cat_sort_10" label="並びを反転"
+                    oncommand="Aima_AimaniOptions.onSortNGCat (10);" />
+          </box>
+        </box>
+        <box orient="horizontal" flex="1">
+          <box orient="vertical" flex="1">
+            <label id="ng_cat_board_select_in_label" value="動作する" />
+            <listbox id="ng_cat_board_select_in_list" flex="1"
+                     rows="5" seltype="multiple">
+              <listhead>
+                <listheader label="板" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="horizontal" align="center">
+            <box orient="vertical">
+              <button id="ng_cat_board_select_add" label="←"
+                      oncommand="Aima_AimaniOptions.onBoardSelectAdd ('ng_cat_');" />
+              <button id="ng_cat_board_select_delete" label="→"
+                      oncommand="Aima_AimaniOptions.onBoardSelectDelete ('ng_cat_');" />
+            </box>
+          </box>
+          <box orient="vertical" flex="1">
+            <label id="ng_cat_board_select_ex_label" value="動作しない" />
+            <listbox id="ng_cat_board_select_ex_list" flex="1"
+                     rows="5" seltype="multiple">
+              <listhead>
+                <listheader label="板" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+        </box>
+        <checkbox id="ng_cat_no_button" checked="false"
+                  label="[消] ボタンを表示しない" />
+        <box orient="horizontal" align="center">
+          <checkbox id="ng_cat_auto" checked="false"
+                    label="同じ画像のスレが 3 秒以内に"
+                    oncommand="Aima_AimaniOptions.checkNGCatAuto ();" />
+          <textbox id="ng_cat_auto_threshold" size="6" />
+          <label id="ng_cat_auto_label"
+                 control="ng_cat_auto"
+                 value="個立ったら自動で登録する" />
+        </box>
+      </tabpanel>
+      <tabpanel flex="1" id="tab_ng_number" orient="vertical">
+        <box orient="horizontal" flex="1">
+          <box orient="vertical" flex="1">
+            <box orient="horizontal">
+              <textbox id="ng_number_number" flex="1" />
+              <menulist id="ng_number_server">
+                <menupopup id="ng_number_server_menu">
+                </menupopup>
+              </menulist>
+            </box>
+            <label id="ng_number_illegal" value="" class="warning" />
+            <listbox id="ng_number_list" flex="1"
+                     onselect="Aima_AimaniOptions.onSelectNGNumber ();"
+                     onkeydown="Aima_AimaniOptions.onKeyDown (arguments [0], Aima_AimaniOptions.onDeleteNGNumber);"
+                     seltype="multiple">
+              <listhead>
+                <listheader label="NG 番号" />
+                <listheader label="画像" />
+                <listheader label="板名" />
+                <listheader label="種類" />
+                <listheader label="依存情報" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol style="min-width: 10em;" flex="1" />
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="vertical">
+            <button id="ng_number_add" label="追加"
+                    oncommand="Aima_AimaniOptions.onAddNGNumber (false);" />
+            <button id="ng_number_modify" label="修正"
+                    oncommand="Aima_AimaniOptions.onAddNGNumber (true);" />
+            <button id="ng_number_moveup" label="上に"
+                    oncommand="Aima_AimaniOptions.onMoveupList ('ng_number_list');" />
+            <button id="ng_number_movedown" label="下に"
+                    oncommand="Aima_AimaniOptions.onMovedownList ('ng_number_list');" />
+            <button id="ng_number_delete" label="削除"
+                    oncommand="Aima_AimaniOptions.onDeleteNGNumber ();" />
+          </box>
+        </box>
+        <label control="ng_number_expire" value="有効期限" />
+        <textbox id="ng_number_expire" />
+      </tabpanel>
+      <tabpanel flex="1" id="tab_thread_rule" orient="vertical">
+        <box orient="horizontal" flex="1">
+          <box orient="vertical" flex="1">
+            <box orient="horizontal">
+              <textbox id="thread_rule_number" flex="1" />
+              <menulist id="thread_rule_server">
+                <menupopup id="thread_rule_server_menu">
+                </menupopup>
+              </menulist>
+            </box>
+            <box orient="horizontal">
+              <checkbox id="thread_rule_text_res" checked="false"
+                        label="文字レス非表示" />
+              <checkbox id="thread_rule_image_res" checked="false"
+                        label="画像レス非表示" />
+              <checkbox id="thread_rule_sage_only" checked="false"
+                        label="非 sage レス非表示" />
+              <checkbox id="thread_rule_not_sage" checked="false"
+                        label="sage レス非表示" />
+              <checkbox id="thread_rule_mini_thumb" checked="false"
+                        label="サムネを小さく表示" />
+            </box>
+            <label id="thread_rule_illegal" value="" class="warning" />
+            <listbox id="thread_rule_list" flex="1"
+                     onselect="Aima_AimaniOptions.onSelectThreadRule ();"
+                     onkeydown="Aima_AimaniOptions.onKeyDown (arguments [0], Aima_AimaniOptions.onDeleteThreadRule);"
+                     seltype="multiple">
+              <listhead>
+                <listheader label="NG 番号" />
+                <listheader label="板名" />
+                <listheader label="文字レス" />
+                <listheader label="画像レス" />
+                <listheader label="非sage" />
+                <listheader label="sage" />
+                <listheader label="小サムネ" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol style="min-width: 6em;" />
+                <listcol style="min-width: 6em;" />
+                <listcol style="min-width: 6em;" />
+                <listcol style="min-width: 6em;" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="vertical">
+            <button id="thread_rule_add" label="追加"
+                    oncommand="Aima_AimaniOptions.onAddThreadRule (false);" />
+            <button id="thread_rule_modify" label="修正"
+                    oncommand="Aima_AimaniOptions.onAddThreadRule (true);" />
+            <button id="thread_rule_moveup" label="上に"
+                    oncommand="Aima_AimaniOptions.onMoveupList ('thread_rule_list');" />
+            <button id="thread_rule_movedown" label="下に"
+                    oncommand="Aima_AimaniOptions.onMovedownList ('thread_rule_list');" />
+            <button id="thread_rule_delete" label="削除"
+                    oncommand="Aima_AimaniOptions.onDeleteThreadRule ();" />
+          </box>
+        </box>
+        <box orient="horizontal" align="center">
+          <label control="thread_rule_mini_thumb_size_label" value="小さいサムネのサイズ" />
+          <textbox id="thread_rule_mini_thumb_size" />
+          <checkbox id="thread_rule_mini_thumb_hover" checked="false"
+                    label="マウスを乗せた時だけ拡大" />
+        </box>
+        <label control="thread_rule_expire" value="有効期限" />
+        <textbox id="thread_rule_expire" />
+      </tabpanel>
+      <tabpanel flex="1" id="tab_board" orient="vertical">
+        <groupbox orient="horizontal" flex="1">
+          <caption>
+            <checkbox id="board_select" checked="false"
+                      label="動作する板を指定する"
+                      oncommand="Aima_AimaniOptions.checkBoardSelect ();" />
+          </caption>
+          <box orient="vertical" flex="1">
+            <label id="board_select_in_label" value="動作する" />
+            <listbox id="board_select_in_list" flex="1"
+                     rows="5" seltype="multiple">
+              <listhead>
+                <listheader label="板" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="horizontal" align="center">
+            <box orient="vertical">
+              <button id="board_select_add" label="←"
+                      oncommand="Aima_AimaniOptions.onBoardSelectAdd ('');" />
+              <button id="board_select_delete" label="→"
+                      oncommand="Aima_AimaniOptions.onBoardSelectDelete ('');" />
+            </box>
+          </box>
+          <box orient="vertical" flex="1">
+            <label id="board_select_ex_label" value="動作しない" />
+            <listbox id="board_select_ex_list" flex="1"
+                     rows="5" seltype="multiple">
+              <listhead>
+                <listheader label="板" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol flex="1" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+        </groupbox>
+        <groupbox orient="horizontal" flex="1">
+          <caption>
+            <checkbox id="board_external" checked="false"
+                      label="外部の板でも動作させる"
+                      oncommand="Aima_AimaniOptions.checkBoardExternal ();" />
+          </caption>
+          <box orient="vertical" flex="1">
+            <box orient="horizontal" align="center">
+              <label id="board_external_pattern_label"
+                     control="board_external_pattern" value="パターン" />
+              <textbox id="board_external_pattern" flex="1" />
+            </box>
+            <box orient="horizontal" align="center">
+              <checkbox id="board_external_monaca" checked="false"
+                        label="monaca.php" />
+              <checkbox id="board_external_prefix" checked="false"
+                        label="前方一致" />
+            </box>
+            <label id="board_external_sample1"
+                   value="前方一致でないパターンは $1: サーバ名、 $2: ディレクトリ名、 $3: パス となるようにしてください" />
+            <label id="board_external_sample2"
+                   value="例: ^http://([^\.]+)\.2chan\.net/([^/]+)/(.*)$" />
+            <label id="board_external_illegal" value="" class="warning" />
+            <listbox id="board_external_list" flex="1"
+                     onselect="Aima_AimaniOptions.onSelectBoardExternal ();"
+                     onkeydown="Aima_AimaniOptions.onKeyDown (arguments [0], Aima_AimaniOptions.onDeleteBoardExternal);"
+                     rows="4" seltype="multiple">
+              <listhead>
+                <listheader label="パターン/プレフィックス" />
+                <listheader label="monaca.php" />
+                <listheader label="前方一致" />
+                <listheader label="" />
+              </listhead>
+              <listcols>
+                <listcol style="min-width: 8em;" flex="1" />
+                <listcol style="min-width: 8em;" />
+                <listcol style="min-width: 8em;" />
+                <listcol />
+              </listcols>
+            </listbox>
+          </box>
+          <box orient="vertical">
+            <button id="board_external_add" label="追加"
+                    oncommand="Aima_AimaniOptions.onAddBoardExternal (false);" />
+            <button id="board_external_modify" label="修正"
+                    oncommand="Aima_AimaniOptions.onAddBoardExternal (true);" />
+            <button id="board_external_moveup" label="上に"
+                    oncommand="Aima_AimaniOptions.onMoveupList ('board_external_list');" />
+            <button id="board_external_movedown" label="下に"
+                    oncommand="Aima_AimaniOptions.onMovedownList ('board_external_list');" />
+            <button id="board_external_delete" label="削除"
+                    oncommand="Aima_AimaniOptions.onDeleteBoardExternal ();" />
+          </box>
+        </groupbox>
+      </tabpanel>
+      <tabpanel flex="1" id="tab_other" orient="vertical">
+        <groupbox orient="vertical">
+          <caption label="ステータスバー" />
+          <checkbox id="statusbar_preferences" checked="false"
+                    label="設定ダイアログのアイコンを表示する" />
+          <checkbox id="statusbar_ng_word" checked="false"
+                    label="NG ワードに追加のアイコンを表示する" />
+        </groupbox>
+        <groupbox orient="vertical">
+          <caption label="ツールバー" />
+          <label value="Firefox では、このチェックボックスは使わずに"
+                 class="warning" />
+          <label value="ツールバーのカスタマイズから追加してください"
+                 class="warning" />
+          <checkbox id="toolbar_preferences" checked="false"
+                    label="設定ダイアログのアイコンを表示する" />
+          <checkbox id="toolbar_ng_word" checked="false"
+                    label="NG ワードに追加のアイコンを表示する" />
+          <label value="変更は次回ウィンドウを開いた時から反映されます" />
+        </groupbox>
+        <groupbox orient="vertical">
+          <caption label="設定のインポート／エクスポート／初期化" />
+          <box orient="horizontal" flex="1">
+            <button id="import" label="インポート"
+                    oncommand="Aima_AimaniOptions2.importPrefs ();" />
+            <button id="export" label="エクスポート"
+                    oncommand="Aima_AimaniOptions2.exportPrefs ();" />
+            <button id="init" label="初期化"
+                    oncommand="Aima_AimaniOptions2.initPrefs ();" />
+          </box>
+          <label id="import_export_message" value="" />
+          <textbox id="import_export_error" hidden="true" value="" />
+        </groupbox>
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
+</dialog>

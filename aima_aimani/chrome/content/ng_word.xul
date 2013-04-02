@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://aima_aimani/content/ng_word.css"
+                 type="text/css"?>
+
+<dialog class="dialog"
+        id="aima_aimaniNGWordDialog"
+        title="合間合間に NG ワードに追加"
+        buttons="accept,cancel"
+        onload="Aima_AimaniNGWord.init ();"
+        ondialogaccept="return Aima_AimaniNGWord.onAddNGWord ();"
+        orient="vertical"
+        flex="1"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <script type="application/x-javascript"
+          src="chrome://aima_aimani/content/ng_word.js" />
+  
+  <groupbox orient="vertical">
+    <caption label="NG ワードに追加" />
+    <textbox id="ng_word_word" flex="1" />
+    <box orient="horizontal">
+      <checkbox id="ng_word_regexp" checked="false" label="正規表現" />
+      <checkbox id="ng_word_ignore_case" checked="false"
+                label="大文字/小文字を区別しない" />
+    </box>
+    <box orient="horizontal" align="center">
+      <label value="範囲:" />
+      <checkbox id="ng_word_message" checked="false" label="本文" />
+      <checkbox id="ng_word_mail" checked="false" label="メル欄など" />
+    </box>
+    <box orient="horizontal" align="center">
+      <label value="対象:" />
+      <checkbox id="ng_word_thread" checked="false" label="スレ" />
+      <checkbox id="ng_word_res" checked="false" label="レス" />
+      <checkbox id="ng_word_cat" checked="false" label="カタログ" />
+    </box>
+    <box orient="horizontal" align="center">
+      <label value="期限:" />
+      <radiogroup id="ng_word_expire" orient="horizontal">
+        <radio value="none" label="なし" selected="true" />
+        <radio value="1day" label="1日" />
+        <radio value="3day" label="3日" />
+        <radio value="date" label="時間:" />
+        <textbox id="ng_word_expire_date" flex="1" />
+      </radiogroup>
+    </box>
+    <groupbox orient="vertical">
+      <caption label="時間の例" />
+      <label value="2007/01/01 00:00:00" />
+      <label value="1 日 (1 日後, 1 d), 1 時間 (1 h), 1 分 (1 m), 1 秒 (1 s)" />
+    </groupbox>
+    <label id="ng_word_illegal" value="" class="warning" />
+  </groupbox>
+</dialog>

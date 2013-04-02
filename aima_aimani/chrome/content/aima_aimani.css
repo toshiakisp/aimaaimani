@@ -1,0 +1,153 @@
+/* ステータスバー */
+
+#aima_aimani-statusbarpanel-preferences {
+  list-style-image: url("chrome://aima_aimani/content/icon_small.png");
+}
+#aima_aimani-statusbarpanel-preferences[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/icon_small_disabled.png") !important;
+}
+#aima_aimani-statusbarpanel-preferences:hover {
+  list-style-image: url("chrome://aima_aimani/content/icon_small_hover.png");
+}
+#aima_aimani-statusbarpanel-preferences:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/icon_small_click.png");
+}
+
+#aima_aimani-statusbarpanel-ng_word {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_small.png");
+}
+#aima_aimani-statusbarpanel-ng_word[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_small_disabled.png") !important;
+}
+#aima_aimani-statusbarpanel-ng_word:hover {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_small_hover.png");
+}
+#aima_aimani-statusbarpanel-ng_word:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_small_click.png");
+}
+
+/* ツールバー (大きいアイコン) */
+
+#aima_aimani-toolbarbutton-preferences {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle.png");
+}
+#aima_aimani-toolbarbutton-preferences[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_disabled.png") !important;
+}
+#aima_aimani-toolbarbutton-preferences:hover {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_hover.png");
+}
+#aima_aimani-toolbarbutton-preferences:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_click.png");
+}
+
+#aima_aimani-toolbarbutton-ng_word {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle.png");
+}
+#aima_aimani-toolbarbutton-ng_word[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_disabled.png") !important;
+}
+#aima_aimani-toolbarbutton-ng_word:hover {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_hover.png");
+}
+#aima_aimani-toolbarbutton-ng_word:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_click.png");
+}
+
+/* ツールバー (小さいアイコン) */
+
+toolbox[iconsize="small"] #aima_aimani-toolbarbutton-preferences,
+toolbar[iconsize="small"] #aima_aimani-toolbarbutton-preferences {
+  list-style-image: url("chrome://aima_aimani/content/icon_small.png");
+}
+toolbox[iconsize="small"] #aima_aimani-toolbarbutton-preferences[status="disabled"],
+toolbar[iconsize="small"] #aima_aimani-toolbarbutton-preferences[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/icon_small_disabled.png") !important;
+}
+toolbox[iconsize="small"] #aima_aimani-toolbarbutton-preferences:hover,
+toolbar[iconsize="small"] #aima_aimani-toolbarbutton-preferences:hover {
+  list-style-image: url("chrome://aima_aimani/content/icon_small_hover.png");
+}
+toolbox[iconsize="small"] #aima_aimani-toolbarbutton-preferences:hover:active,
+toolbar[iconsize="small"] #aima_aimani-toolbarbutton-preferences:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/icon_small_click.png");
+}
+
+toolbox[iconsize="small"] #aima_aimani-toolbarbutton-ng_word,
+toolbar[iconsize="small"] #aima_aimani-toolbarbutton-ng_word {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_small.png");
+}
+toolbox[iconsize="small"] #aima_aimani-toolbarbutton-ng_word[status="disabled"],
+toolbar[iconsize="small"] #aima_aimani-toolbarbutton-ng_word[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_small_disabled.png") !important;
+}
+toolbox[iconsize="small"] #aima_aimani-toolbarbutton-ng_word:hover,
+toolbar[iconsize="small"] #aima_aimani-toolbarbutton-ng_word:hover {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_small_hover.png");
+}
+toolbox[iconsize="small"] #aima_aimani-toolbarbutton-ng_word:hover:active,
+toolbar[iconsize="small"] #aima_aimani-toolbarbutton-ng_word:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_small_click.png");
+}
+
+/* ツールバー (大きいアイコン : カスタマイズ直後) */
+
+toolbox[iconsize="large"] #nav-bar #aima_aimani-toolbarbutton-preferences {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle.png");
+}
+toolbox[iconsize="large"] #nav-bar #aima_aimani-toolbarbutton-preferences[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_disabled.png") !important;
+}
+toolbox[iconsize="large"] #nav-bar #aima_aimani-toolbarbutton-preferences:hover {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_hover.png");
+}
+toolbox[iconsize="large"] #nav-bar #aima_aimani-toolbarbutton-preferences:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_click.png");
+}
+
+toolbox[iconsize="large"] #nav-bar #aima_aimani-toolbarbutton-ng_word {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle.png");
+}
+toolbox[iconsize="large"] #nav-bar #aima_aimani-toolbarbutton-ng_word[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_disabled.png") !important;
+}
+toolbox[iconsize="large"] #nav-bar #aima_aimani-toolbarbutton-ng_word:hover {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_hover.png");
+}
+toolbox[iconsize="large"] #nav-bar #aima_aimani-toolbarbutton-ng_word:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_click.png");
+}
+
+/* 古いツールバー */
+
+#aima_aimani-toolbarbutton-preferences-image {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle.png");
+}
+#aima_aimani-toolbarbutton-preferences-image[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_disabled.png") !important;
+}
+#aima_aimani-toolbarbutton-preferences-image:hover {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_hover.png");
+}
+#aima_aimani-toolbarbutton-preferences-image:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/icon_middle_click.png");
+}
+#aima_aimani-toolbarbutton-preferences-text {
+  list-style-image: none;
+}
+
+#aima_aimani-toolbarbutton-ng_word-image {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle.png");
+}
+#aima_aimani-toolbarbutton-ng_word-image[status="disabled"] {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_disabled.png") !important;
+}
+#aima_aimani-toolbarbutton-ng_word-image:hover {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_hover.png");
+}
+#aima_aimani-toolbarbutton-ng_word-image:hover:active {
+  list-style-image: url("chrome://aima_aimani/content/ng_word_middle_click.png");
+}
+#aima_aimani-toolbarbutton-ng_word-text {
+  list-style-image: none;
+}
