@@ -1863,7 +1863,7 @@ var Aima_Aimani = {
                   if (node.nodeName.toLowerCase () == "img"
                       && node.getAttribute ("src").match
                       (/cat\/([0-9]+)/)) {
-                    imageNode = node;
+                    var imageNode = node;
                     break;
                   }
                   node = node.nextSibling;
