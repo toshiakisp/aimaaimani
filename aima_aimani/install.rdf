@@ -12,36 +12,8 @@
       <!-- Firefox -->
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-        <em:minVersion>1.0</em:minVersion>
-        <em:maxVersion>5.0.*</em:maxVersion>
-      </Description>
-      
-      <!-- Mozilla Suite -->
-      <Description>
-        <em:id>{86c18b42-e466-45a9-ae7a-9b95ba6f5640}</em:id>
-        <em:minVersion>1.2</em:minVersion>
-        <em:maxVersion>1.8</em:maxVersion>
-      </Description>
-      
-      <!-- SeaMonkey -->
-      <Description>
-        <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
-        <em:minVersion>1.0</em:minVersion>
-        <em:maxVersion>2.0.*</em:maxVersion>
-      </Description>
-      
-      <!-- Flock -->
-      <Description>
-        <em:id>{a463f10c-3994-11da-9945-000d60ca027b}</em:id>
-        <em:minVersion>1.0</em:minVersion>
-        <em:maxVersion>1.1.*</em:maxVersion>
-      </Description>
-      
-      <!-- Netscape Browser -->
-      <Description>
-        <em:id>{3db10fab-e461-4c80-8b97-957ad5f8ea47}</em:id>
-        <em:minVersion>8.0</em:minVersion>
-        <em:maxVersion>9.0.*</em:maxVersion>
+        <em:minVersion>4.0</em:minVersion>
+        <em:maxVersion>20.*</em:maxVersion>
       </Description>
     </em:targetApplication>
     
@@ -50,18 +22,9 @@
     <em:creator>arai</em:creator>
     <em:homepageURL>http://www.unmht.org/aima_aimani/</em:homepageURL>
     
-    <em:updateURL>http://www.unmht.org/aima_aimani/update.rdf</em:updateURL>
-    <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCganJOtLPYi/fEBBtyDZeAL/T60GUNZewj0gmTbO/6XULYuyzbxEX3ZnBnBeLq8e/Qfi/uhghWWWJmKqOgK4yX4XNdQMGPnZvEXBgvTdxIRDe+7CFKB0Cq5L/DYPzrZRzb6cgdmEmkIRbztSYn6XFTRpMOQL+3XXY9npi2hAPxjwIDAQAB</em:updateKey>
-    
     <em:optionsURL>chrome://aima_aimani/content/options.xul</em:optionsURL>
     <em:iconURL>chrome://aima_aimani/content/icon.png</em:iconURL>
     
-    <!-- Firefox 1.0 以前互換用 -->
-    <em:file>
-      <Description about="urn:mozilla:extension:file:aima_aimani.jar">
-        <em:package>content/</em:package>
-      </Description>
-    </em:file>
   </Description>
   
 </RDF>

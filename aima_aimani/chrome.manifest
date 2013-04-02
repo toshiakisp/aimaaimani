@@ -1,4 +1,4 @@
-content aima_aimani  jar:chrome/aima_aimani.jar!/content/
+content aima_aimani  chrome/content/
 
 overlay chrome://global/content/customizeToolbar.xul      chrome://aima_aimani/content/customize.xul
 overlay chrome://browser/content/browser.xul              chrome://aima_aimani/content/aima_aimani.xul
