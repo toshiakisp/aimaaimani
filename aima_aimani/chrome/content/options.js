@@ -5302,7 +5302,7 @@ var Aima_AimaniOptions2 = {
           .classes ["@mozilla.org/scriptableinputstream;1"]
           .createInstance (Components.interfaces
                            .nsIScriptableInputStream);
-        fstream.init (file, 0x01, 0444, false);
+        fstream.init (file, 0x01, 0x0124, false);
         sstream.init (fstream);
         var text = sstream.read (-1);
         sstream.close ();
@@ -5377,7 +5377,7 @@ var Aima_AimaniOptions2 = {
           = Components
           .classes ["@mozilla.org/network/file-output-stream;1"]
           .createInstance (Components.interfaces.nsIFileOutputStream);
-        fstream.init (file, 0x02 | 0x08 | 0x20, 0664, 0);
+        fstream.init (file, 0x02 | 0x08 | 0x20, 0x01b4, 0);
                 
         Aima_AimaniOptions.savePrefs (fstream);
                 
