@@ -147,7 +147,6 @@ Aima_AimaniNGCatCache.prototype = {
         bstream.setInputStream (istream);
         var bindata = bstream.readBytes (descriptor.dataSize);
         bstream.close ();
-        istream.close ();
         descriptor.close ();
                 
         var hash = Aima_AimaniNGCat.md5 (bindata);
