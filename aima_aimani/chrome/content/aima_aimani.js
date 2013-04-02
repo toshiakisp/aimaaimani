@@ -89,11 +89,11 @@ Aima_AimaniNGCatCache.prototype = {
                    self);
               }
             }
-            catch (e) {
+            catch (e) { Components.utils.reportError (e);
               try {
                 self.imageNode.style.visibility = "";
               }
-              catch (e) {
+              catch (e) { Components.utils.reportError (e);
               }
               self.targetNode = null;
               self.targetAnchor = null;
@@ -112,11 +112,11 @@ Aima_AimaniNGCatCache.prototype = {
           }, 5000, this);
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
       try {
         this.imageNode.style.visibility = "";
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
       }
       this.targetNode = null;
       this.targetAnchor = null;
@@ -270,7 +270,7 @@ Aima_AimaniNGCatCache.prototype = {
             }, 1000, this.imageNode.width, this.imageNode.height);
         }
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
       }
     }
     if (this.imageNode) {
@@ -394,7 +394,7 @@ var Aima_AimaniNGCat = {
           }
         }
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
       }
     }
         
@@ -408,7 +408,7 @@ var Aima_AimaniNGCat = {
             Akahuku.onHideEntireThread (targetDocument);
           }
         }
-        catch (e) {
+        catch (e) { Components.utils.reportError (e);
         }
       }
     }
@@ -872,7 +872,7 @@ var Aima_AimaniNGCat = {
           Akahuku.onHideEntireThread (targetDocument);
         }
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
       }
     }
   },
@@ -1100,7 +1100,7 @@ Aima_AimaniLocationInfo.prototype = {
       try {
         location = Akahuku.protocolHandler.deAkahukuURI (location);
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
       }
     }
         
@@ -3089,7 +3089,7 @@ var Aima_Aimani = {
         }
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
     }
   },
     
@@ -3118,7 +3118,7 @@ var Aima_Aimani = {
           event.stopPropagation ();
         }
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
       }
     }
   },
@@ -3153,7 +3153,7 @@ var Aima_Aimani = {
         }
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
     }
   },
     
@@ -3276,7 +3276,7 @@ var Aima_Aimani = {
         try {
           href = Akahuku.protocolHandler.deAkahukuURI (href);
         }
-        catch (e) {
+        catch (e) { Components.utils.reportError (e);
         }
       }
             
@@ -3330,7 +3330,7 @@ var Aima_Aimani = {
         Akahuku.onAima_Aimanied (targetDocument);
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
     }
   },
     
@@ -3442,7 +3442,7 @@ var Aima_Aimani = {
               Akahuku.onHideEntireThread (targetDocument);
             }
           }
-          catch (e) {
+          catch (e) { Components.utils.reportError (e);
           }
         }
                         
@@ -3488,7 +3488,7 @@ var Aima_Aimani = {
             header.appendChild (style);
           }
         }
-        catch (e) {
+        catch (e) { Components.utils.reportError (e);
         }
                 
         var enableNGWord = Aima_Aimani.enableNGWord;
@@ -5018,12 +5018,12 @@ var Aima_Aimani = {
     try {
       container.style.cssFloat = "right";
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
     }
     try {
       container.style.styleFloat = "right";
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
     }
         
     var numNode = null;
@@ -5477,7 +5477,7 @@ var Aima_Aimani = {
                 = Aima_AimaniConverter
                 .convertFromUTF8 (ngword_mail);
             }
-            catch (e) {
+            catch (e) { Components.utils.reportError (e);
             }
                         
             if (Aima_Aimani.getInnerHTML2 (node)
@@ -6648,7 +6648,7 @@ var Aima_Aimani = {
             Aima_Aimani.isMozilla = true;
           }
         }
-        catch (e) {
+        catch (e) { Components.utils.reportError (e);
           Aima_Aimani.isMozilla = true;
         }
       }
@@ -7202,7 +7202,7 @@ var Aima_Aimani = {
             
       Aima_Aimani.deleteDocumentParam (targetDocument);
     }
-    catch (e){
+    catch (e){ Components.utils.reportError (e);
     }
         
     if (Aima_Aimani.mode == 2) {
@@ -7211,7 +7211,7 @@ var Aima_Aimani = {
         unsafeWindow.document.Aima_Aimani = null;
         unsafeWindow.document.Aima_AimaniOptionsUtil = null;
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
         document.Aima_Aimani = null;
         document.Aima_AimaniOptionsUtil = null;
       }
@@ -7225,7 +7225,7 @@ var Aima_Aimani = {
                                            tmp [2], tmp [3]);
         }
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
       }
             
       try {
@@ -7236,7 +7236,7 @@ var Aima_Aimani = {
           tmp.popup_managerdata = null;
         }
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
       }
             
       Aima_Aimani.documentParams = null;
@@ -7487,7 +7487,7 @@ var Aima_Aimani = {
         }
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
     }
   },
     
@@ -8620,7 +8620,7 @@ var Aima_AimaniPopupManager = {
                     Aima_Aimani.popupMessageDelay,
                     managerdata);
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
     }
   },
     
@@ -8653,7 +8653,7 @@ var Aima_AimaniPopupManager = {
         managerdata.popup = null;
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
     }
   },
     
@@ -8912,7 +8912,7 @@ var Aima_AimaniUIManager = {
         }
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
       Aima_AimaniUIManager.prefDialog = null;
     }
     var optionsURL = "chrome://aima_aimani/content/options.xul";

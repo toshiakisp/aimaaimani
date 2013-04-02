@@ -151,7 +151,7 @@ var Aima_AimaniNGWord = {
         var tmp = "test";
         tmp.search (text);
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
         if (Aima_AimaniNGWord.mode == 1) {
           document.getElementById (Aima_AimaniNGWord.prefix
                                    + "ng_word_illegal").value

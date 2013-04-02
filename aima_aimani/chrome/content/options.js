@@ -22,7 +22,7 @@ if (unescape ("%u3042") == "%u3042") {
                   try {
                     t = converter.ConvertToUnicode (t);
                   }
-                  catch (e) {
+                  catch (e) { Components.utils.reportError (e);
                   }
                   return t;
                 }
@@ -1088,7 +1088,7 @@ var Aima_AimaniOptions = {
         var tmp = "test";
         tmp.search (text);
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
         if (Aima_AimaniOptions.mode == 1) {
           document.getElementById (Aima_AimaniOptions.prefix
                                    + "ng_word_illegal").value
@@ -4050,7 +4050,7 @@ var Aima_AimaniOptions = {
         var tmp = "test";
         tmp.search (pattern);
       }
-      catch (e) {
+      catch (e) { Components.utils.reportError (e);
         document.getElementById ("board_external_illegal").value
           = "\u6B63\u898F\u8868\u73FE\u304C\u4E0D\u6B63\u3067\u3059";
                 
@@ -5342,7 +5342,7 @@ var Aima_AimaniOptions2 = {
         = "\u30A4\u30F3\u30DD\u30FC\u30C8\u3092\u4E2D\u65AD\u3057\u307E\u3057\u305F";
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
       document.getElementById (Aima_AimaniOptions.prefix
                                + "import_export_message").value
       = "\u30A4\u30F3\u30DD\u30FC\u30C8\u306B\u5931\u6557\u3057\u307E\u3057\u305F";
@@ -5393,7 +5393,7 @@ var Aima_AimaniOptions2 = {
         = "\u30A8\u30B9\u30AF\u30DD\u30FC\u30C8\u3092\u4E2D\u65AD\u3057\u307E\u3057\u305F";
       }
     }
-    catch (e) {
+    catch (e) { Components.utils.reportError (e);
       document.getElementById (Aima_AimaniOptions.prefix
                                + "import_export_message").value
       = "\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8\u306B\u5931\u6557\u3057\u307E\u3057\u305F";
