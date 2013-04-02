@@ -5490,7 +5490,7 @@ var Aima_Aimani = {
           }
           else if (href.match (/http:\/\/www\.amazon\.co\.jp\//)) {
             /* Amazon の広告 */
-            return;
+            return 0;
           }
         }
         else if (Aima_Aimani.mode == 2) {
