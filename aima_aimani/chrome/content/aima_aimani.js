@@ -5476,7 +5476,7 @@ var Aima_Aimani = {
                 = Aima_AimaniConverter
                 .convertFromUTF8 (ngword_mail);
             }
-            catch (e) { Components.utils.reportError (e);
+            catch (e) {
             }
                         
             if (Aima_Aimani.getInnerHTML2 (node)
