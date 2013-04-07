@@ -4697,6 +4697,7 @@ var Aima_Aimani = {
   hideNGNumberCatalogueHandler : function (targetNode) {
     if (Aima_Aimani.enableAll
         && (Aima_Aimani.enableNGNumber
+            || Aima_AimaniNGCat.enableNGCat
             || Aima_Aimani.enableTextThread)) {
       /* 前回追加したアンカーを削除する */
       var nodes = targetNode.getElementsByTagName ("small");
