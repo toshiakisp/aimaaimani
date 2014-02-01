@@ -9298,32 +9298,18 @@ var Aima_AimaniUIManager = {
         panel.setAttribute ("status", "enabled");
         panel.setAttribute ("disabled", false);
       }
-      panel
-        = document
-        .getElementById ("aima_aimani-toolbarbutton-preferences");
-      if (panel) {
-        panel.setAttribute ("status", "enabled");
-      }
-      panel
-        = document
-        .getElementById ("aima_aimani-toolbarbutton-ng_word");
-      if (panel) {
-        panel.setAttribute ("status", "enabled");
-        panel.setAttribute ("disabled", false);
-      }
-      panel
-        = document
-        .getElementById ("aima_aimani-toolbarbutton-preferences-image");
-      if (panel) {
-        panel.setAttribute ("status", "enabled");
-      }
-      panel
-        = document
-        .getElementById ("aima_aimani-toolbarbutton-ng_word-image");
-      if (panel) {
-        panel.setAttribute ("status", "enabled");
-        panel.setAttribute ("disabled", false);
-      }
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-preferences", "status", "enabled");
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-ng_word", "status", "enabled");
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-ng_word", "disabled", false);
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-preferences-image", "status", "enabled");
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-ng_word-image", "status", "enabled");
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-ng_word-image", "disabled", false);
     }
     else {
       panel
@@ -9339,31 +9325,36 @@ var Aima_AimaniUIManager = {
         panel.setAttribute ("status", "disabled");
         panel.setAttribute ("disabled", true);
       }
-      panel
-      = document
-      .getElementById ("aima_aimani-toolbarbutton-preferences");
-      if (panel) {
-        panel.setAttribute ("status", "disabled");
-      }
-      panel
-      = document
-      .getElementById ("aima_aimani-toolbarbutton-ng_word");
-      if (panel) {
-        panel.setAttribute ("status", "disabled");
-        panel.setAttribute ("disabled", true);
-      }
-      panel
-      = document
-      .getElementById ("aima_aimani-toolbarbutton-preferences-image");
-      if (panel) {
-        panel.setAttribute ("status", "disabled");
-      }
-      panel
-      = document
-      .getElementById ("aima_aimani-toolbarbutton-ng_word-image");
-      if (panel) {
-        panel.setAttribute ("status", "disabled");
-        panel.setAttribute ("disabled", true);
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-preferences", "status", "disabled");
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-ng_word", "status", "disabled");
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-ng_word", "disabled", true);
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-preferences-image", "status", "disabled");
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-ng_word-image", "status", "disabled");
+      this._setAttributeOfToolbarButton
+        ("aima_aimani-toolbarbutton-ng_word-image", "disabled", true);
+    }
+  },
+
+  _setAttributeOfToolbarButton : function (id, attr, value) {
+    var button = document.getElementById (id);
+    if (button) {
+      button.setAttribute (attr, value);
+    }
+    else if (typeof CustomizableUI != "undefined") {
+      // For Australis
+      var widgets = CustomizableUI.getWidget (id);
+      if (widgets) {
+        for (var i = 0; i < widgets.instances.length; i ++) {
+          button = widgets.instances [i].node;
+          if (button) {
+            button.setAttribute (attr, value);
+          }
+        }
       }
     }
   },
