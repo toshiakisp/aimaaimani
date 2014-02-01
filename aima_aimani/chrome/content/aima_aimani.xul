@@ -57,14 +57,14 @@
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="aima_aimani-toolbarbutton-preferences"
                    oncommand="Aima_AimaniUIManager.showPreferences (arguments [0]);"
-                   class=""
+                   class="toolbarbutton-1 chromeclass-toolbar-additional"
                    status="enabled"
                    label="合間合間に"
                    context="aima_aimani-statusbar-popup"
                    tooltiptext="合間合間に" />
     <toolbarbutton id="aima_aimani-toolbarbutton-ng_word"
                    oncommand="Aima_AimaniUIManager.showNGWordDialog (arguments [0]);"
-                   class=""
+                   class="toolbarbutton-1 chromeclass-toolbar-additional"
                    status="enabled"
                    label="NG ワード"
                    tooltiptext="NG ワード" />
