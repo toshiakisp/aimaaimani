@@ -74,18 +74,20 @@ Aima_AimaniNGCatCache.prototype = {
         }
       }
       else {
-        Aima_AimaniNGCat.httpCacheSession
-        .asyncOpenCacheEntry
-        (src,
-         Components.interfaces.nsICache.ACCESS_READ,
+        Components.utils.import ("resource://gre/modules/NetUtil.jsm");
+        var uri = NetUtil.newURI (this.imageNode.src);
+        Aima_AimaniNGCat.httpCacheStorage
+        .asyncOpenURI
+        (uri, "",
+         Components.interfaces.nsICacheStorage.OPEN_READONLY,
          this);
-        setTimeout (function (self, src) {
+        setTimeout (function (self, uri) {
             try {
               if (self.imageNode) {
-                Aima_AimaniNGCat.httpCacheSession
-                  .asyncOpenCacheEntry
-                  (src,
-                   Components.interfaces.nsICache.ACCESS_READ,
+                Aima_AimaniNGCat.httpCacheStorage
+                  .asyncOpenURI
+                  (uri, "",
+                   Components.interfaces.nsICacheStorage.OPEN_READONLY,
                    self);
               }
             }
@@ -100,7 +102,7 @@ Aima_AimaniNGCatCache.prototype = {
               self.imageNode = null;
               self.anchor = null;
             }
-          }, 3000, this, src);
+          }, 3000, this, uri);
         setTimeout (function (self) {
             if (self.imageNode) {
               self.imageNode.style.visibility = "";
@@ -127,27 +129,46 @@ Aima_AimaniNGCatCache.prototype = {
     
   /**
    * キャッシュエントリが使用可能になったイベント
-   *   nsICacheListener.onCacheEntryAvailable
+   *   nsICacheEntryOpenCallback.onCacheEntryAvailable
    * 差分位置を取得する
    *
-   * @param  nsICacheEntryDescriptor descriptor
+   * @param  nsICacheEntry entry
    *         キャッシュの情報
-   * @param  nsCacheAccessMode accessGranted
-   *         アクセス権限
-   * @param  nsresult status
-   *         不明
+   * @param  boolean isNew
+   * @param  nsIApplicationCache appCache
+   * @param  nsresult result
    */
-  onCacheEntryAvailable : function (descriptor, accessGranted, status) {
-    if (accessGranted) {
+  onCacheEntryAvailable : function (entry, isNew, appCache, result) {
+
+    if (Components.isSuccessCode (result)) {
+      var self = this;
+      var istream = entry.openInputStream (0);
+      Components.utils.import ("resource://gre/modules/NetUtil.jsm");
+      NetUtil.asyncFetch (istream, function (istream, result) {
+        self._onCacheStreamAvailable (entry, istream, result);
+      });
+    }
+    else {
+      if (this.imageNode) {
+        this.imageNode.style.visibility = "";
+      }
+      this.targetNode = null;
+      this.targetAnchor = null;
+      this.imageNode = null;
+      this.anchor = null;
+    }
+  },
+
+  _onCacheStreamAvailable : function (entry, istream, result) {
+    if (Components.isSuccessCode (result)) {
       try {
-        var istream = descriptor.openInputStream (0);
         var bstream
         = Components.classes ["@mozilla.org/binaryinputstream;1"]
         .createInstance (Components.interfaces.nsIBinaryInputStream);
         bstream.setInputStream (istream);
-        var bindata = bstream.readBytes (descriptor.dataSize);
+        var bindata = bstream.readBytes (entry.dataSize);
         bstream.close ();
-        descriptor.close ();
+        entry.close ();
                 
         var hash = Aima_AimaniNGCat.md5 (bindata);
                 
@@ -279,7 +300,12 @@ Aima_AimaniNGCatCache.prototype = {
     this.targetAnchor = null;
     this.imageNode = null;
     this.anchor = null;
-  }
+  },
+
+  onCacheEntryCheck : function (entry, appCache) {
+    return Components.interfaces.nsICacheEntryOpenCallback.ENTRY_WANTED;
+  },
+  mainThreadOnly : true,
 };
 
 /**
@@ -305,8 +331,8 @@ var Aima_AimaniNGCat = {
   textHideNGCat : "\u6D88",
   textShowNGCat : "\u89E3",
     
-  cacheService : null,     /* nsICasheService  キャッシュサービス */
-  httpCacheSession : null, /* nsICacheSession  HTTP キャッシュセッション */
+  cacheService : null,     /* nsICasheStorageService  キャッシュサービス */
+  httpCacheStorage : null, /* nsICacheStorage  HTTP キャッシュストレージ */
     
   /**
    * 初期化
@@ -934,17 +960,17 @@ var Aima_AimaniNGCat = {
                     imageNode) {
     if (Aima_AimaniNGCat.cacheService == null) {
       Aima_AimaniNGCat.cacheService
-      = Components.classes ["@mozilla.org/network/cache-service;1"]
-      .getService (Components.interfaces.nsICacheService);
+      = Components.classes ["@mozilla.org/netwerk/cache-storage-service;1"]
+      .getService (Components.interfaces.nsICacheStorageService);
     }
         
-    if (Aima_AimaniNGCat.httpCacheSession == null) {
-      Aima_AimaniNGCat.httpCacheSession
+    if (Aima_AimaniNGCat.httpCacheStorage == null) {
+      var scope = {};
+      Components.utils.import ("resource://gre/modules/LoadContextInfo.jsm", scope);
+      this.LoadContextInfo = scope.LoadContextInfo;
+      Aima_AimaniNGCat.httpCacheStorage
       = Aima_AimaniNGCat.cacheService
-      .createSession ("HTTP",
-                      Components.interfaces.nsICache.STORE_ANYWHERE,
-                      true);
-      Aima_AimaniNGCat.httpCacheSession.doomEntriesIfExpired = false;
+      .diskCacheStorage (this.LoadContextInfo.default, false);
     }
         
     var ngcat = "null";
