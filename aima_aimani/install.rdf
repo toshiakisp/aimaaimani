@@ -4,8 +4,8 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   
   <Description about="urn:mozilla:install-manifest">
-    <em:id>{5b525240-a632-4999-85c9-97d28a16d6d2}</em:id>
-    <em:version>3.3.57</em:version>
+    <em:id>aimaaimani@toshiakisp.github.io</em:id>
+    <em:version>3.3.57.sp_rev.1</em:version>
     <em:type>2</em:type>
     
     <em:targetApplication>
@@ -13,14 +13,16 @@
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
         <em:minVersion>32.0</em:minVersion>
-        <em:maxVersion>35.*</em:maxVersion>
+        <em:maxVersion>46.0a1</em:maxVersion>
       </Description>
     </em:targetApplication>
     
     <em:name>合間合間に</em:name>
     <em:description>もう見たくないあのスレ、あのレス、あの画像に</em:description>
     <em:creator>arai</em:creator>
-    <em:homepageURL>http://www.unmht.org/aima_aimani/</em:homepageURL>
+    <em:contributor>toshiaki</em:contributor>
+    <em:homepageURL>https://toshiakisp.github.io/akahuku-firefox-sp/</em:homepageURL>
+    <em:updateURL>https://toshiakisp.github.io/akahuku-firefox-sp/aimaaimani_update.rdf</em:updateURL>
     
     <em:optionsURL>chrome://aima_aimani/content/options.xul</em:optionsURL>
     <em:iconURL>chrome://aima_aimani/content/icon.png</em:iconURL>
