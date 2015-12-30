@@ -9183,7 +9183,7 @@ var Aima_AimaniUIManager = {
       var navbar;
       var button;
       var inner;
-      var label, command;
+      var label;
       navbar = document.getElementById ("nav-bar");
       inner = document.getElementById ("nav-bar-inner");
       if (navbar && inner) {
@@ -9199,8 +9199,9 @@ var Aima_AimaniUIManager = {
           button.setAttribute ("id", id);
                     
           label = "\u5408\u9593\u5408\u9593\u306B";
-          command = "Aima_AimaniUIManager.showPreferences (arguments [0]);";
-          button.setAttribute ("oncommand", command);
+          button.addEventListener ("command", function (ev) {
+            Aima_AimaniUIManager.showPreferences (ev);
+          }, false);
           button.setAttribute ("class", "toolbarbutton-1");
           button.setAttribute ("status", Aima_Aimani.enableAll);
           if (style != 0) {
@@ -9222,8 +9223,9 @@ var Aima_AimaniUIManager = {
           button.setAttribute ("id", id);
                     
           label = "NG \u30EF\u30FC\u30C9";
-          command = "Aima_AimaniUIManager.showNGWordDialog (arguments [0]);";
-          button.setAttribute ("oncommand", command);
+          button.addEventListener ("command", function (ev) {
+            Aima_AimaniUIManager.showNGWordDialog (ev);
+          }, false);
           button.setAttribute ("class", "toolbarbutton-1");
           button.setAttribute ("status", Aima_Aimani.enableAll);
           if (style != 0) {
@@ -9261,19 +9263,21 @@ var Aima_AimaniUIManager = {
         popup = targetDocument.createElement ("popup");
         popup.id = "aima_aimani-statusbar-popup";
         popup.setAttribute ("position", "after_start");
-        popup.setAttribute ("onpopupshowing",
-                            "Aima_AimaniUIManager.setStatusbarPopup ();");
+        popup.addEventListener ("popupshowing", function () {
+          Aima_AimaniUIManager.setStatusbarPopup ();
+        }, false);
                 
         var menuitem;
         var menuseparator;
-        var label, command;
+        var label;
                 
         label = "\u5168\u6A5F\u80FD\u3092 OFF";
-        command = "Aima_AimaniUIManager.switchDisabled ();";
         menuitem = targetDocument.createElement ("menuitem");
         menuitem.id = "aima_aimani-statusbar-popup-all";
         menuitem.setAttribute ("label", label);
-        menuitem.setAttribute ("oncommand", command);
+        menuitem.addEventListener ("command", function () {
+          Aima_AimaniUIManager.switchDisabled ();
+        }, false);
         popup.appendChild (menuitem);
                 
         menuseparator = targetDocument.createElement ("menuseparator");
@@ -9281,10 +9285,11 @@ var Aima_AimaniUIManager = {
         popup.appendChild (menuseparator);
                 
         label = "\u30B5\u30A4\u30C8\u3092\u958B\u304F";
-        command = "Aima_AimaniUIManager.openWebsite ();";
         menuitem = targetDocument.createElement ("menuitem");
         menuitem.setAttribute ("label", label);
-        menuitem.setAttribute ("oncommand", command);
+        menuitem.addEventListener ("command", function () {
+          Aima_AimaniUIManager.openWebsite ();
+        }, false);
         popup.appendChild (menuitem);
                 
         popupset.appendChild (popup);
