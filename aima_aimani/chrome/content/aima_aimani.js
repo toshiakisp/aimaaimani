@@ -1153,13 +1153,16 @@ var Aima_AimaniNGCat = {
              .CURRENT_REQUEST);
         }
                 
+        var errorStatus
+          = Components.interfaces.imgIRequest.STATUS_ERROR
+          | Components.interfaces.imgIRequest.STATUS_LOAD_PARTIAL;
+                
         if (!request
-            || !(request.imageStatus & request.STATUS_LOAD_COMPLETE)) {
+            || request.imageStatus & errorStatus) {
           imageNode.style.visibility = "hidden";
           cache.imageNode.addEventListener
             ("load",
              function () {
-              cache.imageNode.removeEventListener ("load", arguments.callee);
               cache.start ();
             }, false);
         }
