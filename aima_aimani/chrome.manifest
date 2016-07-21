@@ -3,7 +3,6 @@ content aima_aimani  chrome/content/
 overlay chrome://global/content/customizeToolbar.xul      chrome://aima_aimani/content/customize.xul
 overlay chrome://browser/content/browser.xul              chrome://aima_aimani/content/aima_aimani.xul
 overlay chrome://navigator/content/navigatorOverlay.xul   chrome://aima_aimani/content/aima_aimani.xul
-overlay chrome://multiviews/content/navigatorOverlay.xul  chrome://aima_aimani/content/aima_aimani.xul
 
 component   {812162d9-2c38-4012-a5e0-60205537cdad} components/arAima_AimaniContentPolicy.js
 contract    @unmht.org/aima-aimani-content-policy;1 {812162d9-2c38-4012-a5e0-60205537cdad}
