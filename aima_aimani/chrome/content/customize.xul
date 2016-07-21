@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="chrome://aima_aimani/content/aima_aimani.css"
-                 type="text/css"?>
-
-<overlay id="aima_aimani-customizeOverlay"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-</overlay>
