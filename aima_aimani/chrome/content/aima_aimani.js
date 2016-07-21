@@ -18,11 +18,44 @@ Aima_AimaniNGCatCache.prototype = {
   hiding : false,      /* Boolean  NG カタログに追加中か
                         *   true: 追加中
                         *   false: チェック中 */
+
+  notificationTarget : null,
+
+  _destruct : function () {
+    if (this.imageNode) {
+      try {
+        this.imageNode.style.visibility = "";
+      }
+      catch (e) {
+      }
+    }
+    this.targetNode = null;
+    this.targetAnchor = null;
+    this.imageNode = null;
+    this.anchor = null;
+    this.notificationTarget = null;
+  },
+
+  cancel : function (status) {
+    this._canceled = true;
+    if (!this._started) {
+      this._notifyStart ();
+    }
+    this._notifyStop (status);
+    this._destruct ();
+  },
+
+  isPending : function () {
+    return this._started && !this._canceled && this.targetNode != null;
+  },
     
   /**
    * チェック開始
    */
   start : function () {
+    if (this._started) {
+      throw new Error ("Aima_AimaniNGCatCache.start: already started")
+    }
     try {
       var src = this.imageNode.src;
       if (src.match
@@ -62,16 +95,8 @@ Aima_AimaniNGCatCache.prototype = {
           + arAkahukuFile.separator
           + leafName + "." + ext;
                 
-        var targetFile
-          = Components.classes ["@mozilla.org/file/local;1"]
-          .createInstance (Components.interfaces.nsILocalFile);
-        targetFile.initWithPath (targetFileName);
-        if (targetFile.exists ()) {
-          var descriptor
-            = new arAkahukuP2PCacheEntryDescriptor (targetFile);
-          this.onCacheEntryAvailable (descriptor, true, 0);
-          return;
-        }
+        this.asyncOpenP2PCacheEntry (targetFileName);
+        this._notifyStart ();
       }
       else {
         Components.utils.import ("resource://gre/modules/NetUtil.jsm");
@@ -81,49 +106,39 @@ Aima_AimaniNGCatCache.prototype = {
         (uri, "",
          Components.interfaces.nsICacheStorage.OPEN_READONLY,
          this);
-        setTimeout (function (self, uri) {
-            try {
-              if (self.imageNode) {
-                Aima_AimaniNGCat.httpCacheStorage
-                  .asyncOpenURI
-                  (uri, "",
-                   Components.interfaces.nsICacheStorage.OPEN_READONLY,
-                   self);
-              }
-            }
-            catch (e) { Components.utils.reportError (e);
-              try {
-                self.imageNode.style.visibility = "";
-              }
-              catch (e) { Components.utils.reportError (e);
-              }
-              self.targetNode = null;
-              self.targetAnchor = null;
-              self.imageNode = null;
-              self.anchor = null;
-            }
-          }, 3000, this, uri);
-        setTimeout (function (self) {
-            if (self.imageNode) {
-              self.imageNode.style.visibility = "";
-              self.targetNode = null;
-              self.targetAnchor = null;
-              self.imageNode = null;
-              self.anchor = null;
-            }
-          }, 5000, this);
+        this._notifyStart ();
       }
     }
     catch (e) { Components.utils.reportError (e);
-      try {
-        this.imageNode.style.visibility = "";
+      this._notifyStart ();
+      this._notifyStop (e.result);
+      this._destruct ();
+    }
+  },
+  asyncOpenP2PCacheEntry : function (targetFileName) {
+    var that = this;
+    // executeSoon
+    var tm = Components.classes ["@mozilla.org/thread-manager;1"]
+      .getService (Components.interfaces.nsIThreadManager);
+    tm.mainThread.dispatch ({
+      run: function () {
+        that.openP2PCacheEntry (targetFileName);
       }
-      catch (e) { Components.utils.reportError (e);
-      }
-      this.targetNode = null;
-      this.targetAnchor = null;
-      this.imageNode = null;
-      this.anchor = null;
+    }, Components.interfaces.nsIThread.DISPATCH_NORMAL);
+  },
+  openP2PCacheEntry : function (targetFileName) {
+    var targetFile
+      = Components.classes ["@mozilla.org/file/local;1"]
+      .createInstance (Components.interfaces.nsILocalFile);
+    targetFile.initWithPath (targetFileName);
+    if (targetFile.exists ()) {
+      var descriptor
+        = new arAkahukuP2PCacheEntryDescriptor (targetFile);
+      this.onCacheEntryAvailable (descriptor, true, null, 0);
+    }
+    else {
+      this._notifyStop (Components.results.NS_ERROR_FILE_NOT_FOUND);
+      this._destruct ();
     }
   },
     
@@ -139,7 +154,9 @@ Aima_AimaniNGCatCache.prototype = {
    * @param  nsresult result
    */
   onCacheEntryAvailable : function (entry, isNew, appCache, result) {
-
+    if (this._canceled) {
+      return;
+    }
     if (Components.isSuccessCode (result)) {
       var self = this;
       var istream = entry.openInputStream (0);
@@ -149,17 +166,15 @@ Aima_AimaniNGCatCache.prototype = {
       });
     }
     else {
-      if (this.imageNode) {
-        this.imageNode.style.visibility = "";
-      }
-      this.targetNode = null;
-      this.targetAnchor = null;
-      this.imageNode = null;
-      this.anchor = null;
+      this._notifyStop (result);
+      this._destruct ();
     }
   },
 
   _onCacheStreamAvailable : function (entry, istream, result) {
+    if (this._canceled) {
+      return;
+    }
     if (Components.isSuccessCode (result)) {
       try {
         var bstream
@@ -289,24 +304,151 @@ Aima_AimaniNGCatCache.prototype = {
                  hash);
             }, 1000, this.imageNode.width, this.imageNode.height);
         }
+        this._notifyStop ();
+      }
+      catch (e) { Components.utils.reportError (e);
+        this._notifyStop (e.result);
+      }
+    }
+    else {
+      this._notifyStop (result);
+    }
+    this._destruct ();
+  },
+
+  onCacheEntryCheck : function (entry, appCache) {
+    try {
+      entry.dataSize;
+    }
+    catch (e if e.result == Components.results.NS_ERROR_IN_PROGRESS) {
+      return Components.interfaces.nsICacheEntryOpenCallback.RECHECK_AFTER_WRITE_FINISHED;
+    }
+    return Components.interfaces.nsICacheEntryOpenCallback.ENTRY_WANTED;
+  },
+  mainThreadOnly : true,
+
+  // easy notification callback (same as nsIRequestObserver)
+  _notify : function (result) {
+    if (!this.notificationTarget) {
+      return;
+    }
+    try {
+      if (arguments.length > 0) {
+        this.notificationTarget.onStopRequest (this, null, result);
+      }
+      else {
+        this.notificationTarget.onStartRequest (this, null);
+      }
+    }
+    catch (e) { Components.utils.reportError (e);
+    }
+  },
+  _notifyStart : function ()
+  {
+    this._started = true;
+    this._notify ();
+  },
+  _notifyStop : function (result) {
+    this._notify (arguments.length == 0 ? Components.results.NS_OK : result);
+  },
+
+};
+
+function Aima_AimaniNGCatCacheManager () {
+  this.caches = [];
+  this._listeners = [];
+  this.count = 0;
+  this.countSuccess = 0;
+  this.countFail = 0;
+};
+Aima_AimaniNGCatCacheManager.prototype = {
+  destruct : function () {
+    for (var i = 0; this.caches.length; i ++) {
+      this.caches [i].notificationTarget = null;
+      this.caches [i].cancel ();
+    }
+    this.caches = null;
+    this._listeners = null;
+  },
+
+  addNGCatCache : function (cache) {
+    this.caches.push (cache);
+    cache.notificationTarget = this;
+    this.count ++;
+  },
+  onStartRequest : function (cache, context) {
+  },
+  onStopRequest : function (cache, context, status)
+  {
+    var spliced = false;
+    for (var i = 0; i < this.caches.length; i ++) {
+      if (this.caches [i] == cache) {
+        this.caches.splice (i, 1);
+        spliced = true;
+        break;
+      }
+    }
+    if (!spliced) {
+      throw new Error ("Aima_AimaniNGCatCacheManager.onStopRequest: not registered");
+    }
+    if (Components.isSuccessCode (status)) {
+      this.countSuccess ++;
+    }
+    else {
+      this.countFail ++;
+      if (status != Components.results.NS_ERROR_FILE_NOT_FOUND
+          && status != Components.results.NS_ERROR_CACHE_KEY_NOT_FOUND) {
+        // unexpected reason
+        Aima_Aimani.log
+          ("! open cache failed with " + this.resultCodeToString (status)
+           + " for \"" + cache.imageNode.src + "\"");
+      }
+    }
+    if (this.caches.length == 0) {
+      this._notifyAllListeners ("finished");
+      this.count = 0;
+      this.countSuccess = 0;
+      this.countFail = 0;
+    }
+  },
+  resultCodeToString : function (code) {
+    var codeInHex = "(0x" + code.toString (16) + ")";
+    var codeName = "";
+    for (var name in Components.results) {
+      if (code === Components.results [name]) {
+        codeName = name + " ";
+        break;
+      }
+    }
+    return codeName + codeInHex;
+  },
+
+  isPending : function () {
+    return (this.caches.length != 0);
+  },
+
+  addCallbackListener : function (listener) {
+    for (var i = 0; i < this._listeners.length; i ++) {
+      if (listener == this._listeners [i]) {
+        return; // already listening
+      }
+    }
+    this._listeners.push (listener);
+  },
+  _notifyAllListeners : function (status) {
+    var l = this._listeners;
+    this._listeners = [];
+    for (var i = 0; i < l.length; i ++) {
+      try {
+        l [i].apply (null, [this, status]);
       }
       catch (e) { Components.utils.reportError (e);
       }
     }
-    if (this.imageNode) {
-      this.imageNode.style.visibility = "";
-    }
-    this.targetNode = null;
-    this.targetAnchor = null;
-    this.imageNode = null;
-    this.anchor = null;
   },
 
-  onCacheEntryCheck : function (entry, appCache) {
-    return Components.interfaces.nsICacheEntryOpenCallback.ENTRY_WANTED;
-  },
-  mainThreadOnly : true,
 };
+
 
 /**
  * NG カタログ
@@ -958,6 +1100,7 @@ var Aima_AimaniNGCat = {
   apply : function (targetDocument, targetNode, targetAnchor,
                     threadNum, server, dir, imageNum,
                     imageNode) {
+    var param = Aima_Aimani.getDocumentParam (targetDocument);
     if (Aima_AimaniNGCat.cacheService == null) {
       Aima_AimaniNGCat.cacheService
       = Components.classes ["@mozilla.org/netwerk/cache-storage-service;1"]
@@ -994,6 +1137,8 @@ var Aima_AimaniNGCat = {
         cache.imageNum = imageNum;
         cache.imageNode = imageNode;
         cache.hiding = false;
+
+        param.ngcat_cacheManager.addNGCatCache (cache);
                 
         var load;
         var request;
@@ -1297,12 +1442,14 @@ Aima_AimaniStyle.prototype = {
  */
 function Aima_AimaniDocumentParam () {
   this.ngcat_caches = new Array ();
+  this.ngcat_cacheManager = new Aima_AimaniNGCatCacheManager ();
 }
 Aima_AimaniDocumentParam.prototype = {
   targetDocument : null,
   location_info : null,
   popup_managerdata : null,
   lastImage : null,
+  ngcat_cacheManager : null,
   ngcat_caches : null,
   ngcat_log : new Object (),
   ngcat_last : 0,
@@ -1310,10 +1457,20 @@ Aima_AimaniDocumentParam.prototype = {
   easyNGLeftDown : false,
   easyNGLastX : 0,
   easyNGLastY : 0,
-  easyNGMode : 0 /* 1： NG 番号消
+  easyNGMode : 0,/* 1： NG 番号消
                   * 2： NG 番号解除
                   * 3： NG カタログ消
                   * 4： NG カタログ解除 */
+
+  destruct : function () {
+    this.targetDocument = null;
+    this.location_info = null;
+    this.popup_managerdata = null;
+    if (this.ngcat_cacheManager) {
+      this.ngcat_cacheManager.destruct ();
+    }
+    this.ngcat_cacheManager = null;
+  },
 };
 
 /**
@@ -1536,6 +1693,11 @@ var Aima_Aimani = {
                  "",
                  "\u5F37\u5236\u8868\u793A\u89E3\u9664"],
     
+  /* 共通CSSセレクタ */
+  styleCatalogueTableSelector : "table + table" +
+    ",#akahuku_catalog_reload_container + table" +
+    ",#akahuku_catalog_reorder_container2 + table",
+
   /**
    * ドキュメントごとの情報を追加する
    *
@@ -1566,9 +1728,7 @@ var Aima_Aimani = {
       var tmp = Aima_Aimani.documentParams [i];
       if (tmp.targetDocument == targetDocument) {
         Aima_Aimani.documentParams.splice (i, 1);
-        tmp.targetDocument = null;
-        tmp.location_info = null;
-        tmp.popup_managerdata = null;
+        tmp.destruct ();
         tmp = null;
         break;
       }
@@ -1958,6 +2118,7 @@ var Aima_Aimani = {
             cache.imageNode = imageNode;
             cache.hiding = true;
             cache.anchor = target;
+            param.ngcat_cacheManager.addNGCatCache (cache);
             cache.start ();
           }
         }
@@ -3467,8 +3628,8 @@ var Aima_Aimani = {
     }
                 
     Aima_Aimani.addDocumentParam (targetDocument);
-    Aima_Aimani.getDocumentParam (targetDocument).location_info
-    = info;
+    var param = Aima_Aimani.getDocumentParam (targetDocument);
+    param.location_info = info;
                 
     var targetWindow = null;
     if (Aima_Aimani.mode == 1) {
@@ -3521,19 +3682,34 @@ var Aima_Aimani = {
           }
         }
                         
-        if (Aima_Aimani.enableHideCatStyle) {
+        var unhideCatalogue = (function (param) { return function () {
+          var targetDocument = param.targetDocument;
           var header
           = targetDocument.getElementsByTagName ("head");
           if (header.length > 0) {
             header = header [0];
             var s
-              = "table + table"
+              = Aima_Aimani.styleCatalogueTableSelector
               + "{display: table !important;}";
             var style
               = targetDocument.createElement ("style");
             style.appendChild (targetDocument.createTextNode
                                (s));
             header.appendChild (style);
+          }
+        } })(param);
+        if (Aima_Aimani.enableHideCatStyle) {
+          if (param.ngcat_cacheManager.isPending ()) {
+            param.ngcat_cacheManager.addCallbackListener (function (mgr, status) {
+              if (mgr.countFail) {
+                Aima_Aimani.log ("! error(s) in checking caches: "
+                  + mgr.countFail + "/" + mgr.count);
+              }
+              unhideCatalogue ();
+            });
+          }
+          else {
+            unhideCatalogue ();
           }
         }
       }
@@ -4918,21 +5094,8 @@ var Aima_Aimani = {
               imageNode.setAttribute ("__aima_aimani_style", "1");
             }
                     
-            setTimeout
-              (function (targetDocument, targetNode,
-                         targetAnchor,
-                         threadNum,
-                         info_server, info_dir,
-                         imageNum,
-                         imageNode) {
-                Aima_AimaniNGCat.apply
-                  (targetDocument, targetNode,
-                   targetAnchor,
-                   threadNum,
-                   info_server, info_dir,
-                   imageNum,
-                   imageNode);
-              }, 100, targetDocument, targetNode,
+            Aima_AimaniNGCat.apply
+              (targetDocument, targetNode,
                targetAnchor,
                threadNum,
                info.server, info.dir,
@@ -7121,7 +7284,7 @@ var Aima_Aimani = {
         }
         if (Aima_Aimani.enableHideCatStyle) {
           for (var name in Aima_AimaniServerName) {
-            if (name in Aima_Aimani.boardSelectExList) {
+            if (name in Aima_AimaniNGCat.boardSelectExList) {
               continue;
             }
             if (name.match (/^([^:]+):(.+)$/)) {
@@ -7137,7 +7300,8 @@ var Aima_Aimani = {
               + ") {";
                             
               style
-              += "table + table {display: none;}";
+              += Aima_Aimani.styleCatalogueTableSelector
+              + "{display: none;}";
                             
               style
               += "}";
@@ -7250,9 +7414,8 @@ var Aima_Aimani = {
       try {
         for (var i = 0; i < Aima_Aimani.documentParams.length; i ++) {
           tmp = Aima_Aimani.documentParams [i];
-          tmp.targetDocument = null;
-          tmp.location_info = null;
-          tmp.popup_managerdata = null;
+          tmp.destruct ();
+          tmp = null;
         }
       }
       catch (e) { Components.utils.reportError (e);
@@ -7735,7 +7898,34 @@ var Aima_Aimani = {
     for (var i = 0; i < container.nodes.length; i ++) {
       container.nodes [i].parentNode.removeChild (container.nodes [i]);
     }
-  }
+  },
+
+  _consoleService : null,
+  log : function (message) {
+    if (!this._consoleService) {
+      this._consoleService
+        = Components.classes ["@mozilla.org/consoleservice;1"]
+        .getService (Components.interfaces.nsIConsoleService);
+    }
+    var stack = Components.stack.caller.caller;
+    var flag = Components.interfaces.nsIScriptError.infoFlag;
+    if (typeof message == "string") {
+      if (/^!/.test (message)) {
+        flag = Components.interfaces.nsIScriptError.errorFlag;
+      }
+    }
+    else if (message instanceof Error) {
+      flag = Components.interfaces.nsIScriptError.warningFlag;
+    }
+    var scriptError
+      = Components.classes ["@mozilla.org/scripterror;1"]
+      .createInstance (Components.interfaces.nsIScriptError);
+    scriptError.init
+      ("Aima_Aimani: " + String (message),
+       stack.filename, null, stack.lineNumber, null,
+       flag, "chrome javascript");
+    this._consoleService.logMessage (scriptError);
+  },
 };
 
 /**
@@ -8616,8 +8806,11 @@ var Aima_AimaniPopupManager = {
   onMouseMove : function (event) {
     try {
       var targetDocument = event.target.ownerDocument;
-      var managerdata
-      = Aima_Aimani.getDocumentParam (targetDocument).popup_managerdata;
+      var param = Aima_Aimani.getDocumentParam (targetDocument);
+      if (!param) {
+        return;
+      }
+      var managerdata = param.popup_managerdata;
             
       if (managerdata.timerID) {
         if (managerdata.target == event.explicitOriginalTarget) {
