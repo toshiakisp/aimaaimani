@@ -1245,6 +1245,54 @@ Aima_AimaniLocationInfo.prototype = {
 };
 
 /**
+ * スタイルシート管理
+ * (ファイルI/O無し)
+ */
+function Aima_AimaniStyle (name) {
+  this.name = name;
+  this.styleText = "";
+  this.registeredData = null;
+}
+Aima_AimaniStyle.prototype = {
+  type : Components.interfaces.nsIStyleSheetService.USER_SHEET,
+  getStyleSheetService : function () {
+    return Components.classes ["@mozilla.org/content/style-sheet-service;1"]
+      .getService (Components.interfaces.nsIStyleSheetService);
+  },
+  register : function () {
+    if (this.registeredData) {
+      return;
+    }
+    var sss = this.getStyleSheetService ();
+    var uri = this.getDataURI ();
+    this.registeredData = {uri: uri, type: this.type};
+    sss.loadAndRegisterSheet (uri, this.type);
+  },
+  unregister : function () {
+    if (this.registeredData) {
+      var sss = this.getStyleSheetService ();
+      var uri = this.registeredData.uri;
+      var type = this.registeredData.type;
+      if (sss.sheetRegistered (uri, type)) {
+        sss.unregisterSheet (uri, type);
+      }
+      this.registeredData = null;
+    }
+  },
+  getDataURI : function () {
+    var name = this.name ? "/*" + this.name.replace (/(\*\/|#)/,"") + "*/": "";
+    var str = "data:text/css," + name + encodeURIComponent (this.styleText);
+    var ios
+      = Components.classes ["@mozilla.org/network/io-service;1"]
+      .getService (Components.interfaces.nsIIOService);
+    return ios.newURI (str, null, null);
+  },
+  setStyle : function (styleText) {
+    this.styleText = styleText;
+  },
+};
+
+/**
  * ドキュメントごとの情報
  */
 function Aima_AimaniDocumentParam () {
@@ -1437,6 +1485,8 @@ var Aima_Aimani = {
   enableStatusbarNGWord : false,      /* Boolean ステータスバーに
                                        * NG ワードパネルを表示する */
     
+  styleSheet : new Aima_AimaniStyle ("Aima_Aimani"),
+
   /* 表示する文字列 */
   textHideNumber : "\u6D88",
   textShowNumber : "\u89E3",
@@ -6981,56 +7031,9 @@ var Aima_Aimani = {
    */
   modifyStyleFile : function (register) {
     if (Aima_Aimani.mode == 1) {
-      var file
-      = Components.classes ["@mozilla.org/file/local;1"]
-      .createInstance (Components.interfaces.nsILocalFile);
-            
-      var dirname
-      = Components.classes ["@mozilla.org/file/directory_service;1"]
-      .getService (Components.interfaces.nsIProperties)
-      .get ("ProfD", Components.interfaces.nsIFile).path;
-      var separator = "/";
-      if (dirname.indexOf ("\\") != -1) {
-        separator = "\\";
-      }
-      else if (dirname.indexOf ("/") != -1) {
-        separator = "/";
-      }
-      else if (dirname.indexOf (":") != -1) {
-        separator = ":";
-      }
-            
-      file.initWithPath (dirname + separator + "Aima_Aimani"
-                         + separator + "userContent.css");
-      if (!file.exists ()) {
-        file.create (0x00, 0x01b4);
-      }
-            
-      var styleSheetService
-      = Components.classes ["@mozilla.org/content/style-sheet-service;1"]
-      .getService (Components.interfaces.nsIStyleSheetService);
-            
-      var fileProtocolHandler
-      = Components.classes ["@mozilla.org/network/io-service;1"]
-      .getService (Components.interfaces.nsIIOService)
-      .getProtocolHandler ("file")
-      .QueryInterface (Components.interfaces.nsIFileProtocolHandler);
-      var ios
-      = Components.classes["@mozilla.org/network/io-service;1"]
-      .getService(Components.interfaces.nsIIOService);
-      var uri
-      = ios.newURI(fileProtocolHandler.getURLSpecFromFile (file),
-                   null, null);
-      if (styleSheetService
-          .sheetRegistered (uri,
-                            Components.interfaces
-                            .nsIStyleSheetService.USER_SHEET)) {
-        styleSheetService
-          .unregisterSheet (uri,
-                            Components.interfaces
-                            .nsIStyleSheetService.USER_SHEET);
-      }
-            
+
+      this.styleSheet.unregister ();
+
       if (register) {
         var style = "";
         var prevPrefix;
@@ -7141,19 +7144,9 @@ var Aima_Aimani = {
             }
           }
         }
-                
-        var fstream
-        = Components
-        .classes ["@mozilla.org/network/file-output-stream;1"]
-        .createInstance (Components.interfaces.nsIFileOutputStream);
-        fstream.init (file, 0x02 | 0x08 | 0x20, 0x01b4, 0);
-        fstream.write (style, style.length);
-        fstream.close ();
-                
-        styleSheetService
-        .loadAndRegisterSheet (uri,
-                               Components.interfaces
-                               .nsIStyleSheetService.USER_SHEET);
+
+        this.styleSheet.setStyle (style);
+        this.styleSheet.register ();
       }
     }
   },
