@@ -1215,12 +1215,10 @@ var Aima_AimaniConverter = {
    * 初期化処理
    */
   init : function () {
-    if (Aima_Aimani.mode == 1) {
-      Aima_AimaniConverter.converter
-      = Components
-      .classes ["@mozilla.org/intl/scriptableunicodeconverter"]
-      .getService (Components.interfaces.nsIScriptableUnicodeConverter);
-    }
+    Aima_AimaniConverter.converter
+    = Components
+    .classes ["@mozilla.org/intl/scriptableunicodeconverter"]
+    .getService (Components.interfaces.nsIScriptableUnicodeConverter);
   },
     
   /**
@@ -1232,13 +1230,8 @@ var Aima_AimaniConverter = {
    *         UTF-16 に変換した文字列
    */
   convertFromUTF8 : function (text) {
-    if (Aima_Aimani.mode == 1) {
-      Aima_AimaniConverter.converter.charset = "UTF-8";
-      return Aima_AimaniConverter.converter.ConvertToUnicode (text);
-    }
-    else {
-      return text;
-    }
+    Aima_AimaniConverter.converter.charset = "UTF-8";
+    return Aima_AimaniConverter.converter.ConvertToUnicode (text);
   }
 };
 
@@ -1289,12 +1282,10 @@ Aima_AimaniLocationInfo.prototype = {
       this.isNotFound = true;
     }
         
-    if (Aima_Aimani.mode == 1) {
-      try {
-        location = Akahuku.protocolHandler.deAkahukuURI (location);
-      }
-      catch (e) { Components.utils.reportError (e);
-      }
+    try {
+      location = Akahuku.protocolHandler.deAkahukuURI (location);
+    }
+    catch (e) { Components.utils.reportError (e);
     }
         
     if (location.match
@@ -1500,10 +1491,6 @@ Aima_AimaniDocumentParam.prototype = {
  * 本体
  */
 var Aima_Aimani = {
-  mode : 1,                      /* Number  動作モード
-                                  *   1: Firefox/Mozilla Suite
-                                  *   2: Opera/IE/Safari */
-    
   documentParams : new Array (), /* Array  ドキュメントごとの情報 */
   latestParam : null,            /* Aima_AimaniDocumentParam
                                   *   ドキュメントごとの情報 */
@@ -1728,13 +1715,7 @@ var Aima_Aimani = {
    *         対象のドキュメント
    */
   addDocumentParam : function (targetDocument) {
-    var param;
-    if (Aima_Aimani.mode == 1) {
-      param = new Aima_AimaniDocumentParam ();
-    }
-    else {
-      param = new document.Aima_AimaniDocumentParam ();
-    }
+    var param = new Aima_AimaniDocumentParam ();
     param.targetDocument = targetDocument;
     Aima_Aimani.documentParams.push (param);
     Aima_Aimani.latestParam = param;
@@ -1926,19 +1907,6 @@ var Aima_Aimani = {
                     
           if (tmpNode) {
             var newNode;
-            if (Aima_Aimani.mode == 2
-                && Aima_Aimani.enableNGNumber
-                && Aima_Aimani.enableNGNumberSelection) {
-              /* 範囲選択のアンカーを作る */
-              newNode
-                = Aima_Aimani.createAnchor
-                (targetDocument,
-                 "select_message_" + num + "_0",
-                 Aima_Aimani.textSelectRes, true);
-                            
-              tmpNode.parentNode.insertBefore (newNode, tmpNode);
-            }
-                        
             if (additional) {
               additional = "_" + additional;
             }
@@ -1960,13 +1928,7 @@ var Aima_Aimani = {
                 y += tmp.offsetTop;
               }
               if (y < targetDocument.body.scrollTop) {
-                var targetWindow;
-                if (Aima_Aimani.mode == 1) {
-                  targetWindow = targetDocument.defaultView;
-                }
-                else {
-                  targetWindow = window;
-                }
+                var targetWindow = targetDocument.defaultView;
                 if (targetWindow) {
                   targetWindow.scrollTo (0, (y < 0) ? 0 : y);
                 }
@@ -2026,19 +1988,6 @@ var Aima_Aimani = {
                     
           if (tmpNode) {
             var newNode;
-            if (Aima_Aimani.mode == 2
-                && Aima_Aimani.enableNGNumber
-                && Aima_Aimani.enableNGNumberSelection) {
-              /* 範囲選択のアンカーを作る */
-              newNode
-                = Aima_Aimani.createAnchor
-                (targetDocument,
-                 "select_message_" + num + "_0",
-                 Aima_Aimani.textSelectRes, true);
-                            
-              tmpNode.appendChild (newNode);
-            }
-                        
             if (additional) {
               additional = "_" + additional;
             }
@@ -3050,130 +2999,9 @@ var Aima_Aimani = {
         }
       }
             
-      if (Aima_Aimani.mode == 2) {
-        if (method == "select") {
-          notupdated = true;
-          if (Aima_Aimani.endAnchor) {
-            Aima_Aimani.setText (Aima_Aimani.endAnchor,
-                                 "[" + Aima_Aimani.textSelectRes
-                                 + "]");
-            Aima_Aimani.endAnchor.style.color = "#627f29";
-            Aima_Aimani.endAnchor = null;
-                        
-            if (Aima_Aimani.containerAnchor) {
-              Aima_Aimani.containerAnchor.parentNode
-                .removeChild (Aima_Aimani.containerAnchor);
-              Aima_Aimani.containerAnchor = null;
-            }
-                        
-            if (Aima_Aimani.startAnchor) {
-              Aima_Aimani
-                .setText (Aima_Aimani.startAnchor,
-                          "[" + Aima_Aimani.textSelectRes + "]");
-              Aima_Aimani.startAnchor.style.color = "#627f29";
-              Aima_Aimani.startAnchor = null;
-            }
-          }
-          else {
-            if (Aima_Aimani.startAnchor) {
-              if (target != Aima_Aimani.startAnchor) {
-                Aima_Aimani.endAnchor = target;
-                Aima_Aimani
-                .setText (Aima_Aimani.startAnchor,
-                          "[" + Aima_Aimani.textSelectResTo
-                          + "]");
-                target.style.color = "red";
-                                
-                var newNode;
-                newNode = targetDocument.createElement ("span");
-                newNode.style.fontSize = "10pt";
-                newNode.className = "aima_aimani_generated";
-                Aima_Aimani.containerAnchor = newNode;
-                                
-                newNode
-                = targetDocument.createTextNode ("\uFF08");
-                Aima_Aimani.containerAnchor
-                .appendChild (newNode);
-                                
-                newNode
-                = Aima_Aimani.createAnchor
-                (targetDocument,
-                 "hide_select_0_0",
-                 Aima_Aimani.textHideNumber, true);
-                newNode.style.color = "red";
-                Aima_Aimani.containerAnchor
-                .appendChild (newNode);
-                                
-                newNode
-                = targetDocument.createTextNode ("\uFF0F");
-                Aima_Aimani.containerAnchor
-                .appendChild (newNode);
-                                
-                newNode
-                = Aima_Aimani.createAnchor
-                (targetDocument,
-                 "show_select_0_0",
-                 Aima_Aimani.textShowNumber, true);
-                newNode.style.color = "red";
-                Aima_Aimani.containerAnchor
-                .appendChild (newNode);
-                                
-                newNode
-                = targetDocument.createTextNode ("\uFF09");
-                Aima_Aimani.containerAnchor
-                .appendChild (newNode);
-                                
-                target.parentNode
-                .insertBefore (Aima_Aimani.containerAnchor,
-                               target.nextSibling);
-              }
-              else {
-                Aima_Aimani
-                .setText (target,
-                          "[" + Aima_Aimani.textSelectRes
-                          + "]");
-                target.style.color = "#627f29";
-              }
-            }
-            else {
-              Aima_Aimani.startAnchor = target;
-              Aima_Aimani
-              .setText (target,
-                        "[" + Aima_Aimani.textSelectResFrom
-                        + "]");
-              target.style.color = "red";
-            }
-          }
-        }
-                
-        if (subtype == "select") {
-          if (Aima_Aimani.startAnchor && Aima_Aimani.endAnchor) {
-            Aima_Aimani.hideSelectedRes (method == "hide");
-          }
-        }
-                
-        if (update && !notupdated && save) {
-          Aima_AimaniConfigManager.saveNGNumberPref (mod_thumbnail,
-                                                     mod_cat,
-                                                     mod_thread_rule);
-        }
-      }
-            
       if (update && !notupdated && save
           && Aima_Aimani.enableHideStyle) {
         Aima_Aimani.modifyStyleFile (true);
-      }
-            
-      if (Aima_Aimani.mode == 1) {
-        if (update && !notupdated && save) {
-          var prefBranch;
-                    
-          var prefService
-          = Components.classes ["@mozilla.org/preferences-service;1"].
-          getService (Components.interfaces.nsIPrefService);
-                    
-          prefService.savePrefFile (null);
-        }
       }
             
       if (div
@@ -3396,17 +3224,6 @@ var Aima_Aimani = {
         if (param.easyNGLeftDown) {
           param.easyNGLeftDown = false;
                     
-          if (Aima_Aimani.mode == 1) {
-            var prefBranch;
-                        
-            var prefService
-              = Components.classes
-              ["@mozilla.org/preferences-service;1"].
-              getService (Components.interfaces.nsIPrefService);
-                        
-            prefService.savePrefFile (null);
-          }
-                    
           event.preventDefault ();
           event.stopPropagation ();
         }
@@ -3521,7 +3338,7 @@ var Aima_Aimani = {
             
       var needApply = false;
             
-      if (Aima_Aimani.mode == 1) {
+      if (typeof Akahuku != "undefined") {
         try {
           href = Akahuku.protocolHandler.deAkahukuURI (href);
         }
@@ -3569,9 +3386,6 @@ var Aima_Aimani = {
         Aima_Aimani.applyAll (targetDocument);
       }
     }
-    if (Aima_Aimani.mode == 2) {
-      Aima_AimaniOptionsUtil.applyConfigButton (targetDocument);
-    }
         
     try {
       if (typeof Akahuku != "undefined"
@@ -3589,14 +3403,7 @@ var Aima_Aimani = {
   applyAll : function (targetDocument) {
     var href = targetDocument.location.href;
         
-    var info;
-    if (Aima_Aimani.mode == 1) {
-      info = new Aima_AimaniLocationInfo (targetDocument);
-    }
-    else {
-      info
-      = new document.Aima_AimaniLocationInfo (targetDocument);
-    }
+    var info = new Aima_AimaniLocationInfo (targetDocument);
                 
     if (href.match (/futaba\.php$/)) {
       /* レス送信のインラインフレームの場合、なにもしない */
@@ -3632,7 +3439,7 @@ var Aima_Aimani = {
     param.location_info = info;
                 
     var targetWindow = null;
-    if (Aima_Aimani.mode == 1) {
+    if (true) {
       targetWindow = targetDocument.defaultView;
       targetWindow.addEventListener
         ("unload",
@@ -3644,23 +3451,6 @@ var Aima_Aimani = {
          function () {
           Aima_Aimani.onContentAreaClick (arguments [0]);
         }, false);
-    }
-    else {
-      targetWindow = window;
-      if (targetWindow) {
-        Aima_Aimani.addEventListener
-          (targetWindow,
-           "unload",
-           function () {
-            Aima_Aimani.onBodyUnload (targetDocument);
-          }, false);
-      }
-      Aima_Aimani.addEventListener
-      (targetDocument.body,
-       "click",
-       function () {
-        Aima_Aimani.onContentAreaClick (arguments [0]);
-      }, false);
     }
                 
     if (info.isCatalog) {
@@ -3771,24 +3561,6 @@ var Aima_Aimani = {
           if (enableNGThumbnail) {
             Aima_AimaniConfigManager.saveNGThumbnail ();
           }
-                            
-          if (Aima_Aimani.mode == 1) {
-            var prefBranch;
-            
-            var prefService
-              = Components.classes
-              ["@mozilla.org/preferences-service;1"].
-              getService
-              (Components.interfaces.nsIPrefService);
-            
-            prefService.savePrefFile (null);
-          }
-          else if (Aima_Aimani.mode == 2) {
-            Aima_AimaniConfigManager
-              .saveNGNumberPref (Aima_Aimani
-                                 .enableNGThumbnail,
-                                 false, false);
-          }
         }
       }
                     
@@ -3814,21 +3586,10 @@ var Aima_Aimani = {
       }
       
       if (Aima_Aimani.enableMiniThumb
-          || (Aima_Aimani.enableThreadRule && info.isReply)
-          || (Aima_Aimani.mode == 2
-              && Aima_Aimani.enableNGNumber
-              && Aima_Aimani.enableNGNumberSelection)) {
-        if (Aima_Aimani.mode == 1) {
+          || (Aima_Aimani.enableThreadRule && info.isReply)) {
+        if (true) {
           targetDocument.body.addEventListener
           ("mousemove",
-           function () {
-            Aima_Aimani.onMouseMove (arguments [0]);
-          }, false);
-        }
-        else {
-          Aima_Aimani.addEventListener
-          (targetDocument.body,
-           "mousemove",
            function () {
             Aima_Aimani.onMouseMove (arguments [0]);
           }, false);
@@ -3836,18 +3597,11 @@ var Aima_Aimani = {
       }
       
       if (Aima_Aimani.enablePopupMessage) {
-        if (Aima_Aimani.mode == 1) {
+        if (true) {
           Aima_Aimani.getDocumentParam (targetDocument)
           .popup_managerdata
           = new Aima_AimaniPopupManagerData ();
-        }
-        else {
-          Aima_Aimani.getDocumentParam (targetDocument)
-          .popup_managerdata
-          = new document.Aima_AimaniPopupManagerData ();
-        }
                         
-        if (Aima_Aimani.mode == 1) {
           targetDocument.body.addEventListener
           ("mousemove",
            function () {
@@ -3857,23 +3611,6 @@ var Aima_Aimani = {
                             
           targetDocument.body.addEventListener
           ("click",
-           function () {
-            Aima_AimaniPopupManager
-              .onClick (arguments [0]);
-          }, false);
-        }
-        else {
-          Aima_Aimani.addEventListener
-          (targetDocument.body,
-           "mousemove",
-           function () {
-            Aima_AimaniPopupManager
-            .onMouseMove (arguments [0]);
-          }, false);
-                            
-          Aima_Aimani.addEventListener
-          (targetDocument.body,
-           "click",
            function () {
             Aima_AimaniPopupManager
               .onClick (arguments [0]);
@@ -4374,26 +4111,11 @@ var Aima_Aimani = {
           Aima_AimaniConfigManager.saveNGThumbnail ();
         }
                 
-        if (Aima_Aimani.mode == 1) {
-          var prefBranch;
-            
-          var prefService
-            = Components.classes
-            ["@mozilla.org/preferences-service;1"].
-            getService (Components.interfaces.nsIPrefService);
-            
-          prefService.savePrefFile (null);
-        }
-        else if (Aima_Aimani.mode == 2) {
-          Aima_AimaniConfigManager
-            .saveNGNumberPref (enableNGThumbnail, false, false);
-        }
-                
         return true;
       }
     }
     
-    if (Aima_Aimani.mode == 1) {
+    if (true) {
       setTimeout (function (targetNode) {
           var nodes = targetNode.getElementsByTagName ("img");
                     
@@ -4402,13 +4124,6 @@ var Aima_Aimani = {
             nodes [i].src = nodes [i].src;
           }
         }, 1000, container.main);
-    }
-    else {
-      var nodes = container.main.getElementsByTagName ("img");
-            
-      for (var i = 0; i < nodes.length; i ++) {
-        nodes [i].style.display = "inline";
-      }
     }
         
     return false;
@@ -4599,11 +4314,9 @@ var Aima_Aimani = {
           nodes [i].style.display = "inline";
         }
                 
-        if (Aima_Aimani.mode == 1) {
-          setTimeout (function (node) {
-              node.src = node.src;
-            }, 1000, nodes [i]);
-        }
+        setTimeout (function (node) {
+            node.src = node.src;
+          }, 1000, nodes [i]);
       }
             
       if (Aima_Aimani.enableCatalogueUnlink) {
@@ -5055,7 +4768,7 @@ var Aima_Aimani = {
                 
         if (!ngwordOnly
             && Aima_AimaniNGCat.enableNGCat
-            && imageNode && Aima_Aimani.mode == 1) {
+            && imageNode) {
           var name = info.server + ":" + info.dir;
           if (!(name in Aima_AimaniNGCat.boardSelectExList)) {
             if (Aima_Aimani.enableHideCatStyle
@@ -5346,7 +5059,7 @@ var Aima_Aimani = {
       div.insertBefore (container, div.firstChild);
     }
         
-    if (Aima_Aimani.mode == 1) {
+    if (true) {
       targetDocument.body.addEventListener
       ("mousemove",
        function () {
@@ -5359,26 +5072,6 @@ var Aima_Aimani = {
       }, true);
       targetDocument.body.addEventListener
       ("mouseup",
-       function () {
-        Aima_Aimani.onEasyNGMouseUp (arguments [0]);
-      }, true);
-    }
-    else {
-      Aima_Aimani.addEventListener
-      (targetDocument.body,
-       "mousemove",
-       function () {
-        Aima_Aimani.onEasyNGMouseMove (arguments [0]);
-      }, true);
-      Aima_Aimani.addEventListener
-      (targetDocument.body,
-       "mousedown",
-       function () {
-        Aima_Aimani.onEasyNGMouseDown (arguments [0]);
-      }, true);
-      Aima_Aimani.addEventListener
-      (targetDocument.body,
-       "mouseup",
        function () {
         Aima_Aimani.onEasyNGMouseUp (arguments [0]);
       }, true);
@@ -5482,21 +5175,6 @@ var Aima_Aimani = {
                 
         if (enableNGThumbnail) {
           Aima_AimaniConfigManager.saveNGThumbnail ();
-        }
-                
-        if (Aima_Aimani.mode == 1) {
-          var prefBranch;
-            
-          var prefService
-          = Components.classes
-          ["@mozilla.org/preferences-service;1"].
-          getService (Components.interfaces.nsIPrefService);
-            
-          prefService.savePrefFile (null);
-        }
-        if (Aima_Aimani.mode == 2) {
-          Aima_AimaniConfigManager
-          .saveNGNumberPref (enableNGThumbnail, false, false);
         }
       }
             
@@ -5644,19 +5322,6 @@ var Aima_Aimani = {
                   || node.firstChild.getAttribute ("width");
                 imageHeight = node.firstChild.height
                   || node.firstChild.getAttribute ("height");
-                if (Aima_Aimani.mode == 2
-                    && Aima_Aimani.isIE
-                    && imageWidth == 0
-                    && "outerHTML" in node.firstChild) {
-                  if (node.firstChild.outerHTML.match
-                      (/width[ \t\r\n]*=[ \t\r\n]*[\'\"]?([0-9]+)[\'\"]?/)) {
-                    imageWidth = parseInt (RegExp.$1);
-                  }
-                  if (node.firstChild.outerHTML.match
-                      (/height[ \t\r\n]*=[ \t\r\n]*[\'\"]?([0-9]+)[\'\"]?/)) {
-                    imageHeight = parseInt (RegExp.$1);
-                  }
-                }
                 if ("alt" in node.firstChild
                     && node.firstChild.alt
                     .match (/([0-9]*)/)) {
@@ -5700,29 +5365,6 @@ var Aima_Aimani = {
           else if (href.match (/http:\/\/www\.amazon\.co\.jp\//)) {
             /* Amazon の広告 */
             return 0;
-          }
-        }
-        else if (Aima_Aimani.mode == 2) {
-          var text = Aima_Aimani.getInnerText (node);
-          if (num == 0
-              && text.indexOf ("No.") != -1
-              && text.match (/No\.([0-9]+)/)) {
-            /* スレ番号、レス番号の場合 */
-            num = parseInt (RegExp.$1);
-                    
-            noNode = node;
-          }
-                
-          if (text.indexOf ("ID:") != -1
-              && text.match (/ID:([^ ]+)/)) {
-            /* ID の場合 */
-            ngword_id = RegExp.$1;
-          }
-                
-          if (text.indexOf ("IP:") != -1
-              && text.match (/IP:([^ ]+)/)) {
-            /* IP アドレス の場合 */
-            ngword_ip = RegExp.$1;
           }
         }
       }
@@ -5841,28 +5483,6 @@ var Aima_Aimani = {
                 
         if (tmpNode) {
           var newNode;
-          if (Aima_Aimani.mode == 2
-              && Aima_Aimani.enableNGNumber
-              && Aima_Aimani.enableNGNumberSelection) {
-            /* 範囲選択のアンカーを作る */
-            newNode
-              = Aima_Aimani.createAnchor
-              (targetDocument,
-               "select_message_" + num + "_0",
-               Aima_Aimani.textSelectRes, true);
-                        
-            if (hide != 0) {
-              var node2 = tmpNode.firstChild;
-              while (node2 && node2.nextSibling) {
-                node2 = node2.nextSibling;
-              }
-              tmpNode.insertBefore (newNode, node2);
-            }
-            else {
-              tmpNode.appendChild (newNode);
-            }
-          }
-                    
           if (hide == 0) {
             newNode
               = Aima_Aimani.createAnchor
@@ -5882,20 +5502,6 @@ var Aima_Aimani = {
                 
         if (hide == 0 && tmpNode) {
           var newNode;
-          if (Aima_Aimani.mode == 2
-              && Aima_Aimani.enableNGNumber
-              && Aima_Aimani.enableNGNumberSelection) {
-            /* 範囲選択のアンカーを作る */
-            newNode
-              = Aima_Aimani.createAnchor
-              (targetDocument,
-               "select_message_" + num + "_0",
-               Aima_Aimani.textSelectRes, true);
-                        
-            tmpNode.parentNode.insertBefore (newNode,
-                                             tmpNode);
-          }
-                    
           newNode
             = Aima_Aimani.createAnchor
             (targetDocument,
@@ -5983,19 +5589,6 @@ var Aima_Aimani = {
             || imageNode.getAttribute ("width");
             h = imageNode.height
             || imageNode.getAttribute ("height");
-            if (Aima_Aimani.mode == 2
-                && Aima_Aimani.isIE
-                && w == 0
-                && "outerHTML" in imageNode) {
-              if (imageNode.outerHTML.match
-                  (/width[ \t\r\n]*=[ \t\r\n]*[\'\"]?([0-9]+)[\'\"]?/)) {
-                w = parseInt (RegExp.$1);
-              }
-              if (imageNode.outerHTML.match
-                  (/height[ \t\r\n]*=[ \t\r\n]*[\'\"]?([0-9]+)[\'\"]?/)) {
-                h = parseInt (RegExp.$1);
-              }
-            }
             s = Aima_Aimani.ThreadRuleMiniThumbSize;
             if (w > h) {
               if (w > s) {
@@ -6015,9 +5608,7 @@ var Aima_Aimani = {
             else {
               imageNode.style.width = w + "px";
               imageNode.style.height = h + "px";
-              if (Aima_Aimani.mode == 1) {
-                imageNode.setAttribute ("__aima_aimani_mini_thumb", "1");
-              }
+              imageNode.setAttribute ("__aima_aimani_mini_thumb", "1");
             }
           }
           else {
@@ -6291,20 +5882,6 @@ var Aima_Aimani = {
                                           noNode.nextSibling);
         }
             
-        if (!admin && noNode && Aima_Aimani.mode == 2
-            && Aima_Aimani.enableNGNumber
-            && Aima_Aimani.enableNGNumberSelection) {
-          /* 範囲選択のアンカーを作る */
-          var newNode
-          = Aima_Aimani.createAnchor
-          (targetDocument,
-           "select_message_" + num + "_0",
-           Aima_Aimani.textSelectRes, true);
-                
-          noNode.parentNode.insertBefore (newNode,
-                                          noNode.nextSibling);
-        }
-            
         if (!admin && linkNode && imageNum != 0 && enableNGThumbnail) {
           /* NG サムネのアンカー */
           var name;
@@ -6348,9 +5925,6 @@ var Aima_Aimani = {
    *         要素の中の文字列
    */
   getInnerHTML2 : function (element) {
-    if (Aima_Aimani.mode == 2) {
-      return element.innerHTML;
-    }
     var nodes, i;
     var normal = true;
         
@@ -6701,12 +6275,7 @@ var Aima_Aimani = {
         
     var info = Aima_Aimani.getDocumentParam (targetDocument).location_info;
     if (!info) {
-      if (Aima_Aimani.mode == 1) {
-        info = new Aima_AimaniLocationInfo (targetDocument);
-      }
-      else {
-        info = new document.Aima_AimaniLocationInfo (targetDocument);
-      }
+      info = new Aima_AimaniLocationInfo (targetDocument);
       Aima_Aimani.addDocumentParam (targetDocument);
       Aima_Aimani.getDocumentParam (targetDocument).location_info = info;
     }
@@ -6780,20 +6349,6 @@ var Aima_Aimani = {
       if (enableNGThumbnail) {
         Aima_AimaniConfigManager.saveNGThumbnail ();
       }
-            
-      if (Aima_Aimani.mode == 1) {
-        var prefBranch;
-            
-        var prefService
-        = Components.classes ["@mozilla.org/preferences-service;1"].
-        getService (Components.interfaces.nsIPrefService);
-            
-        prefService.savePrefFile (null);
-      }
-      else if (Aima_Aimani.mode == 2) {
-        Aima_AimaniConfigManager
-        .saveNGNumberPref (enableNGThumbnail, false, false);
-      }
     }
   },
     
@@ -6801,7 +6356,7 @@ var Aima_Aimani = {
    * ウィンドウが開かれたイベント
    */
   onLoad : function () {
-    if (Aima_Aimani.mode == 1) {
+    if (true) {
       if (Aima_Aimani.initialized) {
         return;
       }
@@ -6840,31 +6395,6 @@ var Aima_Aimani = {
             
       Aima_Aimani.initialized = true;
     }
-    else {
-      /* ブラウザチェック */
-      if (window && window.opera) {
-        Aima_Aimani.isOpera = true;
-      }
-      else if (document.all) {
-        Aima_Aimani.isIE = true;
-      }
-      else {
-        try {
-          if (navigator.userAgent.indexOf ("Safari") != -1) {
-            Aima_Aimani.isSafari = true;
-          }
-          else {
-            Aima_Aimani.isMozilla = true;
-          }
-        }
-        catch (e) { Components.utils.reportError (e);
-          Aima_Aimani.isMozilla = true;
-        }
-      }
-            
-      Aima_AimaniConfigManager.loadPrefBranch ();
-      Aima_AimaniConfigManager.prefBranch.loadPref ();
-    }
   },
     
   /**
@@ -6894,7 +6424,7 @@ var Aima_Aimani = {
    *         [HTMLAnchorElement, ...]
    */
   getSelectedAnchor : function (targetDocument) {
-    if (Aima_Aimani.mode == 1) {
+    if (true) {
       var focusedWindow = document.commandDispatcher.focusedWindow;
       if (focusedWindow == window) {
         focusedWindow = content;
@@ -6993,129 +6523,6 @@ var Aima_Aimani = {
       selection.removeAllRanges ();
       return nodes;
     }
-    else {
-      var nodes = new Array ();
-            
-      var node;
-      var lastNode = null;
-      var td;
-      var startContainer = null;
-      var endContainer = null;
-            
-      var started = 0;
-      var nodes2 = targetDocument.getElementsByTagName ("small");
-      for (var i = 0; i < nodes2.length; i ++) {
-        if (nodes2 [i] == Aima_Aimani.startAnchor) {
-          started = 1;
-          break;
-        }
-        if (nodes2 [i] == Aima_Aimani.endAnchor) {
-          break;
-        }
-      }
-      if (!started) {
-        /* 並びが逆 */
-        node = Aima_Aimani.startAnchor;
-        Aima_Aimani.startAnchor = Aima_Aimani.endAnchor;
-        Aima_Aimani.endAnchor = node;
-      }
-      
-      var container = Aima_Aimani.getMessageContainer (range.startAnchor);
-      if (container) {
-        startContainer = container.main;
-      }
-      else {
-        startContainer = Aima_Aimani.startAnchor;
-        while (startContainer
-               && startContainer.nodeName.toLowerCase () != "hr") {
-          if (startContainer.previousSibling) {
-            startContainer = startContainer.previousSibling;
-          }
-          else {
-            startContainer = startContainer.parentNode;
-          }
-        }
-        if (startContainer == null) {
-          startContainer = Aima_Aimani.startAnchor;
-        }
-      }
-            
-      var container = Aima_Aimani.getMessageContainer (range.endAnchor);
-      if (container) {
-        endContainer = container.main;
-      }
-      else {
-        endContainer = Aima_Aimani.endAnchor;
-        while (endContainer
-               && endContainer.nodeName.toLowerCase () != "hr"
-               && endContainer.nodeName.toLowerCase () != "table") {
-          if (endContainer.nextSibling) {
-            endContainer = endContainer.nextSibling;
-          }
-          else {
-            endContainer = endContainer.parentNode;
-          }
-        }
-        if (endContainer == null) {
-          endContainer = Aima_Aimani.endAnchor;
-        }
-        else if (endContainer.nodeName.toLowerCase () == "table") {
-          endContainer = endContainer.previousSibling;
-        }
-      }
-            
-      node = startContainer;
-      while (node) {
-        nodeName = node.nodeName.toLowerCase ();
-        if (nodeName == "small"
-            && "className" in node
-            && node.className == "aima_aimani_generated") {
-          if (node != lastNode) {
-            nodes.push (node);
-            lastNode = node;
-          }
-        }
-                    
-        if (node.firstChild) {
-          node = node.firstChild;
-        }
-        else {
-          var end = false;
-          while (node) {
-            if (node == endContainer) {
-              end = true;
-              break;
-            }
-                            
-            if (node.nextSibling) {
-              node = node.nextSibling;
-              break;
-            }
-            node = node.parentNode;
-          }
-          if (end) {
-            break;
-          }
-        }
-      }
-            
-      Aima_Aimani.setText (Aima_Aimani.startAnchor,
-                           "[" + Aima_Aimani.textSelectRes + "]");
-      Aima_Aimani.startAnchor.style.color = "#627f29";
-      Aima_Aimani.startAnchor = null;
-      Aima_Aimani.setText (Aima_Aimani.endAnchor,
-                           "[" + Aima_Aimani.textSelectRes + "]");
-      Aima_Aimani.endAnchor.style.color = "#627f29";
-      Aima_Aimani.endAnchor = null;
-            
-      if (Aima_Aimani.containerAnchor) {
-        Aima_Aimani.containerAnchor.parentNode
-          .removeChild (Aima_Aimani.containerAnchor);
-        Aima_Aimani.containerAnchor = null;
-      }
-            
-      return nodes;
-    }
   },
     
   /**
@@ -7127,13 +6534,7 @@ var Aima_Aimani = {
    *         対象のドキュメント
    */
   getTargetDocument : function (event) {
-    if (Aima_Aimani.mode == 1) {
-      var targetWindow = event.target.defaultView;
-      return targetWindow.document;
-    }
-    else {
-      return document;
-    }
+    return event.target.defaultView.document;
   },
     
   /**
@@ -7143,16 +6544,11 @@ var Aima_Aimani = {
    *         フォーカスを持つウィンドウのドキュメント
    */
   getFocusedDocument : function () {
-    if (Aima_Aimani.mode == 1) {
-      var focusedWindow = document.commandDispatcher.focusedWindow;
-      if (focusedWindow == window) {
-        focusedWindow = content;
-      }
-      return focusedWindow.document;
+    var focusedWindow = document.commandDispatcher.focusedWindow;
+    if (focusedWindow == window) {
+      focusedWindow = content;
     }
-    else {
-      return document;
-    }
+    return focusedWindow.document;
   },
     
   /**
@@ -7163,7 +6559,7 @@ var Aima_Aimani = {
    *         false: 解除する
    */
   modifyStyleFile : function (register) {
-    if (Aima_Aimani.mode == 1) {
+    if (true) {
 
       this.styleSheet.unregister ();
 
@@ -7356,65 +6752,6 @@ var Aima_Aimani = {
       Aima_Aimani.deleteDocumentParam (targetDocument);
     }
     catch (e){ Components.utils.reportError (e);
-    }
-        
-    if (Aima_Aimani.mode == 2) {
-      /* スコープによっては参照が消えないので強制的に消す */
-      try {
-        unsafeWindow.document.Aima_Aimani = null;
-        unsafeWindow.document.Aima_AimaniOptionsUtil = null;
-      }
-      catch (e) { Components.utils.reportError (e);
-        document.Aima_Aimani = null;
-        document.Aima_AimaniOptionsUtil = null;
-      }
-            
-      var tmp;
-            
-      try {
-        for (var i = 0; i < Aima_Aimani.events.length; i ++) {
-          tmp = Aima_Aimani.events [i];
-          Aima_Aimani.removeEventListener (tmp [0], tmp [1],
-                                           tmp [2], tmp [3]);
-        }
-      }
-      catch (e) { Components.utils.reportError (e);
-      }
-            
-      try {
-        for (var i = 0; i < Aima_Aimani.documentParams.length; i ++) {
-          tmp = Aima_Aimani.documentParams [i];
-          tmp.destruct ();
-          tmp = null;
-        }
-      }
-      catch (e) { Components.utils.reportError (e);
-      }
-            
-      Aima_Aimani.documentParams = null;
-      Aima_Aimani.latestParam = null;
-      Aima_Aimani.updateScript = null;
-      Aima_Aimani.startAnchor = null;
-      Aima_Aimani.endAnchor = null;
-      Aima_Aimani.containerAnchor = null;
-      Aima_Aimani.events = null;
-      Aima_Aimani.NGWordList = null;
-      Aima_Aimani.NGThumbnailList = null;
-      Aima_Aimani.NGNumberList = null;
-      Aima_Aimani.threadRuleList = null;
-      Aima_Aimani.boardSelectExList = null;
-      Aima_Aimani.NGWordBoardSelectExList = null;
-      Aima_Aimani.NGThumbnailBoardSelectExList = null;
-            
-      Aima_AimaniConfigManager.prefBranch = null;
-            
-      Aima_AimaniPrefBranch.prefs = null;
-      Aima_AimaniPrefBranch.script = null;
-      Aima_AimaniPrefBranch.scripts = null;
-            
-      document.Aima_AimaniLocationInfo = null;
-      document.Aima_AimaniDocumentParam = null;
-      document.Aima_AimaniPopupManagerData = null;
     }
   },
     
@@ -7614,9 +6951,7 @@ var Aima_Aimani = {
           else {
             imageNode.style.width = w + "px";
             imageNode.style.height = h + "px";
-            if (Aima_Aimani.mode == 1) {
-              imageNode.setAttribute ("__aima_aimani_mini_thumb", "1");
-            }
+            imageNode.setAttribute ("__aima_aimani_mini_thumb", "1");
           }
         }
       }
@@ -7937,7 +7272,7 @@ var Aima_AimaniConfigManager = {
         .getCharPref ("aima_aimani.version");
     }
         
-    if (Aima_Aimani.mode == 1) {
+    if (true) {
       if (version != Aima_AimaniVersion) {
         Aima_AimaniConfigManager.prefBranch
         .setCharPref ("aima_aimani.version", Aima_AimaniVersion);
@@ -7961,48 +7296,25 @@ var Aima_AimaniConfigManager = {
                       Aima_AimaniConfigManager, false);
       }
     }
-    else {
-      if (version != Aima_AimaniVersion) {
-        Aima_AimaniConfigManager.prefBranch
-        .setCharPref ("aima_aimani.version", Aima_AimaniVersion);
-        Aima_AimaniConfigManager.prefBranch
-        .savePrefs (new Array ("aima_aimani.version"));
-      }
-            
-      Aima_Aimani.aimadVersion
-      = Aima_AimaniConfigManager
-      .initPref ("char", "config.version", "0.0.0");
-    }
   },
     
   /**
    * prefBranch を設定し直す
    */
   loadPrefBranch : function () {
-    if (Aima_Aimani.mode == 1) {
-      if (true) {
-        Aima_AimaniConfigManager.prefBranch
-        = Components.classes ["@mozilla.org/preferences-service;1"]
-        .getService (Components.interfaces.nsIPrefBranch);
-      }
-    }
-    else {
-      Aima_AimaniConfigManager.prefBranch = Aima_AimaniPrefBranch;
-    }
+    Aima_AimaniConfigManager.prefBranch
+    = Components.classes ["@mozilla.org/preferences-service;1"]
+    .getService (Components.interfaces.nsIPrefBranch);
   },
     
   /**
    * 終了処理
    */
   term : function () {
-    if (Aima_Aimani.mode == 1) {
-      if (true) {
-        /* 設定の変更の監視を解除する */
-        Aima_AimaniConfigManager.prefBranch
-        .removeObserver ("aima_aimani.savepref",
-                         Aima_AimaniConfigManager);
-      }
-    }
+    /* 設定の変更の監視を解除する */
+    Aima_AimaniConfigManager.prefBranch
+    .removeObserver ("aima_aimani.savepref",
+                     Aima_AimaniConfigManager);
   },
     
   /**
@@ -8216,14 +7528,6 @@ var Aima_AimaniConfigManager = {
     Aima_Aimani.enableHideCatStyle
     = Aima_AimaniConfigManager
     .initPref ("bool", "aima_aimani.hide_cat_style", false);
-    if (Aima_Aimani.mode == 1) {
-      if (typeof (Components.interfaces.nsIStyleSheetService)
-          == "undefined") {
-        Aima_Aimani.enableHideStyle = false;
-        Aima_Aimani.enableHideThreadStyle = false;
-        Aima_Aimani.enableHideCatStyle = false;
-      }
-    }
     Aima_Aimani.enableCatalogueUnlink
     = Aima_AimaniConfigManager
     .initPref ("bool", "aima_aimani.catalogue_unlink", false);
@@ -8324,9 +7628,7 @@ var Aima_AimaniConfigManager = {
       }
     }
         
-    if (Aima_Aimani.mode == 1) {
-      Aima_AimaniNGCat.init ();
-    }
+    Aima_AimaniNGCat.init ();
         
     Aima_Aimani.enableBracket
     = Aima_AimaniConfigManager
@@ -8514,10 +7816,6 @@ var Aima_AimaniConfigManager = {
     if (expired) {
       Aima_AimaniConfigManager.prefBranch
       .setCharPref ("aima_aimani.ng_word.list", list);
-      if (Aima_Aimani.mode == 2) {
-        Aima_AimaniConfigManager.prefBranch
-          .savePrefs (new Array ("aima_aimani.ng_word.list"));
-      }
     }
         
     /* 全てを正規表現に変換する */
@@ -8847,14 +8145,7 @@ var Aima_AimaniPopupManager = {
   onTimeout : function (managerdata) {
     var targetDocument;
         
-    if (Aima_Aimani.mode == 1) {
-      targetDocument = managerdata.targetDocument;
-    }
-    else {
-      targetDocument = document;
-      managerdata
-      = Aima_Aimani.getDocumentParam (targetDocument).popup_managerdata;
-    }
+    targetDocument = managerdata.targetDocument;
     
     /* 警告のノードを探す */
     var node = managerdata.target;
