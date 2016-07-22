@@ -4,6 +4,10 @@
  * NG カタログの各画像のハッシュ算出器
  */
 function Aima_AimaniNGCatCache () {
+  this._started = false;
+  this._canceled = false;
+  this._stopped = false;
+  this._restarting = false;
 }
 Aima_AimaniNGCatCache.prototype = {
   targetNode : null,   /* HTMLTableCellElement  カタログの td 要素 */
@@ -22,6 +26,16 @@ Aima_AimaniNGCatCache.prototype = {
   notificationTarget : null,
 
   _destruct : function () {
+    if (this._restarting) {
+      this._restarting = false;
+      Aima_Aimani.executeSoon (function (that) {
+        that._started = false;
+        that._canceled = false;
+        that._stopped = false;
+        that.start ();
+      }, [this]);
+      return;
+    }
     if (this.imageNode) {
       try {
         this.imageNode.style.visibility = "";
@@ -37,6 +51,9 @@ Aima_AimaniNGCatCache.prototype = {
   },
 
   cancel : function (status) {
+    if (this._canceled) {
+      return;
+    }
     this._canceled = true;
     if (!this._started) {
       this._notifyStart ();
@@ -47,6 +64,13 @@ Aima_AimaniNGCatCache.prototype = {
 
   isPending : function () {
     return this._started && !this._canceled && this.targetNode != null;
+  },
+
+  restart : function () {
+    if (!this._stopped || !this.imageNode) {
+      throw new Error ("restart is unable from the current state");
+    }
+    this._restarting = true; // not to be destructed
   },
     
   /**
@@ -116,15 +140,9 @@ Aima_AimaniNGCatCache.prototype = {
     }
   },
   asyncOpenP2PCacheEntry : function (targetFileName) {
-    var that = this;
-    // executeSoon
-    var tm = Components.classes ["@mozilla.org/thread-manager;1"]
-      .getService (Components.interfaces.nsIThreadManager);
-    tm.mainThread.dispatch ({
-      run: function () {
-        that.openP2PCacheEntry (targetFileName);
-      }
-    }, Components.interfaces.nsIThread.DISPATCH_NORMAL);
+    Aima_Aimani.executeSoon (function (that) {
+      that.openP2PCacheEntry (targetFileName);
+    }, [this]);
   },
   openP2PCacheEntry : function (targetFileName) {
     var targetFile
@@ -349,6 +367,7 @@ Aima_AimaniNGCatCache.prototype = {
     this._notify ();
   },
   _notifyStop : function (result) {
+    this._stopped = true;
     this._notify (arguments.length == 0 ? Components.results.NS_OK : result);
   },
 
@@ -360,6 +379,7 @@ function Aima_AimaniNGCatCacheManager () {
   this.count = 0;
   this.countSuccess = 0;
   this.countFail = 0;
+  this.numMaxRetry = 2;
 };
 Aima_AimaniNGCatCacheManager.prototype = {
   destruct : function () {
@@ -395,14 +415,25 @@ Aima_AimaniNGCatCacheManager.prototype = {
       this.countSuccess ++;
     }
     else {
-      this.countFail ++;
-      if (status != Components.results.NS_ERROR_FILE_NOT_FOUND
-          && status != Components.results.NS_ERROR_CACHE_KEY_NOT_FOUND) {
-        // unexpected reason
-        Aima_Aimani.log
-          ("! open cache failed with " + this.resultCodeToString (status)
-           + " for \"" + cache.imageNode.src + "\"");
+      var numRestart = cache.numRestart ? cache.numRestart : 0;
+      if ((status == Components.results.NS_ERROR_CACHE_KEY_NOT_FOUND
+            || status == Components.results.NS_ERROR_FILE_NOT_FOUND)
+          && numRestart < this.numMaxRetry) {
+        cache.numRestart = numRestart + 1;
+        try {
+          cache.restart ();
+          this.caches.push (cache);
+          return;
+        }
+        catch (e) { Components.utils.reportError (e);
+        }
       }
+
+      this.countFail ++;
+      Aima_Aimani.log
+        ("! open cache failed with " + this.resultCodeToString (status)
+         + " for \"" + cache.imageNode.src + "\""
+         + (cache.numRestart ? " after " + cache.numRestart + " retries" : ""));
     }
     if (this.caches.length == 0) {
       this._notifyAllListeners ("finished");
@@ -1163,6 +1194,7 @@ var Aima_AimaniNGCat = {
           cache.imageNode.addEventListener
             ("load",
              function () {
+              cache.imageNode.removeEventListener ("load", arguments.callee);
               cache.start ();
             }, false);
         }
@@ -7926,6 +7958,24 @@ var Aima_Aimani = {
        flag, "chrome javascript");
     this._consoleService.logMessage (scriptError);
   },
+
+  executeSoon : function (func, optArgs) {
+    var tm = Components.classes ["@mozilla.org/thread-manager;1"]
+      .getService (Components.interfaces.nsIThreadManager);
+    var runnable = {
+      run: function () {
+        if (typeof optArgs === "undefined") {
+          func.apply (null);
+        }
+        else {
+          func.apply (null, optArgs);
+        }
+      }
+    };
+    tm.mainThread.dispatch
+      (runnable, Components.interfaces.nsIThread.DISPATCH_NORMAL);
+  },
+
 };
 
 /**
