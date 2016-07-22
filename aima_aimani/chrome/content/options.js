@@ -35,17 +35,12 @@ if (unescape ("%u3042") == "%u3042") {
   }
 }
 
-/* Opera/IE/Safari 版に移植する部分 ---- ここから ---- */
 /**
  * 設定管理
  */
 var Aima_AimaniOptions = {
-  prefBranch : null,    /* nsIPrefBranch/nsIPrefBranch2  pref サービス */
+  prefBranch : null,    /* nsIPrefBranch  pref サービス */
   
-  mode : 1,                      /* Number  動作モード
-                                  *   1: Firefox/Mozilla Suite
-                                  *   2: Opera/IE/Safari */
-    
   prefix : "",                   /* String  要素の ID のプレフィックス */
   attrName : "value",            /* String  値を格納する属性名 */
   itemName : "listitem",
@@ -104,23 +99,10 @@ var Aima_AimaniOptions = {
   initPref : function (map, type, name, value) {
     if (map == null) {
       if (Aima_AimaniOptions.prefBranch == null) {
-        if (Aima_AimaniOptions.mode == 1) {
-          if (Components.interfaces.nsIPrefBranch2) {
-            Aima_AimaniOptions.prefBranch
-            = Components
-            .classes ["@mozilla.org/preferences-service;1"]
-            .getService (Components.interfaces.nsIPrefBranch2);
-          }
-          else {
-            Aima_AimaniOptions.prefBranch
-            = Components
-            .classes ["@mozilla.org/preferences-service;1"]
-            .getService (Components.interfaces.nsIPrefBranch);
-          }
-        }
-        else {
-          Aima_AimaniOptions.prefBranch = Aima_AimaniConfigManager.prefBranch;
-        }
+        Aima_AimaniOptions.prefBranch
+        = Components
+        .classes ["@mozilla.org/preferences-service;1"]
+        .getService (Components.interfaces.nsIPrefBranch);
       }
             
       if (Aima_AimaniOptions.prefBranch.prefHasUserValue (name)) {
@@ -193,7 +175,7 @@ var Aima_AimaniOptions = {
   loadPrefs : function (map) {
     var value;
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       if (map == null) {
         document.getElementById ("version").value
           += Aima_AimaniVersion;
@@ -225,7 +207,7 @@ var Aima_AimaniOptions = {
     = Aima_AimaniOptions
     .initPref (map, "bool", "aima_aimani.all", true);
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       document.getElementById (Aima_AimaniOptions.prefix
                                + "statusbar_preferences").checked
         = Aima_AimaniOptions
@@ -250,7 +232,7 @@ var Aima_AimaniOptions = {
                              + "hide_warning").checked
     = Aima_AimaniOptions
     .initPref (map, "bool", "aima_aimani.hide_warning", false);
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       document.getElementById (Aima_AimaniOptions.prefix
                                + "hide_style").checked
         = Aima_AimaniOptions
@@ -363,7 +345,7 @@ var Aima_AimaniOptions = {
     Aima_AimaniOptions.loadBoardSelect (map, "ng_thumbnail.",
                                         "ng_thumbnail_");
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       document.getElementById (Aima_AimaniOptions.prefix
                                + "ng_cat").checked
         = Aima_AimaniOptions
@@ -445,7 +427,7 @@ var Aima_AimaniOptions = {
     Aima_AimaniOptions.loadBoardSelect (map, "", "");
     Aima_AimaniOptions.checkBoardSelect ();
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       document.getElementById ("board_external").checked
         = Aima_AimaniOptions
         .initPref (map, "bool", "aima_aimani.board_external", false);
@@ -646,151 +628,31 @@ var Aima_AimaniOptions = {
     if (listitem == null) {
       append = true;
       listitem = document.createElement (Aima_AimaniOptions.itemName);
-      if (Aima_AimaniOptions.mode == 2) {
-        Aima_Aimani.addEventListener
-          (listitem,
-           "click",
-           function () {
-            Aima_AimaniOptions
-              .onSelectNGWord (arguments [0]);
-          }, false);
-      }
             
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "regexp";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "ignore_case";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "message";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "mail";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "thread";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "res";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "cat";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
             
-      if (Aima_AimaniOptions.mode == 1) {
-        listitem.addEventListener
-          ("mousedown",
-           function () {
-            Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
-          }, false);
-      }
-      else if (Aima_Aimani.isIE) {
-        listbox.appendChild (listitem);
-      }
+      listitem.addEventListener
+        ("mousedown",
+         function () {
+          Aima_AimaniOptions.onCheckNGWordItem (arguments [0]);
+        }, false);
     }
         
     listcell = listitem.firstChild;
@@ -828,16 +690,8 @@ var Aima_AimaniOptions = {
     listcell = listcell.nextSibling;
     Aima_AimaniOptions.setItem (listcell, 0, expireText, expire);
         
-    if (Aima_AimaniOptions.mode == 1) {
-      if (append) {
-        listbox.appendChild (listitem);
-      }
-    }
-    else {
-      if (append
-          && !Aima_Aimani.isIE) {
-        listbox.appendChild (listitem);
-      }
+    if (append) {
+      listbox.appendChild (listitem);
     }
   },
     
@@ -859,10 +713,6 @@ var Aima_AimaniOptions = {
     var d = new Date ();
     d.setTime (date);
     var year = d.getYear () + 1900;
-    if (Aima_AimaniOptions.mode == 2
-        && Aima_Aimani.isIE) {
-      year -= 1900;
-    }
         
     if (isShort) {
       year = year % 100;
@@ -1040,16 +890,8 @@ var Aima_AimaniOptions = {
       target |= 0x8000;
     }
         
-    if (Aima_AimaniOptions.mode == 1) {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "ng_word_illegal").value = "";
-    }
-    else {
-      Aima_Aimani
-      .setText (document
-                .getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_word_illegal"), "");
-    }
+    document.getElementById (Aima_AimaniOptions.prefix
+                             + "ng_word_illegal").value = "";
         
     if (expire == "none" || !expire) {
       expire = "0";
@@ -1066,18 +908,9 @@ var Aima_AimaniOptions = {
         expire = "1_" + expire;
       }
       else {
-        if (Aima_AimaniOptions.mode == 1) {
-          document.getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_word_illegal").value
-          = "\u6642\u523B\u304C\u7570\u5E38\u3067\u3059";
-        }
-        else {
-          Aima_Aimani
-          .setText (document
-                    .getElementById (Aima_AimaniOptions.prefix
-                                     + "ng_word_illegal"),
-                    "\u6642\u523B\u304C\u7570\u5E38\u3067\u3059");
-        }
+        document.getElementById (Aima_AimaniOptions.prefix
+                                 + "ng_word_illegal").value
+        = "\u6642\u523B\u304C\u7570\u5E38\u3067\u3059";
                 
         return;
       }
@@ -1089,18 +922,9 @@ var Aima_AimaniOptions = {
         tmp.search (text);
       }
       catch (e) { Components.utils.reportError (e);
-        if (Aima_AimaniOptions.mode == 1) {
-          document.getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_word_illegal").value
-          = "\u6B63\u898F\u8868\u73FE\u304C\u4E0D\u6B63\u3067\u3059";
-        }
-        else {
-          Aima_Aimani
-          .setText (document
-                    .getElementById (Aima_AimaniOptions.prefix
-                                     + "ng_word_illegal"),
-                    "\u6B63\u898F\u8868\u73FE\u304C\u4E0D\u6B63\u3067\u3059");
-        }
+        document.getElementById (Aima_AimaniOptions.prefix
+                                 + "ng_word_illegal").value
+        = "\u6B63\u898F\u8868\u73FE\u304C\u4E0D\u6B63\u3067\u3059";
                 
         return;
       }
@@ -1150,33 +974,15 @@ var Aima_AimaniOptions = {
         }
       }
       else {
-        if (Aima_AimaniOptions.mode == 1) {
-          document.getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_word_illegal").value
-            = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
-        }
-        else {
-          Aima_Aimani
-            .setText (document
-                      .getElementById (Aima_AimaniOptions.prefix
-                                       + "ng_word_illegal"),
-                      "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059");
-        }
+        document.getElementById (Aima_AimaniOptions.prefix
+                                 + "ng_word_illegal").value
+          = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
       }
     }
     else {
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_word_illegal").value
-        = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_word_illegal"),
-                  "\u756A\u53F7\u304C\u4E0D\u6B63\u3067\u3059");
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_word_illegal").value
+      = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
     }
   },
     
@@ -1231,14 +1037,6 @@ var Aima_AimaniOptions = {
       }
       node = nextNode;
     }
-        
-    if (Aima_AimaniOptions.mode == 2) {
-      if (Aima_Aimani.isOpera
-          && "version" in window.opera
-          && window.opera.version ().match (/^9/)) {
-        window.scrollBy (0, 0);
-      }
-    }
   },
     
   /**
@@ -1250,9 +1048,6 @@ var Aima_AimaniOptions = {
   onSelectNGWord : function (event) {
     var listbox
     = document.getElementById (Aima_AimaniOptions.prefix + "ng_word_list");
-    if (Aima_AimaniOptions.mode == 2) {
-      Aima_AimaniUIUtil.onSelectList (event);
-    }
     var selectedItem = Aima_AimaniOptions.getSelectedItem (event, listbox);
         
     if (Aima_AimaniOptions.getSelectedIndex (listbox) != -1) {
@@ -1283,24 +1078,6 @@ var Aima_AimaniOptions = {
       if (value [3] == "0") {
         document.getElementById (Aima_AimaniOptions.prefix
                                  + "ng_word_expire").value = "none";
-        if (Aima_AimaniOptions.mode == 2) {
-          document.getElementById
-            (Aima_AimaniOptions.prefix
-             + "ng_word_expire_none").checked
-            = "checked";
-          document.getElementById
-            (Aima_AimaniOptions.prefix
-             + "ng_word_expire_1day").checked
-            = "";
-          document.getElementById
-            (Aima_AimaniOptions.prefix
-             + "ng_word_expire_3day").checked
-            = "";
-          document.getElementById
-            (Aima_AimaniOptions.prefix
-             + "ng_word_expire_date").checked
-            = "";
-        }
         Aima_AimaniOptions.selectItem
           (document.getElementById (Aima_AimaniOptions.prefix
                                     + "ng_word_expire"));
@@ -1312,24 +1089,6 @@ var Aima_AimaniOptions = {
         var expireTime = parseInt (RegExp.$1);
         document.getElementById (Aima_AimaniOptions.prefix
                                  + "ng_word_expire").value = "date";
-        if (Aima_AimaniOptions.mode == 2) {
-          document.getElementById
-            (Aima_AimaniOptions.prefix
-             + "ng_word_expire_none").checked
-            = "";
-          document.getElementById
-            (Aima_AimaniOptions.prefix
-             + "ng_word_expire_1day").checked
-            = "";
-          document.getElementById
-            (Aima_AimaniOptions.prefix
-             + "ng_word_expire_3day").checked
-            = "";
-          document.getElementById
-            (Aima_AimaniOptions.prefix
-             + "ng_word_expire_date").checked
-            = "checked";
-        }
         Aima_AimaniOptions.selectItem
           (document.getElementById (Aima_AimaniOptions.prefix
                                     + "ng_word_expire"));
@@ -1339,16 +1098,9 @@ var Aima_AimaniOptions = {
       }
             
       var selectedCount = Aima_AimaniOptions.getSelectedCount (listbox);
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_word_modify").disabled
-          = (selectedCount > 1);
-      }
-      else {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_word_modify")
-          .disabled = (selectedCount > 1) ? "disabled" : "";
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_word_modify").disabled
+        = (selectedCount > 1);
     }
   },
     
@@ -1378,21 +1130,14 @@ var Aima_AimaniOptions = {
     var listitem;
     var target = null;
         
-    if (Aima_AimaniOptions.mode == 1) {
-      listitem = event.target;
-      if (!Aima_AimaniOptions.isListitem (listitem)) {
-        return;
-      }
-    }
-    else {
-      target = event.target;
-      listitem = Aima_Aimani.findParentNode (target,
-                                             Aima_AimaniOptions.itemName);
+    listitem = event.target;
+    if (!Aima_AimaniOptions.isListitem (listitem)) {
+      return;
     }
         
     var value = Aima_AimaniOptions.getNGWordItem (listitem);
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       var listcell_word    = listitem.firstChild;
       var listcell_regexp  = listcell_word.nextSibling;
       var listcell_ic      = listcell_regexp.nextSibling;
@@ -1470,31 +1215,6 @@ var Aima_AimaniOptions = {
         return;
       }
     }
-    else {
-      if (target.className == Aima_AimaniOptions.prefix + "regexp") {
-        value [1] = !value [1];
-      }
-      else if (target.className
-               == Aima_AimaniOptions.prefix + "ignore_case") {
-        value [2] = value [2] ^ 0x8000;
-      }
-      else if (target.className
-               == Aima_AimaniOptions.prefix + "message") {
-        value [2] = value [2] ^ 0x0001;
-      }
-      else if (target.className == Aima_AimaniOptions.prefix + "mail") {
-        value [2] = value [2] ^ 0x0002;
-      }
-      else if (target.className == Aima_AimaniOptions.prefix + "thread") {
-        value [2] = value [2] ^ 0x0100;
-      }
-      else if (target.className == Aima_AimaniOptions.prefix + "res") {
-        value [2] = value [2] ^ 0x0200;
-      }
-      else if (target.className == Aima_AimaniOptions.prefix + "cat") {
-        value [2] = value [2] ^ 0x0400;
-      }
-    }
         
     document.getElementById (Aima_AimaniOptions.prefix
                              + "ng_word_word").value = value [0];
@@ -1521,24 +1241,6 @@ var Aima_AimaniOptions = {
     if (value [3] == "0") {
       document.getElementById (Aima_AimaniOptions.prefix
                                + "ng_word_expire").value = "none";
-      if (Aima_AimaniOptions.mode == 2) {
-        document.getElementById
-          (Aima_AimaniOptions.prefix
-           + "ng_word_expire_none").checked
-          = "checked";
-        document.getElementById
-          (Aima_AimaniOptions.prefix
-           + "ng_word_expire_1day").checked
-          = "";
-        document.getElementById
-          (Aima_AimaniOptions.prefix
-           + "ng_word_expire_3day").checked
-          = "";
-        document.getElementById
-          (Aima_AimaniOptions.prefix
-           + "ng_word_expire_date").checked
-          = "";
-      }
       Aima_AimaniOptions.selectItem
         (document.getElementById (Aima_AimaniOptions.prefix
                                   + "ng_word_expire"));
@@ -1550,24 +1252,6 @@ var Aima_AimaniOptions = {
       var expireTime = parseInt (RegExp.$1);
       document.getElementById (Aima_AimaniOptions.prefix
                                + "ng_word_expire").value = "date";
-      if (Aima_AimaniOptions.mode == 2) {
-        document.getElementById
-          (Aima_AimaniOptions.prefix
-           + "ng_word_expire_none").checked
-          = "";
-        document.getElementById
-          (Aima_AimaniOptions.prefix
-           + "ng_word_expire_1day").checked
-          = "";
-        document.getElementById
-          (Aima_AimaniOptions.prefix
-           + "ng_word_expire_3day").checked
-          = "";
-        document.getElementById
-          (Aima_AimaniOptions.prefix
-           + "ng_word_expire_date").checked
-          = "checked";
-      }
       Aima_AimaniOptions.selectItem
       (document.getElementById (Aima_AimaniOptions.prefix
                                 + "ng_word_expire"));
@@ -1737,57 +1421,20 @@ var Aima_AimaniOptions = {
     if (listitem == null) {
       append = true;
       listitem = document.createElement (Aima_AimaniOptions.itemName);
-      if (Aima_AimaniOptions.mode == 2) {
-        Aima_Aimani.addEventListener
-          (listitem,
-           "click",
-           function () {
-            Aima_AimaniOptions
-              .onSelectNGThumbnail (arguments [0]);
-          }, false);
-      }
             
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
     }
         
@@ -1876,16 +1523,8 @@ var Aima_AimaniOptions = {
       bytes = bytes + "";
     }
         
-    if (Aima_AimaniOptions.mode == 1) {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "ng_thumbnail_illegal").value = "";
-    }
-    else {
-      Aima_Aimani
-      .setText (document
-                .getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_thumbnail_illegal"), "");
-    }
+    document.getElementById (Aima_AimaniOptions.prefix
+                             + "ng_thumbnail_illegal").value = "";
         
     var listbox = document.getElementById (Aima_AimaniOptions.prefix
                                            + "ng_thumbnail_list");
@@ -1952,33 +1591,15 @@ var Aima_AimaniOptions = {
         }
       }
       else {
-        if (Aima_AimaniOptions.mode == 1) {
-          document.getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_thumbnail_illegal").value
-            = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
-        }
-        else {
-          Aima_Aimani
-            .setText (document
-                      .getElementById (Aima_AimaniOptions.prefix
-                                       + "ng_thumbnail_illegal"),
-                      "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059");
-        }
+        document.getElementById (Aima_AimaniOptions.prefix
+                                 + "ng_thumbnail_illegal").value
+          = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
       }
     }
     else {
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_thumbnail_illegal").value
-        = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_thumbnail_illegal"),
-                  "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059");
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_thumbnail_illegal").value
+      = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
     }
   },
     
@@ -2024,14 +1645,6 @@ var Aima_AimaniOptions = {
         }
       }
       node = nextNode;
-    }
-            
-    if (Aima_AimaniOptions.mode == 2) {
-      if (Aima_Aimani.isOpera
-          && "version" in window.opera
-          && window.opera.version ().match (/^9/)) {
-        window.scrollBy (0, 0);
-      }
     }
   },
     
@@ -2126,9 +1739,6 @@ var Aima_AimaniOptions = {
     var listbox
     = document.getElementById (Aima_AimaniOptions.prefix
                                + "ng_thumbnail_list");
-    if (Aima_AimaniOptions.mode == 2) {
-      Aima_AimaniUIUtil.onSelectList (event);
-    }
     var selectedItem = Aima_AimaniOptions.getSelectedItem (event, listbox);
         
     if (Aima_AimaniOptions.getSelectedIndex (listbox) != -1) {
@@ -2167,16 +1777,9 @@ var Aima_AimaniOptions = {
                                + "ng_thumbnail_date").value = r;
             
       var selectedCount = Aima_AimaniOptions.getSelectedCount (listbox);
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_thumbnail_modify").disabled
-          = (selectedCount > 1);
-      }
-      else {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_thumbnail_modify").disabled
-          = (selectedCount > 1) ? "disabled" : "";
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_thumbnail_modify").disabled
+        = (selectedCount > 1);
     }
   },
     
@@ -2328,51 +1931,18 @@ var Aima_AimaniOptions = {
     if (listitem == null) {
       append = true;
       listitem = document.createElement (Aima_AimaniOptions.itemName);
-      if (Aima_AimaniOptions.mode == 2) {
-        Aima_Aimani.addEventListener
-          (listitem,
-           "click",
-           function () {
-            Aima_AimaniOptions
-              .onSelectNGCat (arguments [0]);
-          }, false);
-      }
             
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
     }
         
@@ -2434,16 +2004,8 @@ var Aima_AimaniOptions = {
       date = now;
     }
         
-    if (Aima_AimaniOptions.mode == 1) {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "ng_cat_illegal").value = "";
-    }
-    else {
-      Aima_Aimani
-      .setText (document
-                .getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_cat_illegal"), "");
-    }
+    document.getElementById (Aima_AimaniOptions.prefix
+                             + "ng_cat_illegal").value = "";
         
     var listbox = document.getElementById (Aima_AimaniOptions.prefix
                                            + "ng_cat_list");
@@ -2505,33 +2067,15 @@ var Aima_AimaniOptions = {
         }
       }
       else {
-        if (Aima_AimaniOptions.mode == 1) {
-          document.getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_cat_illegal").value
-            = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
-        }
-        else {
-          Aima_Aimani
-            .setText (document
-                      .getElementById (Aima_AimaniOptions.prefix
-                                       + "ng_cat_illegal"),
-                      "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059");
-        }
+        document.getElementById (Aima_AimaniOptions.prefix
+                                 + "ng_cat_illegal").value
+          = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
       }
     }
     else {
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_cat_illegal").value
-        = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_cat_illegal"),
-                  "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059");
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_cat_illegal").value
+      = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
     }
   },
     
@@ -2577,14 +2121,6 @@ var Aima_AimaniOptions = {
         }
       }
       node = nextNode;
-    }
-            
-    if (Aima_AimaniOptions.mode == 2) {
-      if (Aima_Aimani.isOpera
-          && "version" in window.opera
-          && window.opera.version ().match (/^9/)) {
-        window.scrollBy (0, 0);
-      }
     }
   },
     
@@ -2674,9 +2210,6 @@ var Aima_AimaniOptions = {
     var listbox
     = document.getElementById (Aima_AimaniOptions.prefix
                                + "ng_cat_list");
-    if (Aima_AimaniOptions.mode == 2) {
-      Aima_AimaniUIUtil.onSelectList (event);
-    }
     var selectedItem = Aima_AimaniOptions.getSelectedItem (event, listbox);
         
     if (Aima_AimaniOptions.getSelectedIndex (listbox) != -1) {
@@ -2700,16 +2233,9 @@ var Aima_AimaniOptions = {
                                + "ng_cat_date").value = r;
             
       var selectedCount = Aima_AimaniOptions.getSelectedCount (listbox);
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_cat_modify").disabled
-          = (selectedCount > 1);
-      }
-      else {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_cat_modify").disabled
-          = (selectedCount > 1) ? "disabled" : "";
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_cat_modify").disabled
+        = (selectedCount > 1);
     }
   },
     
@@ -2770,12 +2296,9 @@ var Aima_AimaniOptions = {
     var ng_thumbnail
     = document.getElementById (Aima_AimaniOptions.prefix
                                + "ng_thumbnail").checked;
-    var ng_cat = false;
-    if (Aima_AimaniOptions.mode == 1) {
-      ng_cat
-        = document.getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_cat").checked;
-    }
+    var ng_cat
+      = document.getElementById (Aima_AimaniOptions.prefix
+                                 + "ng_cat").checked;
     var text_thread
     = document.getElementById (Aima_AimaniOptions.prefix
                                + "text_thread").checked;
@@ -2900,45 +2423,16 @@ var Aima_AimaniOptions = {
       append = true;
             
       listitem = document.createElement (Aima_AimaniOptions.itemName);
-      if (Aima_AimaniOptions.mode == 2) {
-        Aima_Aimani.addEventListener
-          (listitem,
-           "click",
-           function () {
-            Aima_AimaniOptions
-              .onSelectNGNumber (arguments [0]);
-          }, false);
-      }
             
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
     }
         
@@ -3000,34 +2494,17 @@ var Aima_AimaniOptions = {
                                + "ng_number_server").value;
     var dir = "";
         
-    if (Aima_AimaniOptions.mode == 1) {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "ng_number_illegal").value = "";
-    }
-    else {
-      Aima_Aimani
-      .setText (document
-                .getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_number_illegal"), "");
-    }
+    document.getElementById (Aima_AimaniOptions.prefix
+                             + "ng_number_illegal").value = "";
             
     if (server.match (/^([^:]+):(.+)$/)) {
       server = RegExp.$1;
       dir = RegExp.$2;
     }
     else {
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_number_illegal").value
-        = "\u677F\u304C\u9078\u629E\u3055\u308C\u3066\u3044\u307E\u305B\u3093";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_number_illegal"),
-                  "\u677F\u304C\u9078\u629E\u3055\u308C\u3066\u3044\u307E\u305B\u3093");
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_number_illegal").value
+      = "\u677F\u304C\u9078\u629E\u3055\u308C\u3066\u3044\u307E\u305B\u3093";
             
       return;
     }
@@ -3079,33 +2556,15 @@ var Aima_AimaniOptions = {
         }
       }
       else {
-        if (Aima_AimaniOptions.mode == 1) {
-          document.getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_number_illegal").value
-            = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
-        }
-        else {
-          Aima_Aimani
-            .setText (document
-                      .getElementById (Aima_AimaniOptions.prefix
-                                       + "ng_number_illegal"),
-                      "\u540C\u3058 NG \u756A\u53F7\u304C\u3042\u308A\u307E\u3059");
-        }
+        document.getElementById (Aima_AimaniOptions.prefix
+                                 + "ng_number_illegal").value
+          = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
       }
     }
     else {
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_number_illegal").value
-        = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniOptions.prefix
-                                   + "ng_number_illegal"),
-                  "\u756A\u53F7\u304C\u4E0D\u6B63\u3067\u3059");
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_number_illegal").value
+      = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
     }
   },
     
@@ -3128,14 +2587,6 @@ var Aima_AimaniOptions = {
       }
       node = nextNode;
     }
-            
-    if (Aima_AimaniOptions.mode == 2) {
-      if (Aima_Aimani.isOpera
-          && "version" in window.opera
-          && window.opera.version ().match (/^9/)) {
-        window.scrollBy (0, 0);
-      }
-    }
   },
     
   /**
@@ -3148,9 +2599,6 @@ var Aima_AimaniOptions = {
     var listbox
     = document.getElementById (Aima_AimaniOptions.prefix
                                + "ng_number_list");
-    if (Aima_AimaniOptions.mode == 2) {
-      Aima_AimaniUIUtil.onSelectList (event);
-    }
     var selectedItem = Aima_AimaniOptions.getSelectedItem (event, listbox);
         
     if (Aima_AimaniOptions.getSelectedIndex (listbox) != -1) {
@@ -3164,16 +2612,9 @@ var Aima_AimaniOptions = {
       Aima_AimaniOptions.selectMenu (menu, value [1] + ":" + value [2]);
             
       var selectedCount = Aima_AimaniOptions.getSelectedCount (listbox);
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_number_modify").disabled
-          = (selectedCount > 1);
-      }
-      else {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "ng_number_modify")
-          .disabled = (selectedCount > 1) ? "disabled" : "";
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "ng_number_modify").disabled
+        = (selectedCount > 1);
     }
   },
     
@@ -3312,124 +2753,27 @@ var Aima_AimaniOptions = {
       append = true;
             
       listitem = document.createElement (Aima_AimaniOptions.itemName);
-      if (Aima_AimaniOptions.mode == 2) {
-        Aima_Aimani.addEventListener
-          (listitem,
-           "click",
-           function () {
-            Aima_AimaniOptions
-              .onSelectThreadRule (arguments [0]);
-          }, false);
-      }
             
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "text_res";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckThreadRuleItem
-              (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "image_res";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckThreadRuleItem
-              (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "sage_only";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckThreadRuleItem
-              (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "not_sage";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckThreadRuleItem
-              (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
       listcell = document.createElement (Aima_AimaniOptions.cellName);
-      if (Aima_AimaniOptions.mode == 2) {
-        listcell.style.fontSize = "9pt";
-        listcell.style.padding = "0em 0.4em 0em 0.4em";
-        input = document.createElement ("input");
-        input.className = Aima_AimaniOptions.prefix + "mini_thumb";
-        input.type = "checkbox";
-        Aima_Aimani.addEventListener
-          (input,
-           "click",
-           function () {
-            Aima_AimaniOptions.onCheckThreadRuleItem
-              (arguments [0]);
-          }, false);
-        listcell.appendChild (input);
-      }
       listitem.appendChild (listcell);
             
-      if (Aima_AimaniOptions.mode == 1) {
-        listitem.addEventListener
-          ("mousedown",
-           function () {
-            Aima_AimaniOptions.onCheckThreadRuleItem (arguments [0]);
-          }, false);
-      }
-      else if (Aima_Aimani.isIE) {
-        listbox.appendChild (listitem);
-      }
+      listitem.addEventListener
+        ("mousedown",
+         function () {
+          Aima_AimaniOptions.onCheckThreadRuleItem (arguments [0]);
+        }, false);
     }
         
     listcell = listitem.firstChild;
@@ -3456,16 +2800,8 @@ var Aima_AimaniOptions = {
     listcell = listcell.nextSibling;
     Aima_AimaniOptions.setItem (listcell, 1, rule, rule & 8);
         
-    if (Aima_AimaniOptions.mode == 1) {
-      if (append) {
-        listbox.appendChild (listitem);
-      }
-    }
-    else {
-      if (append
-          && !Aima_Aimani.isIE) {
-        listbox.appendChild (listitem);
-      }
+    if (append) {
+      listbox.appendChild (listitem);
     }
   },
     
@@ -3519,51 +2855,25 @@ var Aima_AimaniOptions = {
       rule |= 8;
     }
        
-    if (Aima_AimaniOptions.mode == 1) {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "thread_rule_illegal").value = "";
-    }
-    else {
-      Aima_Aimani
-      .setText (document
-                .getElementById (Aima_AimaniOptions.prefix
-                                 + "thread_rule_illegal"), "");
-    }
+    document.getElementById (Aima_AimaniOptions.prefix
+                             + "thread_rule_illegal").value = "";
         
     if (server.match (/^([^:]+):(.+)$/)) {
       server = RegExp.$1;
       dir = RegExp.$2;
     }
     else {
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "thread_rule_illegal").value
-        = "\u677F\u304C\u9078\u629E\u3055\u308C\u3066\u3044\u307E\u305B\u3093";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniOptions.prefix
-                                   + "thread_rule_illegal"),
-                  "\u677F\u304C\u9078\u629E\u3055\u308C\u3066\u3044\u307E\u305B\u3093");
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "thread_rule_illegal").value
+      = "\u677F\u304C\u9078\u629E\u3055\u308C\u3066\u3044\u307E\u305B\u3093";
             
       return;
     }
         
     if (!rule) {
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "thread_rule_illegal").value
-        = "\u30EB\u30FC\u30EB\u304C\u7A7A\u3067\u3059";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniOptions.prefix
-                                   + "thread_rule_illegal"),
-                  "\u30EB\u30FC\u30EB\u304C\u7A7A\u3067\u3059");
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "thread_rule_illegal").value
+      = "\u30EB\u30FC\u30EB\u304C\u7A7A\u3067\u3059";
             
       return;
     }
@@ -3613,33 +2923,15 @@ var Aima_AimaniOptions = {
         }
       }
       else {
-        if (Aima_AimaniOptions.mode == 1) {
-          document.getElementById (Aima_AimaniOptions.prefix
-                                   + "thread_rule_illegal").value
-            = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
-        }
-        else {
-          Aima_Aimani
-            .setText (document
-                      .getElementById (Aima_AimaniOptions.prefix
-                                       + "thread_rule_illegal"),
-                      "\u540C\u3058 NG \u756A\u53F7\u304C\u3042\u308A\u307E\u3059");
-        }
+        document.getElementById (Aima_AimaniOptions.prefix
+                                 + "thread_rule_illegal").value
+          = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
       }
     }
     else {
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "thread_rule_illegal").value
-        = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniOptions.prefix
-                                   + "thread_rule_illegal"),
-                  "\u756A\u53F7\u304C\u4E0D\u6B63\u3067\u3059");
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "thread_rule_illegal").value
+      = "\u30C7\u30FC\u30BF\u304C\u4E0D\u6B63\u3067\u3059";
     }
   },
     
@@ -3662,14 +2954,6 @@ var Aima_AimaniOptions = {
       }
       node = nextNode;
     }
-        
-    if (Aima_AimaniOptions.mode == 2) {
-      if (Aima_Aimani.isOpera
-          && "version" in window.opera
-          && window.opera.version ().match (/^9/)) {
-        window.scrollBy (0, 0);
-      }
-    }
   },
     
   /**
@@ -3682,9 +2966,6 @@ var Aima_AimaniOptions = {
     var listbox
     = document.getElementById (Aima_AimaniOptions.prefix
                                + "thread_rule_list");
-    if (Aima_AimaniOptions.mode == 2) {
-      Aima_AimaniUIUtil.onSelectList (event);
-    }
     var selectedItem = Aima_AimaniOptions.getSelectedItem (event, listbox);
         
     if (Aima_AimaniOptions.getSelectedIndex (listbox) != -1) {
@@ -3713,16 +2994,9 @@ var Aima_AimaniOptions = {
         = value [3] & 8;
             
       var selectedCount = Aima_AimaniOptions.getSelectedCount (listbox);
-      if (Aima_AimaniOptions.mode == 1) {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "thread_rule_modify").disabled
-          = (selectedCount > 1);
-      }
-      else {
-        document.getElementById (Aima_AimaniOptions.prefix
-                                 + "thread_rule_modify").disabled
-          = (selectedCount > 1) ? "disabled" : "";
-      }
+      document.getElementById (Aima_AimaniOptions.prefix
+                               + "thread_rule_modify").disabled
+        = (selectedCount > 1);
     }
   },
     
@@ -3736,21 +3010,14 @@ var Aima_AimaniOptions = {
     var listitem;
     var target = null;
         
-    if (Aima_AimaniOptions.mode == 1) {
-      listitem = event.target;
-      if (!Aima_AimaniOptions.isListitem (listitem)) {
-        return;
-      }
-    }
-    else {
-      target = event.target;
-      listitem = Aima_Aimani.findParentNode (target,
-                                             Aima_AimaniOptions.itemName);
+    listitem = event.target;
+    if (!Aima_AimaniOptions.isListitem (listitem)) {
+      return;
     }
         
     var value = Aima_AimaniOptions.getThreadRuleItem (listitem);
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       var listcell_number     = listitem.firstChild;
       var listcell_board      = listcell_number.nextSibling;
       var listcell_text_res   = listcell_board.nextSibling;
@@ -3808,27 +3075,6 @@ var Aima_AimaniOptions = {
             < listcell_mini_thumb.boxObject.x + 16) {
           value [3] = value [3] ^ 8;
         }
-      }
-    }
-    else {
-      if (target.className == Aima_AimaniOptions.prefix + "text_res") {
-        value [3] = value [3] ^ 1;
-      }
-      else if (target.className
-               == Aima_AimaniOptions.prefix + "image_res") {
-        value [3] = value [3] ^ 16;
-      }
-      else if (target.className
-               == Aima_AimaniOptions.prefix + "sage_only") {
-        value [3] = value [3] ^ 2;
-      }
-      else if (target.className
-               == Aima_AimaniOptions.prefix + "not_sage") {
-        value [3] = value [3] ^ 4;
-      }
-      else if (target.className
-               == Aima_AimaniOptions.prefix + "mini_thumb") {
-        value [3] = value [3] ^ 8;
       }
     }
         
@@ -3894,7 +3140,7 @@ var Aima_AimaniOptions = {
           name = unescape (part1);
           if (name in names
               && names [name]) {
-            if (Aima_AimaniOptions.mode == 1) {
+            if (true) {
               listitem
                 = document.createElement
                 (Aima_AimaniOptions.itemName);
@@ -3903,27 +3149,6 @@ var Aima_AimaniOptions = {
                 (Aima_AimaniOptions.cellName);
               listcell.setAttribute ("value", name);
               listcell.setAttribute ("label", names [name]);
-            }
-            else {
-              listitem
-                = document.createElement
-                (Aima_AimaniOptions.itemName);
-              Aima_Aimani.addEventListener
-                (listitem,
-                 "click",
-                 function () {
-                  Aima_AimaniUIUtil
-                    .onSelectList (arguments [0]);
-                }, false);
-                            
-              listcell
-                = document.createElement
-                (Aima_AimaniOptions.cellName);
-              listcell.style.fontSize = "9pt";
-              listcell.style.padding = "0em 0.4em 0em 0.4em";
-              listcell.setAttribute ("name", name);
-              listcell.appendChild
-                (document.createTextNode (names [name]));
             }
                         
             names [name] = null;
@@ -3937,32 +3162,13 @@ var Aima_AimaniOptions = {
                                        + idPrefix + "board_select_in_list");
     for (name in names) {
       if (names [name]) {
-        if (Aima_AimaniOptions.mode == 1) {
+        if (true) {
           listitem
             = document.createElement (Aima_AimaniOptions.itemName);
           listcell
             = document.createElement (Aima_AimaniOptions.cellName);
           listcell.setAttribute ("value", name);
           listcell.setAttribute ("label", names [name]);
-        }
-        else {
-          listitem
-            = document.createElement (Aima_AimaniOptions.itemName);
-          Aima_Aimani.addEventListener
-            (listitem,
-             "click",
-             function () {
-              Aima_AimaniUIUtil
-                .onSelectList (arguments [0]);
-            }, false);
-                    
-          listcell
-            = document.createElement (Aima_AimaniOptions.cellName);
-          listcell.style.fontSize = "9pt";
-          listcell.style.padding = "0em 0.4em 0em 0.4em";
-          listcell.setAttribute ("name", name);
-          listcell.appendChild (document
-                                .createTextNode (names [name]));
         }
         listitem.appendChild (listcell);
         listbox.appendChild (listitem);
@@ -4283,7 +3489,7 @@ var Aima_AimaniOptions = {
   initMenu : function (menu) {
     var menuItem;
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       for (var name in Aima_AimaniServerName) {
         menuItem = document.createElement ("menuitem");
         menuItem.setAttribute ("label", Aima_AimaniServerName [name]);
@@ -4291,21 +3497,6 @@ var Aima_AimaniOptions = {
         menu.firstChild.appendChild (menuItem);
       }
       menu.selectedIndex = 0;
-    }
-    else {
-      var first = true;
-            
-      for (var name in Aima_AimaniServerName) {
-        menuItem = document.createElement ("option");
-        var label = Aima_AimaniServerName [name];
-        menuItem.appendChild (document.createTextNode (label));
-        menuItem.value = name;
-        if (first) {
-          menuItem.selected = "selected";
-          first = false;
-        }
-        menu.appendChild (menuItem);
-      }
     }
   },
     
@@ -4328,23 +3519,10 @@ var Aima_AimaniOptions = {
   setPref : function (fstream, type, name, value) {
     if (fstream == null) {
       if (Aima_AimaniOptions.prefBranch == null) {
-        if (Aima_AimaniOptions.mode == 1) {
-          if (Components.interfaces.nsIPrefBranch2) {
-            Aima_AimaniOptions.prefBranch
-            = Components
-            .classes ["@mozilla.org/preferences-service;1"]
-            .getService (Components.interfaces.nsIPrefBranch2);
-          }
-          else {
-            Aima_AimaniOptions.prefBranch
-            = Components
-            .classes ["@mozilla.org/preferences-service;1"]
-            .getService (Components.interfaces.nsIPrefBranch);
-          }
-        }
-        else {
-          Aima_AimaniOptions.prefBranch = Aima_AimaniConfigManager.prefBranch;
-        }
+        Aima_AimaniOptions.prefBranch
+        = Components
+        .classes ["@mozilla.org/preferences-service;1"]
+        .getService (Components.interfaces.nsIPrefBranch);
       }
       
       ; /* switch のインデント用 */
@@ -4361,14 +3539,8 @@ var Aima_AimaniOptions = {
       }
     }
     else {
-      if (Aima_AimaniOptions.mode == 1) {
-        var line = escape (name) + "," + escape (value) + "\r\n";
-        fstream.write (line, line.length);
-      }
-      else {
-        fstream.value
-        += escape (name) + "," + escape (value) + "\r\n";
-      }
+      var line = escape (name) + "," + escape (value) + "\r\n";
+      fstream.write (line, line.length);
     }
   },
     
@@ -4395,7 +3567,7 @@ var Aima_AimaniOptions = {
               document.getElementById (Aima_AimaniOptions.prefix
                                        + "all").checked);
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       Aima_AimaniOptions
         .setPref (fstream, "bool", "aima_aimani.statusbar.preferences",
                   document.getElementById (Aima_AimaniOptions.prefix
@@ -4422,7 +3594,7 @@ var Aima_AimaniOptions = {
     .setPref (fstream, "bool", "aima_aimani.hide_warning",
               document.getElementById (Aima_AimaniOptions.prefix
                                        + "hide_warning").checked);
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       Aima_AimaniOptions
         .setPref (fstream, "bool", "aima_aimani.hide_style",
                   document.getElementById (Aima_AimaniOptions.prefix
@@ -4555,7 +3727,7 @@ var Aima_AimaniOptions = {
               "aima_aimani.ng_thumbnail.board_select.ex_list",
               value);
 
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       Aima_AimaniOptions
         .setPref (fstream, "bool", "aima_aimani.ng_cat",
                   document.getElementById (Aima_AimaniOptions.prefix
@@ -4674,7 +3846,7 @@ var Aima_AimaniOptions = {
     .setPref (fstream, "char", "aima_aimani.board_select.ex_list",
               value);
         
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       Aima_AimaniOptions
         .setPref (fstream, "bool", "aima_aimani.board_external",
                   document.getElementById ("board_external").checked);
@@ -4700,9 +3872,7 @@ var Aima_AimaniOptions = {
         .setPref (fstream,
                   "char", "aima_aimani.board_external.patterns",
                   tmp);
-    }
         
-    if (Aima_AimaniOptions.mode == 1) {
       Aima_AimaniOptions
       .setPref (fstream, "char", "aima_aimani.savepref",
                 new Date ().getTime ());
@@ -4713,19 +3883,6 @@ var Aima_AimaniOptions = {
           getService (Components.interfaces.nsIPrefService);
             
         prefService.savePrefFile (null);
-      }
-    }
-    else {
-      if (fstream == null) {
-        Aima_AimaniConfigManager.prefBranch.saveAllPrefs ();
-                
-        var configbox
-        = document.getElementById ("aima_aimani_configbox");
-        configbox.style.display = "none";
-        Aima_Aimani.setText (configbox, null);
-                
-        Aima_AimaniConfigManager.getConfigurationFromPreferencesAll ();
-        Aima_AimaniConfigManager.getConfigurationFromPreferences ();
       }
     }
         
@@ -4819,7 +3976,7 @@ var Aima_AimaniOptions = {
   },
     
   checkPopupMessage : function () {
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       document.getElementById (Aima_AimaniOptions.prefix
                                + "popup_message_delay_show").disabled
       = document.getElementById (Aima_AimaniOptions.prefix
@@ -4831,33 +3988,19 @@ var Aima_AimaniOptions = {
       = !document.getElementById (Aima_AimaniOptions.prefix
                                   + "popup_message").checked;
     }
-    else {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "popup_message_delay_show").disabled
-      = (!document.getElementById (Aima_AimaniOptions.prefix
-                                   + "popup_message").checked)
-      ? "disabled" : "";
-    }
   },
     
   checkHideEntireRes : function () {
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       document.getElementById (Aima_AimaniOptions.prefix
                                + "hide_entire_res_instant").disabled
       = !document.getElementById (Aima_AimaniOptions.prefix
                                   + "hide_entire_res").checked;
     }
-    else {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "hide_entire_res_instant").disabled
-      = (!document.getElementById (Aima_AimaniOptions.prefix
-                                   + "hide_entire_res").checked)
-      ? "disabled" : "";
-    }
   },
 
   checkBoardSelect : function () {
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       document.getElementById (Aima_AimaniOptions.prefix
                                + "board_select_in_list").disabled
       = document.getElementById (Aima_AimaniOptions.prefix
@@ -4873,39 +4016,16 @@ var Aima_AimaniOptions = {
       = !document.getElementById (Aima_AimaniOptions.prefix
                                   + "board_select").checked;
     }
-    else {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "board_select_in_list").disabled
-      = document.getElementById (Aima_AimaniOptions.prefix
-                                 + "board_select_ex_list").disabled
-      = document.getElementById (Aima_AimaniOptions.prefix
-                                 + "board_select_add").disabled
-      = document.getElementById (Aima_AimaniOptions.prefix
-                                 + "board_select_delete").disabled
-      = (!document.getElementById (Aima_AimaniOptions.prefix
-                                   + "board_select").checked)
-      ? "disabled" : "";
-        
-    }
   },
     
   checkEasyNG : function () {
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       document.getElementById (Aima_AimaniOptions.prefix
                                + "easyng_type").disabled
       = document.getElementById (Aima_AimaniOptions.prefix
                                  + "easyng_startup").disabled
       = !document.getElementById (Aima_AimaniOptions.prefix
                                   + "easyng").checked;
-    }
-    else {
-      document.getElementById (Aima_AimaniOptions.prefix
-                               + "easyng_type").disabled
-      = document.getElementById (Aima_AimaniOptions.prefix
-                                 + "easyng_startup").disabled
-      = (!document.getElementById (Aima_AimaniOptions.prefix
-                                   + "easyng").checked)
-      ? "disabled" : "";
     }
   },
     
@@ -4947,20 +4067,11 @@ var Aima_AimaniOptions = {
   setItem : function (listcell, type, label, value) {
     label = label + "";
     if (type == 0) {
-      if (Aima_AimaniOptions.mode == 1) {
-        listcell.setAttribute ("label", label);
-        listcell.setAttribute ("value", value);
-      }
-      else {
-        /* Aima_AimaniUIUtil.escapeEntity の結果に
-         * エンティティ参照が含まれる可能性があるので innerHTML を使用する */
-        listcell.innerHTML
-          = Aima_AimaniUIUtil.escapeEntity (label);
-        listcell.setAttribute ("name", value);
-      }
+      listcell.setAttribute ("label", label);
+      listcell.setAttribute ("value", value);
     }
     else if (type == 1) {
-      if (Aima_AimaniOptions.mode == 1) {
+      if (true) {
         listcell.setAttribute ("value", label);
         listcell.setAttribute ("class", "listcell-iconic");
         if (value) {
@@ -4972,15 +4083,6 @@ var Aima_AimaniOptions = {
           listcell.setAttribute
           ("image",
            "chrome://aima_aimani/content/check_x.png");
-        }
-      }
-      else {
-        listcell.setAttribute ("name", label);
-        if (value) {
-          listcell.firstChild.checked = "checked";
-        }
-        else {
-          listcell.firstChild.checked = "";
         }
       }
     }
@@ -4995,18 +4097,8 @@ var Aima_AimaniOptions = {
    *         項目が選択されているか
    */
   isSelected : function (listitem) {
-    if (Aima_AimaniOptions.mode == 1) {
-      if (listitem.selected) {
-        return true;
-      }
-    }
-    else {
-      if (listitem.firstChild.style.backgroundColor
-          == "#3875d7"
-          || listitem.firstChild.style.backgroundColor
-          == "rgb(56, 117, 215)") {
-        return true;
-      }
+    if (listitem.selected) {
+      return true;
     }
     return false;
   },
@@ -5020,21 +4112,7 @@ var Aima_AimaniOptions = {
    *         選択されている項目の数
    */
   getSelectedCount : function (listbox) {
-    if (Aima_AimaniOptions.mode == 1) {
-      return listbox.selectedCount;
-    }
-    else {
-      var selectedCount = 0;
-            
-      node = listbox.firstChild;
-      while (node) {
-        if (Aima_AimaniOptions.isSelected (node)) {
-          selectedCount ++;
-        }
-        node = node.nextSibling;
-      }
-      return selectedCount;
-    }
+    return listbox.selectedCount;
   },
     
   /**
@@ -5046,12 +4124,7 @@ var Aima_AimaniOptions = {
    *         選択されている項目の位置
    */
   getSelectedIndex : function (listbox) {
-    if (Aima_AimaniOptions.mode == 1) {
-      return listbox.selectedIndex;
-    }
-    else {
-      return 0;
-    }
+    return listbox.selectedIndex;
   },
     
   /**
@@ -5063,13 +4136,7 @@ var Aima_AimaniOptions = {
    *         選択されている項目
    */
   getSelectedItem : function (event, listbox) { 
-    if (Aima_AimaniOptions.mode == 1) {
-      return listbox.selectedItem;
-    }
-    else {
-      return Aima_Aimani.findParentNode (event.target,
-                                         Aima_AimaniOptions.itemName);
-    }
+    return listbox.selectedItem;
   },
     
   /**
@@ -5098,7 +4165,7 @@ var Aima_AimaniOptions = {
    *        選択する項目の値
    */
   selectMenu : function (menu, value) {
-    if (Aima_AimaniOptions.mode == 1) {
+    if (true) {
       var i = 0;
       var node = menu.firstChild.firstChild;
       while (node) {
@@ -5109,19 +4176,6 @@ var Aima_AimaniOptions = {
                 
         node = node.nextSibling;
         i ++;
-      }
-    }
-    else {
-      var node = menu.firstChild;
-      while (node) {
-        if (node.value == value) {
-          node.selected = "selected";
-        }
-        else {
-          node.selected = "";
-        }
-                
-        node = node.nextSibling;
       }
     }
   },
@@ -5135,12 +4189,7 @@ var Aima_AimaniOptions = {
    *         最初の項目
    */
   getFirstItem : function (listbox) { 
-    if (Aima_AimaniOptions.mode == 1) {
-      return listbox.firstChild;
-    }
-    else {
-      return listbox.firstChild.nextSibling;
-    }
+    return listbox.firstChild;
   },
     
   /**
@@ -5154,14 +4203,8 @@ var Aima_AimaniOptions = {
    *           false: ヘッダ
    */
   isListitem : function (listitem) {
-    if (Aima_AimaniOptions.mode == 1) {
-      return  (listitem.nodeName
-               == Aima_AimaniOptions.itemName);
-    }
-    else {
-      return (listitem.firstChild.nodeName.toLowerCase ()
-              == Aima_AimaniOptions.cellName);
-    }
+    return  (listitem.nodeName
+             == Aima_AimaniOptions.itemName);
   },
     
   /**
@@ -5188,7 +4231,7 @@ var Aima_AimaniOptions = {
                              (Aima_AimaniOptions.attrName));
       subnode2.setAttribute (Aima_AimaniOptions.attrName, tmp);
             
-      if (Aima_AimaniOptions.mode == 1) {
+      if (true) {
         if (subnode1.getAttribute ("class")
             == "listcell-iconic") {
           tmp = subnode1.getAttribute ("image");
@@ -5203,18 +4246,6 @@ var Aima_AimaniOptions = {
                                  subnode2
                                  .getAttribute ("label"));
           subnode2.setAttribute ("label", tmp);
-        }
-      }
-      else {
-        var subsubnode1 = subnode1.firstChild;
-        var subsubnode2 = subnode2.firstChild;
-        if (subsubnode1) {
-          subnode1.removeChild (subsubnode1);
-          subnode2.appendChild (subsubnode1);
-        }
-        if (subsubnode2) {
-          subnode2.removeChild (subsubnode2);
-          subnode1.appendChild (subsubnode2);
         }
       }
       subnode1 = subnode1.nextSibling;
@@ -5236,34 +4267,9 @@ var Aima_AimaniOptions = {
    *         対象の項目
    */
   toggleItemSelection : function (listbox, listitem) {
-    if (Aima_AimaniOptions.mode == 1) {
-      listbox.toggleItemSelection (listitem);
-    }
-    else {
-      var td;
-      if (Aima_AimaniOptions.isSelected (listitem)) {
-        td = listitem.firstChild;
-        while (td) {
-          td.style.fontWeight = "";
-          td.style.color = "";
-          td.style.backgroundColor = "";
-          td = td.nextSibling;
-        }
-      }
-      else {
-        td = listitem.firstChild;
-        while (td) {
-          td.style.fontWeight = "";
-          bold = td.style.fontWeight;
-          td.style.color = "#ffffff";
-          td.style.backgroundColor = "#3875d7";
-          td = td.nextSibling;
-        }
-      }
-    }
+    listbox.toggleItemSelection (listitem);
   }
 };
-/* Opera/IE/Safari 版に移植する部分 ---- ここまで ---- */
 
 /**
  * Firefox 版のみの設定管理

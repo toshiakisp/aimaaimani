@@ -5,10 +5,6 @@
  * NG ワード設定管理
  **/
 var Aima_AimaniNGWord = {
-  mode : 1,                      /* Number  動作モード
-                                  *   1: Firefox/Mozilla Suite
-                                  *   2: Opera/IE/Safari */
-    
   prefix : "",                   /* String  要素の ID のプレフィックス */
     
   /**
@@ -17,19 +13,7 @@ var Aima_AimaniNGWord = {
   init : function () {
     var ng_word = "";
         
-    if (Aima_AimaniNGWord.mode == 1) {
-      ng_word = window.arguments [0];
-    }
-    else {
-      var selection = Aima_AimaniUIUtil.getSelection ();
-      if (selection) {
-        selection = selection.replace (/^\n+/, "");
-        selection = selection.replace (/\n+$/, "");
-        selection = selection.replace (/\n/g, "<br>");
-                
-        ng_word = selection;
-      }
-    }
+    ng_word = window.arguments [0];
         
     document.getElementById (Aima_AimaniNGWord.prefix
                              + "ng_word_word").value = ng_word;
@@ -103,16 +87,8 @@ var Aima_AimaniNGWord = {
       target |= 0x8000;
     }
         
-    if (Aima_AimaniNGWord.mode == 1) {
-      document.getElementById (Aima_AimaniNGWord.prefix
-                               + "ng_word_illegal").value = "";
-    }
-    else {
-      Aima_Aimani
-      .setText (document
-                .getElementById (Aima_AimaniNGWord.prefix
-                                 + "ng_word_illegal"), "");
-    }
+    document.getElementById (Aima_AimaniNGWord.prefix
+                             + "ng_word_illegal").value = "";
         
     if (expire == "none" || !expire) {
       expire = "0";
@@ -129,18 +105,9 @@ var Aima_AimaniNGWord = {
         expire = "1_" + expire;
       }
       else {
-        if (Aima_AimaniNGWord.mode == 1) {
-          document.getElementById (Aima_AimaniNGWord.prefix
-                                   + "ng_word_illegal").value
-          = "\u6642\u523B\u304C\u7570\u5E38\u3067\u3059";
-        }
-        else {
-          Aima_Aimani
-          .setText (document
-                    .getElementById (Aima_AimaniNGWord.prefix
-                                     + "ng_word_illegal"),
-                    "\u6642\u523B\u304C\u7570\u5E38\u3067\u3059");
-        }
+        document.getElementById (Aima_AimaniNGWord.prefix
+                                 + "ng_word_illegal").value
+        = "\u6642\u523B\u304C\u7570\u5E38\u3067\u3059";
                 
         return false;
       }
@@ -152,18 +119,9 @@ var Aima_AimaniNGWord = {
         tmp.search (text);
       }
       catch (e) { Components.utils.reportError (e);
-        if (Aima_AimaniNGWord.mode == 1) {
-          document.getElementById (Aima_AimaniNGWord.prefix
-                                   + "ng_word_illegal").value
-          = "\u6B63\u898F\u8868\u73FE\u304C\u4E0D\u6B63\u3067\u3059";
-        }
-        else {
-          Aima_Aimani
-          .setText (document
-                    .getElementById (Aima_AimaniNGWord.prefix
-                                     + "ng_word_illegal"),
-                    "\u6B63\u898F\u8868\u73FE\u304C\u4E0D\u6B63\u3067\u3059");
-        }
+        document.getElementById (Aima_AimaniNGWord.prefix
+                                 + "ng_word_illegal").value
+        = "\u6B63\u898F\u8868\u73FE\u304C\u4E0D\u6B63\u3067\u3059";
                 
         return false;
       }
@@ -204,106 +162,21 @@ var Aima_AimaniNGWord = {
         Aima_AimaniNGWord
           .setPref ("char", "aima_aimani.ng_word.list", ng_word);
                 
-        if (Aima_AimaniNGWord.mode == 1) {
-          Aima_AimaniNGWord
-            .setPref ("char", "aima_aimani.savepref",
-                      new Date ().getTime ());
-        }
-        else {
-          Aima_AimaniConfigManager.prefBranch
-            .savePrefs (new Array ("aima_aimani.ng_word.list"));
-                    
-          document.getElementById (Aima_AimaniNGWord.prefix
-                                   + "ng_word_word")
-            .value = "";
-                    
-          document.getElementById ("aima_aimani_ngwordbox")
-            .style.display = "none";
-          Aima_Aimani.setText
-            (document.getElementById ("aima_aimani_ngwordbox"),
-             null);
-                    
-          var a = new Object ();
-                    
-          var word = text;
-          r = (r == "o");
-                    
-          if (r) {
-            word = word.replace (/\xa5/g, "\\");
-          }
-          else {
-            word = word.replace
-              (/([\(\)\[\]\{\}\\\^\$\+\*\?\|\-])/g, "\\$1");
-          }
-                    
-          if (ic) {
-            word = new RegExp (word, "i");
-          }
-          else {
-            word = new RegExp (word);
-          }
-                    
-          a [target] = new Array ();
-          a [target].push (word);
-                    
-          var targetDocument = document;
-          var param = Aima_Aimani.getDocumentParam (targetDocument);
-          if (param) {
-            info = param.location_info;
-                        
-            if (info.isCatalog) {
-              Aima_Aimani.applyCatalogue (targetDocument, true,
-                                          a);
-            }
-            else {
-              var result
-                = Aima_Aimani.apply (targetDocument,
-                                     false,
-                                     false,
-                                     true,
-                                     false,
-                                     false,
-                                     false,
-                                     a);
-            }
-          }
-                    
-          if (result) {
-            Aima_AimaniConfigManager.saveNGNumberPref (false);
-          }
-                    
-          Aima_AimaniConfigManager.loadNGWord ();
-        }
+        Aima_AimaniNGWord
+          .setPref ("char", "aima_aimani.savepref",
+                    new Date ().getTime ());
       }
       else {
-        if (Aima_AimaniNGWord.mode == 1) {
-          document.getElementById (Aima_AimaniNGWord.prefix
-                                   + "ng_word_illegal").value
-            = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
-        }
-        else {
-          Aima_Aimani
-            .setText (document
-                      .getElementById (Aima_AimaniNGWord.prefix
-                                       + "ng_word_illegal"),
-                      "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059");
-        }
+        document.getElementById (Aima_AimaniNGWord.prefix
+                                 + "ng_word_illegal").value
+          = "\u540C\u3058\u9805\u76EE\u304C\u3042\u308A\u307E\u3059";
         return false;
       }
     }
     else {
-      if (Aima_AimaniNGWord.mode == 1) {
-        document.getElementById (Aima_AimaniNGWord.prefix
-                                 + "ng_word_illegal").value
-        = "NG \u30EF\u30FC\u30C9\u304C\u4E0D\u6B63\u3067\u3059";
-      }
-      else {
-        Aima_Aimani
-        .setText (document
-                  .getElementById (Aima_AimaniNGWord.prefix
-                                   + "ng_word_illegal"),
-                  "NG \u30EF\u30FC\u30C9\u304C\u4E0D\u6B63\u3067\u3059");
-      }
+      document.getElementById (Aima_AimaniNGWord.prefix
+                               + "ng_word_illegal").value
+      = "NG \u30EF\u30FC\u30C9\u304C\u4E0D\u6B63\u3067\u3059";
             
       return false;
     }
@@ -323,10 +196,6 @@ var Aima_AimaniNGWord = {
     var d = new Date ();
     d.setTime (date);
     var year = d.getYear () + 1900;
-    if (Aima_AimaniNGWord.mode == 2
-        && Aima_Aimani.isIE) {
-      year -= 1900;
-    }
     var month = d.getMonth () + 1;
     if (month < 10) {
       month = "0" + month;
@@ -449,23 +318,10 @@ var Aima_AimaniNGWord = {
   initPref : function (type, name, value) {
     var prefBranch;
             
-    if (Aima_AimaniNGWord.mode == 1) {
-      if (Components.interfaces.nsIPrefBranch2) {
-        prefBranch
-          = Components
-          .classes ["@mozilla.org/preferences-service;1"]
-          .getService (Components.interfaces.nsIPrefBranch2);
-      }
-      else {
-        prefBranch
-          = Components
-          .classes ["@mozilla.org/preferences-service;1"]
-          .getService (Components.interfaces.nsIPrefBranch);
-      }
-    }
-    else {
-      prefBranch = Aima_AimaniConfigManager.prefBranch;
-    }
+    prefBranch
+      = Components
+      .classes ["@mozilla.org/preferences-service;1"]
+      .getService (Components.interfaces.nsIPrefBranch);
             
     if (prefBranch.prefHasUserValue (name)) {
       ; /* switch のインデント用 */
@@ -515,23 +371,10 @@ var Aima_AimaniNGWord = {
   setPref : function (type, name, value) {
     var prefBranch;
         
-    if (Aima_AimaniNGWord.mode == 1) {
-      if (Components.interfaces.nsIPrefBranch2) {
-        prefBranch
-          = Components
-          .classes ["@mozilla.org/preferences-service;1"]
-          .getService (Components.interfaces.nsIPrefBranch2);
-      }
-      else {
-        prefBranch
-          = Components
-          .classes ["@mozilla.org/preferences-service;1"]
-          .getService (Components.interfaces.nsIPrefBranch);
-      }
-    }
-    else {
-      prefBranch = Aima_AimaniConfigManager.prefBranch;
-    }
+    prefBranch
+      = Components
+      .classes ["@mozilla.org/preferences-service;1"]
+      .getService (Components.interfaces.nsIPrefBranch);
             
     ; /* switch のインデント用 */
     switch (type) {
