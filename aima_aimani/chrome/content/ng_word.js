@@ -1,6 +1,5 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
-/* Opera/IE/Safari 版に移植する部分 ---- ここから ---- */
 /**
  * NG ワード設定管理
  **/
@@ -390,4 +389,3 @@ var Aima_AimaniNGWord = {
     }
   }
 };
-/* Opera/IE/Safari 版に移植する部分 ---- ここまで ---- */

@@ -1204,7 +1204,6 @@ var Aima_AimaniNGCat = {
   }
 };
 
-/* Opera/IE/Safari 版に移植する部分 ---- ここから ---- */
 /**
  * 文字コード変換器
  */
@@ -1500,30 +1499,6 @@ var Aima_Aimani = {
   enableAll : false,             /* Boolean  全機能の ON／OFF */
     
   nearestExpireTime : 0,         /* Number  NG ワードの期限のうち最も近いもの */
-    
-  /* Opera/IE/Safari 版用のメンバ - ここから - */
-  aimadVersion : "0.0.0", /* String  aimad のバージョン */
-  updateScript : null,           /* HTMLScriptElement
-                                  *   アップデートの script 要素 */
-    
-  startAnchor : null,            /* HTMLElement  選択範囲の開始のアンカー */
-  endAnchor : null,              /* HTMLElement  選択範囲の終了のアンカー */
-  containerAnchor : null,        /* HTMLElement  選択範囲の終了のアンカーの
-                                  *   隣に出る操作用のアンカー */
-  overAnchor : null,             /* HTMLElement  カーソルの下のアンカー */
-    
-  isIE : false,                  /* Boolean  IE かどうか */
-  isOpera : false,               /* Boolean  Opera かどうか */
-  isSafari : false,              /* Boolean  Safari かどうか */
-  isMozilla : false,             /* Boolean  Mozilla Suite かどうか
-                                  *   (動作モード : 2 において) */
-    
-  events : new Array (),         /* Array  イベントリスナのリスト
-                                  *   [[HTMLElement イベントの対象,
-                                  *     String イベント名,
-                                  *     function リスナ,
-                                  *     Boolean useCapture のフラグ], ...] */
-  /* Opera/IE/Safari 版用のメンバ - ここまで - */
     
   /* [一般] タブの設定 */
   enableHideWarning : false,          /* Boolean  警告を表示しない */
@@ -4006,9 +3981,6 @@ var Aima_Aimani = {
       newtd = targetDocument.createElement ("div");
       newtd.style.marginTop = "4px";
       newtd.style.cssFloat = "left";
-      if (Aima_Aimani.isIE) {
-        newtd.style.styleFloat = "left";
-      }
     }
     newtd.style.backgroundColor = "#f0e0d6";
     newtd.className = "aima_aimani_hidden";
@@ -4937,16 +4909,7 @@ var Aima_Aimani = {
     = targetDocument.createElement ("div");
     container.className = "aima_aimani_generated";
     container.style.backgroundColor = "#ffffee";
-    try {
-      container.style.cssFloat = "right";
-    }
-    catch (e) { Components.utils.reportError (e);
-    }
-    try {
-      container.style.styleFloat = "right";
-    }
-    catch (e) { Components.utils.reportError (e);
-    }
+    container.style.cssFloat = "right";
         
     var numNode = null;
     if (Aima_Aimani.enableEasyNGType == "num") {
@@ -6769,118 +6732,6 @@ var Aima_Aimani = {
   },
     
   /**
-   * イベントリスナの登録
-   *
-   * @param  HTMLElement target
-   *         イベントの対象
-   * @param  String eventName
-   *         イベント名
-   * @param  function listener
-   *         リスナ
-   * @param  Boolean flag
-   *         useCapture のフラグ
-   */
-  addEventListener : function (target, eventName, handler, flag) {
-    var handler2 = null;
-    if (!Aima_Aimani.isIE) {
-      /* Opera, Safari 他 の場合 */
-            
-      handler2 = function () {
-        var event2 = new Aima_AimaniEvent (arguments [0]);
-        return handler (event2);
-      };
-            
-      target.addEventListener
-        (eventName, 
-         handler2,
-         flag);
-    }
-    else {
-      /* IE の場合 */
-      handler2 = function () {
-        var event2 = new Aima_AimaniEvent (event);
-        return handler (event2);
-      };
-            
-      target.attachEvent
-      ("on" + eventName,
-       handler2);         
-    }
-        
-    Aima_Aimani.events.push (new Array (target, eventName, handler2, flag));
-  },
-    
-  /**
-   * イベントリスナの破棄
-   *
-   * @param  HTMLElement target
-   *         イベントの対象
-   * @param  String eventName
-   *         イベント名
-   * @param  function listener
-   *         リスナ
-   * @param  Boolean flag
-   *         useCapture のフラグ
-   */
-  removeEventListener : function (target, eventName, handler, flag) {
-    if (!Aima_Aimani.isIE) {
-      /* Opera, Safari 他 の場合 */
-            
-      target.removeEventListener
-      (eventName, 
-       handler,
-       flag);
-    }
-    else {
-      /* IE の場合 */
-      target.detachEvent
-      ("on" + eventName,
-       handler);          
-    }
-  },
-    
-  /**
-   * 設定値を prefBranch に設定する
-   * aimad の応答である JavaScript から呼ばれる
-   *
-   * @param  String name
-   *         URL エンコードされた設定名
-   * @param  String value
-   *         URL エンコードされた設定値
-   */
-  setPref : function (name, value) {
-    Aima_AimaniConfigManager.prefBranch
-    .setCharPref (unescape (name), unescape (value));
-  },
-    
-  /**
-   * 設定が読み込まれたイベント
-   * aimad の応答である JavaScript から呼ばれる
-   */
-  onPrefLoaded : function () {
-    /* script 要素を削除する */
-    Aima_AimaniConfigManager.prefBranch.script.parentNode
-    .removeChild (Aima_AimaniConfigManager.prefBranch.script);
-        
-    Aima_AimaniConfigManager.init ();
-        
-    Aima_Aimani.onDOMContentLoaded ();
-  },
-    
-  /**
-   * 設定が保存されたイベント
-   * aimad の応答である JavaScript から呼ばれる
-   *
-   * @param  Number index
-   *         script 要素のインデックス
-   */
-  onPrefSet : function (index) {
-    /* script 要素を削除する */
-    Aima_AimaniConfigManager.prefBranch.scripts [index].parentNode
-    .removeChild (Aima_AimaniConfigManager.prefBranch.scripts [index]);
-  },
-    
-  /**
    * マウスを動かしたイベント
    * 選択範囲のアンカーの状態を変える
    *
@@ -6960,19 +6811,6 @@ var Aima_Aimani = {
           && node.nodeName.toLowerCase () != "small") {
         node = Aima_Aimani.findParentNode (node, "small");
       }
-            
-      if (node
-          && node.getAttribute ("name")
-          .match (/^select_message_[0-9]+_0/)) {
-        Aima_Aimani.overAnchor = node;
-        Aima_Aimani.onAnchorOver (node);
-      }
-      else {
-        if (Aima_Aimani.overAnchor) {
-          Aima_Aimani.onAnchorOut (Aima_Aimani.overAnchor);
-          Aima_Aimani.overAnchor = null;
-        }
-      }
     }
     catch (e) { Components.utils.reportError (e);
     }
@@ -6985,27 +6823,8 @@ var Aima_Aimani = {
    *         対象のアンカー
    */
   onAnchorOver : function (target) {
-    var targetDocument = document;
-        
-    if (Aima_Aimani.startAnchor) {
-      if (Aima_Aimani.endAnchor) {
-        if (target != Aima_Aimani.startAnchor
-            && target != Aima_Aimani.endAnchor) {
-          target.firstChild.nodeValue
-            = "[" + Aima_Aimani.textSelectResReset + "]";
-        }
-      }
-      else {
-        if (target != Aima_Aimani.startAnchor) {
-          target.firstChild.nodeValue
-            = "[" + Aima_Aimani.textSelectResTo + "]";
-        }
-      }
-    }
-    else {
-      target.firstChild.nodeValue
-      = "[" + Aima_Aimani.textSelectResFrom + "]";
-    }
+    target.firstChild.nodeValue
+    = "[" + Aima_Aimani.textSelectResFrom + "]";
   },
     
   /**
@@ -7015,27 +6834,8 @@ var Aima_Aimani = {
    *         対象のアンカー
    */
   onAnchorOut : function (target) {
-    var targetDocument = document;
-        
-    if (Aima_Aimani.startAnchor) {
-      if (Aima_Aimani.endAnchor) {
-        if (target != Aima_Aimani.startAnchor
-            && target != Aima_Aimani.endAnchor) {
-          target.firstChild.nodeValue
-            = "[" + Aima_Aimani.textSelectRes + "]";
-        }
-      }
-      else {
-        if (target != Aima_Aimani.startAnchor) {
-          target.firstChild.nodeValue
-            = "[" + Aima_Aimani.textSelectRes + "]";
-        }
-      }
-    }
-    else {
-      target.firstChild.nodeValue
-      = "[" + Aima_Aimani.textSelectRes + "]";
-    }
+    target.firstChild.nodeValue
+    = "[" + Aima_Aimani.textSelectRes + "]";
   },
   
   /**
@@ -7346,36 +7146,6 @@ var Aima_AimaniConfigManager = {
       Aima_AimaniUIManager.showPanel ();
       Aima_AimaniUIManager.setPanelStatus ();
     }
-  },
-    
-  /**
-   * NG 番号を保存する
-   *
-   * @param  Boolean mod_thumbnail
-   *         NG サムネを更新したか
-   * @param  Boolean mod_cat
-   *         NG カタログを更新したか
-   * @param  Boolean mod_thread_rule
-   *         スレッドルールを更新したか
-   */
-  saveNGNumberPref : function (mod_thumbnail, mod_cat, mod_thread_rule) {
-    var a = new Array ();
-    a.push ("aima_aimani.ng_number.list");
-        
-    if (mod_thumbnail) {
-      a.push ("aima_aimani.ng_thumbnail.list");
-    }
-        
-    if (mod_cat) {
-      a.push ("aima_aimani.ng_cat.list");
-    }
-        
-    if (mod_thread_rule) {
-      a.push ("aima_aimani.thread_rule.list");
-    }
-        
-    Aima_AimaniConfigManager.prefBranch
-    .savePrefs (a);
   },
     
   /**
@@ -8139,8 +7909,7 @@ var Aima_AimaniPopupManager = {
    * マウスを動かしてから指定時間経ったイベント
    *
    * @param  Aima_AimaniPopupManagerData managerdata
-   *         Firefox ではポップアップのデータ
-   *         Opera/IE/Safari では undefined
+   *         ポップアップのデータ
    */
   onTimeout : function (managerdata) {
     var targetDocument;
@@ -8231,7 +8000,6 @@ var Aima_AimaniPopupManager = {
     }
   }
 };
-/* Opera/IE/Safari 版に移植する部分 ---- ここまで ---- */
 
 /**
  * UI 管理
@@ -8685,55 +8453,6 @@ var Aima_AimaniUIManager = {
     if (panel) {
       panel.hidden = !Aima_Aimani.enableStatusbarNGWord;
     }
-        
-    var popup;
-    popup = document.getElementById ("aima_aimani-statusbar-popup");
-    if (!popup) {
-      /* Mozilla Suite では mainPopupSet が無いためオーバーレイできない */
-            
-      var mainWindow = document.getElementById ("main-window");
-      if (mainWindow) {
-        var targetDocument = mainWindow.ownerDocument;
-                
-        var popupset = targetDocument.createElement ("popupset");
-                
-        popup = targetDocument.createElement ("popup");
-        popup.id = "aima_aimani-statusbar-popup";
-        popup.setAttribute ("position", "after_start");
-        popup.addEventListener ("popupshowing", function () {
-          Aima_AimaniUIManager.setStatusbarPopup ();
-        }, false);
-                
-        var menuitem;
-        var menuseparator;
-        var label;
-                
-        label = "\u5168\u6A5F\u80FD\u3092 OFF";
-        menuitem = targetDocument.createElement ("menuitem");
-        menuitem.id = "aima_aimani-statusbar-popup-all";
-        menuitem.setAttribute ("label", label);
-        menuitem.addEventListener ("command", function () {
-          Aima_AimaniUIManager.switchDisabled ();
-        }, false);
-        popup.appendChild (menuitem);
-                
-        menuseparator = targetDocument.createElement ("menuseparator");
-        menuseparator.id = "aima_aimani-menuitem-separator";
-        popup.appendChild (menuseparator);
-                
-        label = "\u30B5\u30A4\u30C8\u3092\u958B\u304F";
-        menuitem = targetDocument.createElement ("menuitem");
-        menuitem.setAttribute ("label", label);
-        menuitem.addEventListener ("command", function () {
-          Aima_AimaniUIManager.openWebsite ();
-        }, false);
-        popup.appendChild (menuitem);
-                
-        popupset.appendChild (popup);
-                
-        mainWindow.appendChild (popupset);
-      }
-    }
   },
     
   /**
@@ -8885,20 +8604,11 @@ var Aima_AimaniUIManager = {
   }
 };
 
-/* 古い Mozilla Suite では1つ目のイベントリスナが無視されるので 2 つ登録する */
-window.addEventListener ("load",
-                         function () {
-                           Aima_Aimani.onLoad ();
-                         }, false);
 window.addEventListener ("load",
                          function () {
                            Aima_Aimani.onLoad ();
                          }, false);
 
-window.addEventListener ("unload",
-                         function () {
-                           Aima_Aimani.onUnload ();
-                         }, false);
 window.addEventListener ("unload",
                          function () {
                            Aima_Aimani.onUnload ();
