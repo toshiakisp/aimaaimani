@@ -625,11 +625,6 @@ var Aima_AimaniNGCat = {
    *         コメント
    */
   addNGCat : function (width, height, hash, comment) {
-    if (Aima_Aimani.mode == 1
-        && Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniNGCat.loadNGCat ();
-    }
-        
     if (Aima_AimaniNGCat.arrayExistsNGCat (Aima_AimaniNGCat.NGCatList,
                                            width, height, hash)) {
       return;
@@ -653,10 +648,6 @@ var Aima_AimaniNGCat = {
    *         ハッシュ
    */
   deleteNGCat : function (width, height, hash) {
-    if (Aima_Aimani.mode == 1
-        && Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniNGCat.loadNGCat ();
-    }
     if (!Aima_AimaniNGCat.arrayDeleteNGCat (Aima_AimaniNGCat.NGCatList,
                                             width, height, hash)) {
       return;
@@ -3526,17 +3517,7 @@ var Aima_Aimani = {
         
     var href = targetDocument.location.href;
         
-    if (Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      /* 監視していない場合にのみ設定を取得する */
-      Aima_AimaniConfigManager.getConfigurationFromPreferencesAll ();
-    }
-        
     if (Aima_Aimani.enableAll) {
-      if (Aima_AimaniConfigManager.isOldPrefBranch ()) {
-        /* 監視していない場合にのみ設定を取得する */
-        Aima_AimaniConfigManager
-        .getConfigurationFromPreferencesBoardExternal ();
-      }
             
       var needApply = false;
             
@@ -3626,20 +3607,7 @@ var Aima_Aimani = {
       return;
     }
                 
-    if (Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      /* 監視していない場合にのみ設定を取得する */
-      Aima_AimaniConfigManager.getConfigurationFromPreferences ();
-                    
-      /* 設定を反映させる */
-      if (Aima_Aimani.mode == 1) {
-        info = new Aima_AimaniLocationInfo (targetDocument);
-      }
-      else {
-        info
-        = new document.Aima_AimaniLocationInfo (targetDocument);
-      }
-    }
-    else if (Aima_Aimani.nearestExpireTime != 0) {
+    if (Aima_Aimani.nearestExpireTime != 0) {
       var now = (new Date ()).getTime ();
       if (now > Aima_Aimani.nearestExpireTime) {
         Aima_AimaniConfigManager.loadNGWord ();
@@ -3938,11 +3906,6 @@ var Aima_Aimani = {
    *         画像の番号
    */
   addNGNumber : function (num, server, dir, depend, reason, imageNum) {
-    if (Aima_Aimani.mode == 1
-        && Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniConfigManager.loadNGNumber ();
-    }
-        
     if (Aima_Aimani.arrayExists3 (Aima_Aimani.NGNumberList,
                                   num, server, dir)) {
       return;
@@ -3965,11 +3928,6 @@ var Aima_Aimani = {
    *         ディレクトリ名
    */
   deleteNGNumber : function (num, server, dir) {
-    if (Aima_Aimani.mode == 1
-        && Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniConfigManager.loadNGNumber ();
-    }
-        
     if (!Aima_Aimani.arrayDelete3 (Aima_Aimani.NGNumberList,
                                    num, server, dir)) {
       return;
@@ -3993,11 +3951,6 @@ var Aima_Aimani = {
    *         コメント
    */
   addNGThumbnail : function (width, height, bytes, ext, comment) {
-    if (Aima_Aimani.mode == 1
-        && Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniConfigManager.loadNGThumbnail ();
-    }
-        
     if (Aima_Aimani.arrayExistsNGThumbnail(Aima_Aimani.NGThumbnailList,
                                            width, height, bytes, ext)) {
       return;
@@ -4023,11 +3976,6 @@ var Aima_Aimani = {
    *         拡張子
    */
   deleteNGThumbnail : function (width, height, bytes, ext) {
-    if (Aima_Aimani.mode == 1
-        && Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniConfigManager.loadNGThumbnail ();
-    }
-        
     if (!Aima_Aimani.arrayDeleteNGThumbnail (Aima_Aimani.NGThumbnailList,
                                              width, height, bytes, ext)) {
       return;
@@ -4051,11 +3999,6 @@ var Aima_Aimani = {
    *         ディレクトリ名
    */
   addThreadRule : function (num, server, dir, rule) {
-    if (Aima_Aimani.mode == 1
-        && Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniConfigManager.loadThreadRule ();
-    }
-        
     if (Aima_Aimani.arrayExists3 (Aima_Aimani.ThreadRuleList,
                                   num, server, dir, rule)) {
       return;
@@ -4077,11 +4020,6 @@ var Aima_Aimani = {
    *         ディレクトリ名
    */
   deleteThreadRule : function (num, server, dir) {
-    if (Aima_Aimani.mode == 1
-        && Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniConfigManager.loadThreadRule ();
-    }
-        
     if (!Aima_Aimani.arrayDelete3 (Aima_Aimani.ThreadRuleList,
                                    num, server, dir)) {
       return;
@@ -7983,7 +7921,7 @@ var Aima_Aimani = {
  *   Inherits From: nsIObserver
  */
 var Aima_AimaniConfigManager = {
-  prefBranch : null,    /* nsIPrefBranch/nsIPrefBranch2  pref サービス */
+  prefBranch : null,    /* nsIPrefBranch pref サービス */
     
   /**
    * 初期化処理
@@ -8005,7 +7943,7 @@ var Aima_AimaniConfigManager = {
         .setCharPref ("aima_aimani.version", Aima_AimaniVersion);
       }
             
-      if (Components.interfaces.nsIPrefBranch2) {
+      if (true) {
         /* 設定を取得する */
         Aima_AimaniConfigManager.getConfigurationFromPreferencesAll ();
         Aima_AimaniConfigManager.getConfigurationFromPreferences ();
@@ -8042,12 +7980,7 @@ var Aima_AimaniConfigManager = {
    */
   loadPrefBranch : function () {
     if (Aima_Aimani.mode == 1) {
-      if (Components.interfaces.nsIPrefBranch2) {
-        Aima_AimaniConfigManager.prefBranch
-        = Components.classes ["@mozilla.org/preferences-service;1"]
-        .getService (Components.interfaces.nsIPrefBranch2);
-      }
-      else {
+      if (true) {
         Aima_AimaniConfigManager.prefBranch
         = Components.classes ["@mozilla.org/preferences-service;1"]
         .getService (Components.interfaces.nsIPrefBranch);
@@ -8063,7 +7996,7 @@ var Aima_AimaniConfigManager = {
    */
   term : function () {
     if (Aima_Aimani.mode == 1) {
-      if (Components.interfaces.nsIPrefBranch2) {
+      if (true) {
         /* 設定の変更の監視を解除する */
         Aima_AimaniConfigManager.prefBranch
         .removeObserver ("aima_aimani.savepref",
@@ -8100,21 +8033,6 @@ var Aima_AimaniConfigManager = {
             
       Aima_AimaniUIManager.showPanel ();
       Aima_AimaniUIManager.setPanelStatus ();
-    }
-  },
-    
-  /**
-   * prefBranch が古いかどうかチェックする
-   *
-   * @return Boolean
-   *         prefBranch が古いかどうか
-   */
-  isOldPrefBranch : function () {
-    if (Aima_Aimani.mode == 1) {
-      return (Components.interfaces.nsIPrefBranch2 == undefined);
-    }
-    else {
-      return true;
     }
   },
     
@@ -9180,14 +9098,6 @@ var Aima_AimaniUIManager = {
     var optionsURL = "chrome://aima_aimani/content/options.xul";
     var features = "chrome,titlebar,toolbar,centerscreen,resizable";
     Aima_AimaniUIManager.prefDialog = openDialog (optionsURL, "", features);
-        
-    if (Aima_AimaniConfigManager.isOldPrefBranch ()) {
-      Aima_AimaniUIManager.prefDialog.addEventListener
-        ("unload",
-         function () {
-          Aima_AimaniUIManager.setPanelStatus ();
-        }, false);
-    }
   },
     
   /**
