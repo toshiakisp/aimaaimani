@@ -1057,14 +1057,21 @@ var Aima_AimaniNGCat = {
     targetAnchor.parentNode.appendChild (newNode);
         
     if (Aima_Aimani.enableHideEntireThread) {
-      try {
-        if (typeof Akahuku != "undefined"
-            && Akahuku.onHideEntireThread) {
-          Akahuku.onHideEntireThread (targetDocument);
+      // Akahuku.onHideEntireThread は後で一度だけ呼ぶ
+      var param = Aima_Aimani.getDocumentParam (targetDocument);
+      targetDocument.defaultView
+        .clearTimeout (param.ngcat_hideEntireThread_timerID);
+      param.ngcat_hideEntireThread_timerID
+      = targetDocument.defaultView
+      .setTimeout (function () {
+        if (typeof Akahuku != "undefined") {
+          try {
+            Akahuku.onHideEntireThread (targetDocument);
+          }
+          catch (e) { Components.utils.reportError (e);
+          }
         }
-      }
-      catch (e) { Components.utils.reportError (e);
-      }
+      }, 10);
     }
   },
     
@@ -1470,6 +1477,7 @@ Aima_AimaniDocumentParam.prototype = {
   ngcat_caches : null,
   ngcat_log : new Object (),
   ngcat_last : 0,
+  ngcat_hideEntireThread_timerID : null,
   easyNG : false,
   easyNGLeftDown : false,
   easyNGLastX : 0,
