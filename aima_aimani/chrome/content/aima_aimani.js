@@ -205,9 +205,13 @@ Aima_AimaniNGCatCache.prototype = {
                 
         var hash = Aima_AimaniNGCat.md5 (bindata);
                 
+        var imageWidth = this.imageNode.getAttribute ("width")
+        || this.imageNode.width;
+        var imageHeight = this.imageNode.getAttribute ("height")
+        || this.imageNode.height
         var ngcat
-        = this.imageNode.width
-        + "_" + this.imageNode.height
+        = imageWidth
+        + "_" + imageHeight
         + "_" + hash;
                 
         this.imageNode.setAttribute ("aima_aimani_ngcat", ngcat);
@@ -282,8 +286,7 @@ Aima_AimaniNGCatCache.prototype = {
            this.anchor,
            6, false);
                     
-          Aima_AimaniNGCat.addNGCat (this.imageNode.width,
-                                     this.imageNode.height,
+          Aima_AimaniNGCat.addNGCat (imageWidth, imageHeight,
                                      hash,
                                      "");
                     
@@ -310,8 +313,7 @@ Aima_AimaniNGCatCache.prototype = {
         }
                 
         if (autoHide) {
-          Aima_AimaniNGCat.addNGCat (this.imageNode.width,
-                                     this.imageNode.height,
+          Aima_AimaniNGCat.addNGCat (imageWidth, imageHeight,
                                      hash,
                                      "auto");
           setTimeout (function (width, height) {
@@ -320,7 +322,7 @@ Aima_AimaniNGCatCache.prototype = {
                  width,
                  height,
                  hash);
-            }, 1000, this.imageNode.width, this.imageNode.height);
+            }, 1000, imageWidth, imageHeight);
         }
         this._notifyStop ();
       }
@@ -1144,10 +1146,12 @@ var Aima_AimaniNGCat = {
       imageNode.style.visibility = "";
     }
     else {
+      var width = imageNode.getAttribute ("width") || imageNode.width;
+      var height = imageNode.getAttribute ("height") || imageNode.height;
       var item
       = Aima_AimaniNGCat.arrayExistsNGCatNoHash
       (Aima_AimaniNGCat.NGCatList,
-       imageNode.width, imageNode.height);
+       width, height);
       if (item) {
         /* NG カタログに含まれる可能性がある */
         var cache = new Aima_AimaniNGCatCache ();
@@ -5268,10 +5272,10 @@ var Aima_Aimani = {
                 imageNode = node.firstChild;
                 imageNum = parseInt (RegExp.$1);
                 imageWidth
-                  = node.firstChild.width
-                  || node.firstChild.getAttribute ("width");
-                imageHeight = node.firstChild.height
-                  || node.firstChild.getAttribute ("height");
+                  = node.firstChild.getAttribute ("width")
+                  || node.firstChild.width;
+                imageHeight = node.firstChild.getAttribute ("height")
+                  || node.firstChild.height;
                 if ("alt" in node.firstChild
                     && node.firstChild.alt
                     .match (/([0-9]*)/)) {
@@ -5535,10 +5539,10 @@ var Aima_Aimani = {
           if (Aima_Aimani.enableMiniThumb
               || info.threadRule & 8) {
             var w, h, s;
-            w = imageNode.width
-            || imageNode.getAttribute ("width");
-            h = imageNode.height
-            || imageNode.getAttribute ("height");
+            w = imageNode.getAttribute ("width")
+            || imageNode.width;
+            h = imageNode.getAttribute ("height")
+            || imageNode.height;
             s = Aima_Aimani.ThreadRuleMiniThumbSize;
             if (w > h) {
               if (w > s) {
@@ -6760,8 +6764,8 @@ var Aima_Aimani = {
           var w, h, s;
           var imageNode = param.lastImage;
                 
-          w = imageNode.width;
-          h = imageNode.height;
+          w = imageNode.getAttribute ("width") || imageNode.width;
+          h = imageNode.getAttribute ("height") || imageNode.height;
           s = Aima_Aimani.ThreadRuleMiniThumbSize;
           if (w > h) {
             if (w > s) {
