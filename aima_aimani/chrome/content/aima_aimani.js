@@ -3310,6 +3310,14 @@ var Aima_Aimani = {
    */
   onDOMContentLoaded : function (event) {
     var targetDocument = Aima_Aimani.getTargetDocument (event);
+
+    var frame = targetDocument.defaultView.frameElement;
+    if (frame && frame.nodeName.toLowerCase () == "iframe"
+        && !frame.hasAttribute ("src")) {
+      // src の無い iframe の中には適用しない
+      // (親ドキュメントの href と同じに見えてしまう)
+      return;
+    }
         
     var href = targetDocument.location.href;
         
