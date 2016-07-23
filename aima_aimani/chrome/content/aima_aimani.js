@@ -51,6 +51,7 @@ Aima_AimaniNGCatCache.prototype = {
   },
 
   cancel : function (status) {
+    status = status || Components.results.NS_BINDING_ABORTED;
     if (this._canceled) {
       return;
     }
@@ -1193,12 +1194,18 @@ var Aima_AimaniNGCat = {
         if (!request
             || request.imageStatus & errorStatus) {
           imageNode.style.visibility = "hidden";
-          cache.imageNode.addEventListener
-            ("load",
-             function () {
-              cache.imageNode.removeEventListener ("load", arguments.callee);
+          var cache_handler = function (event) {
+            event.target.removeEventListener ("load", cache_handler);
+            event.target.removeEventListener ("error", cache_handler);
+            if (event.type == "load") {
               cache.start ();
-            }, false);
+            }
+            else {
+              cache.cancel ();
+            }
+          };
+          cache.imageNode.addEventListener ("load", cache_handler, false);
+          cache.imageNode.addEventListener ("error", cache_handler, false);
         }
         else {
           cache.start ();
