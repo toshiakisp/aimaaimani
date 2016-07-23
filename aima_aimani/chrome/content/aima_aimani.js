@@ -5159,19 +5159,6 @@ var Aima_Aimani = {
    *         対象のドキュメント
    */
   hideNGNumberHandler2 : function (targetNode, targetDocument) {
-    var nodes = targetNode.getElementsByTagName ("small");
-    for (var i = 0; i < nodes.length; i ++) {
-      if (nodes [i].className == "aima_aimani_generated") {
-        var x = 0;
-        for (var tmp = nodes [i]; tmp;
-             tmp = tmp.offsetParent) {
-          x += tmp.offsetLeft;
-        }
-        if (x > targetDocument.documentElement.scrollWidth) {
-          nodes [i].style.display = "block";
-        }
-      }
-    }
   },
     
   /**
@@ -5794,14 +5781,6 @@ var Aima_Aimani = {
           else {
             threadTmpNode.parentNode.insertBefore (newNode,
                                                    threadTmpNode);
-          }
-          var x = 0;
-          for (var tmp = newNode; tmp;
-               tmp = tmp.offsetParent) {
-            x += tmp.offsetLeft;
-          }
-          if (x > targetDocument.documentElement.scrollWidth) {
-            newNode.style.display = "block";
           }
         }
                 
