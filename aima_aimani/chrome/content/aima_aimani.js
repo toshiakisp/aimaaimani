@@ -6985,6 +6985,30 @@ var Aima_Aimani = {
    *         コンテナ
    */
   getMessageContainer : function (node) {
+    try {
+      return Aima_Aimani.getMessageContainerByXPath (node);
+    }
+    catch (e) {
+    }
+    return Aima_Aimani.getMessageContainerByDOM (node);
+  },
+  getMessageContainerByXPath : function (node) {
+    var xpath = "./ancestor-or-self::td[1]/ancestor::table[1]";
+    var doc = node.ownerDocument;
+    var type = doc.defaultView.XPathResult.FIRST_ORDERED_NODE_TYPE;
+    var re = doc.evaluate (xpath, node, null, type, null);
+    var table = re.singleNodeValue;
+    if (table) {
+      xpath = ".//blockquote[1]/ancestor::td[1]";
+      doc.evaluate (xpath, table, null, type, null);
+      var td = re.singleNodeValue;
+      if (td) {
+        return {main: td, nodes: [table]};
+      }
+    }
+    throw new Error ();
+  },
+  getMessageContainerByDOM : function (node) {
     var container = {};
     
     var td = Aima_Aimani.findParentNode (node, "td");
