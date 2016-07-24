@@ -6855,6 +6855,46 @@ var Aima_Aimani = {
    *         [HTMLQuoteElement, ...]
    */
   getMessageBQ : function (targetNode) {
+    try {
+      return Aima_Aimani.getMessageBQByXPath (targetNode);
+    }
+    catch (e) { Aima_Aimani.log (e);
+    }
+    return Aima_Aimani.getMessageBQByDOM (targetNode);
+  },
+  getMessageBQByXPath : function (targetNode) {
+    var doc = targetNode.ownerDocument || targetNode;
+    if (doc.nodeType != doc.DOCUMENT_NODE) {
+      throw new Error ();
+    }
+    var newNodes = new Array ();
+    var xpath = ".//blockquote"
+      + "[count(ancestor::center)=0]"
+      + "[count(ancestor::table[@border='1' or @class='ama'])=0]"
+      + "[count(ancestor::div[@id='akahuku_respanel_content' or @class='ama'])=0]";
+    var type = doc.defaultView.XPathResult.ORDERED_NODE_ITERATOR_TYPE;
+    var it = doc.evaluate (xpath, targetNode, null, type, null);
+    var node = it.iterateNext ();
+    while (node) {
+      newNodes.push (node);
+      node = it.iterateNext ();
+    }
+    if (newNodes.length == 0) {
+      // BLOCKQUOTE ではないバージョン
+      xpath = ".//div["
+        + "contains(concat(' ',normalize-space(@class),' '),' re ')"
+        + " or contains(concat(' ',normalize-space(@class),' '),' t ')"
+        + "]";
+      it = doc.evaluate (xpath, targetNode, null, type, it);
+      node = it.iterateNext ();
+      while (node) {
+        newNodes.push (node);
+        node = it.iterateNext ();
+      }
+    }
+    return newNodes;
+  },
+  getMessageBQByDOM : function (targetNode) {
     var nodes = targetNode.getElementsByTagName ("blockquote");
     var newNodes = new Array ();
     for (var i = 0; i < nodes.length; i ++) {
