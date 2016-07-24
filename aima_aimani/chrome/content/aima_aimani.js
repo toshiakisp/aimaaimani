@@ -3482,7 +3482,7 @@ var Aima_Aimani = {
             header = header [0];
             var s
               = Aima_Aimani.styleCatalogueTableSelector
-              + "{display: table !important;}";
+              + "{visibility: unset !important;}";
             var style
               = targetDocument.createElement ("style");
             style.appendChild (targetDocument.createTextNode
@@ -3573,7 +3573,7 @@ var Aima_Aimani = {
           header = header [0];
           var s
             = "body > form"
-            + "{display: block !important;}";
+            + "{visibility: unset !important;}";
           var style
             = targetDocument.createElement ("style");
           style.appendChild (targetDocument.createTextNode
@@ -6610,7 +6610,7 @@ var Aima_Aimani = {
               + ") {";
                             
               style
-              += "body > form {display: none;}";
+              += "body > form {visibility: hidden;}";
                             
               style
               += "}";
@@ -6636,7 +6636,7 @@ var Aima_Aimani = {
                             
               style
               += Aima_Aimani.styleCatalogueTableSelector
-              + "{display: none;}";
+              + "{visibility: hidden;}";
                             
               style
               += "}";
