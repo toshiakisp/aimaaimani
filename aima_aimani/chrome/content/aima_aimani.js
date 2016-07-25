@@ -7000,7 +7000,7 @@ var Aima_Aimani = {
     var table = re.singleNodeValue;
     if (table) {
       xpath = ".//blockquote[1]/ancestor::td[1]";
-      doc.evaluate (xpath, table, null, type, null);
+      re = doc.evaluate (xpath, table, null, type, null);
       var td = re.singleNodeValue;
       if (td) {
         return {main: td, nodes: [table]};
