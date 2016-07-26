@@ -1108,6 +1108,8 @@ var Aima_AimaniNGCat = {
         cache.imageNode = imageNode;
         cache.hiding = false;
 
+        ngcat = "null?";//ハッシュ計算中
+
         param.ngcat_cacheManager.addNGCatCache (cache);
                 
         var getImgRequest = function (img) {
@@ -6589,6 +6591,26 @@ var Aima_Aimani = {
             }
           }
         }
+        if (Aima_AimaniNGCat.enableNGCat) {
+          for (var name in Aima_AimaniServerName) {
+            if (name in Aima_AimaniNGCat.boardSelectExList) {
+              continue;
+            }
+            if (name.match (/^([^:]+):(.+)$/)) {
+              var server = RegExp.$1;
+              var dir = RegExp.$2;
+              prefix = "http://" + server + ".2chan.net/" + dir + "/";
+              style
+                += "@-moz-document url-prefix(" + prefix + ") {"
+                // ハッシュ計算未成功
+                + "td small.aima_aimani_generated"
+                + "[name^='hide_ngcat_'][name$='_null?']"
+                + "{color: #ccc !important;}"
+
+                + "}";
+            }
+          }
+        }
         if (Aima_Aimani.enableHideCatStyle) {
           for (var name in Aima_AimaniServerName) {
             if (name in Aima_AimaniNGCat.boardSelectExList) {
@@ -7180,10 +7202,7 @@ var Aima_AimaniConfigManager = {
       Aima_AimaniConfigManager
       .getConfigurationFromPreferencesBoardExternal ();
       
-      if (Aima_Aimani.enableHideStyle
-          || Aima_Aimani.enableHideCatStyle) {
-        Aima_Aimani.modifyStyleFile (Aima_Aimani.enableAll);
-      }
+      Aima_Aimani.modifyStyleFile (Aima_Aimani.enableAll);
             
       Aima_AimaniUIManager.showPanel ();
       Aima_AimaniUIManager.setPanelStatus ();
