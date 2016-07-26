@@ -84,57 +84,8 @@ Aima_AimaniNGCatCache.prototype = {
       throw new Error ("Aima_AimaniNGCatCache.start: already started")
     }
     try {
-      var src = this.imageNode.src;
-      if (src.match
-          (/^akahuku:\/\/([^\.\/]+)\.2chan\.net(:[0-9]+)?\/p2p\/http\.5\/((?:feb|tmp|up|img|cgi|zip|dat|may|nov|jun|dec)\/)?([^\/]+)\/(thumb|src|cat)\/([A-Za-z0-9]+)\.([a-z]+)$/)) {
-        var server = RegExp.$1;
-        var sdir = RegExp.$3;
-        var dir = RegExp.$4;
-        var type = RegExp.$5;
-        var leafName = RegExp.$6;
-        var ext = RegExp.$7;
-                
-        if (sdir) {
-          sdir = sdir.replace (/\//, "");
-          if ("enableTreatAsSame" in arAkahukuP2P
-              && arAkahukuP2P.enableTreatAsSame) {
-            server = sdir;
-          }
-          else {
-            dir = sdir + "-" + dir;
-          }
-        }
-                
-        /* P2P の場合は P2P のキャッシュから取得する */
-        if (leafName.length == 17) {
-          /* 末尾にランダム文字列が付いている場合、取り除く */
-          leafName = leafName.substr (0, leafName.length - 4);
-        }
-                
-        var targetFileName
-          = arAkahukuP2P.cacheBase
-          + arAkahukuFile.separator
-          + server
-          + arAkahukuFile.separator
-          + dir
-          + arAkahukuFile.separator
-          + type
-          + arAkahukuFile.separator
-          + leafName + "." + ext;
-                
-        this.asyncOpenP2PCacheEntry (targetFileName);
-        this._notifyStart ();
-      }
-      else {
-        Components.utils.import ("resource://gre/modules/NetUtil.jsm");
-        var uri = NetUtil.newURI (this.imageNode.src);
-        Aima_AimaniNGCat.httpCacheStorage
-        .asyncOpenURI
-        (uri, "",
-         Components.interfaces.nsICacheStorage.OPEN_READONLY,
-         this);
-        this._notifyStart ();
-      }
+      this.asyncOpenCacheViaChannel ();
+      this._notifyStart ();
     }
     catch (e) { Components.utils.reportError (e);
       this._notifyStart ();
@@ -142,54 +93,65 @@ Aima_AimaniNGCatCache.prototype = {
       this._destruct ();
     }
   },
-  asyncOpenP2PCacheEntry : function (targetFileName) {
-    Aima_Aimani.executeSoon (function (that) {
-      that.openP2PCacheEntry (targetFileName);
-    }, [this]);
-  },
-  openP2PCacheEntry : function (targetFileName) {
-    var targetFile
-      = Components.classes ["@mozilla.org/file/local;1"]
-      .createInstance (Components.interfaces.nsILocalFile);
-    targetFile.initWithPath (targetFileName);
-    if (targetFile.exists ()) {
-      var descriptor
-        = new arAkahukuP2PCacheEntryDescriptor (targetFile);
-      this.onCacheEntryAvailable (descriptor, true, null, 0);
-    }
-    else {
-      this._notifyStop (Components.results.NS_ERROR_FILE_NOT_FOUND);
-      this._destruct ();
-    }
-  },
-    
-  /**
-   * キャッシュエントリが使用可能になったイベント
-   *   nsICacheEntryOpenCallback.onCacheEntryAvailable
-   * 差分位置を取得する
-   *
-   * @param  nsICacheEntry entry
-   *         キャッシュの情報
-   * @param  boolean isNew
-   * @param  nsIApplicationCache appCache
-   * @param  nsresult result
-   */
-  onCacheEntryAvailable : function (entry, isNew, appCache, result) {
-    if (this._canceled) {
-      return;
-    }
-    if (Components.isSuccessCode (result)) {
-      var self = this;
-      var istream = entry.openInputStream (0);
-      Components.utils.import ("resource://gre/modules/NetUtil.jsm");
-      NetUtil.asyncFetch (istream, function (istream, result) {
-        self._onCacheStreamAvailable (entry, istream, result);
-      });
-    }
-    else {
-      this._notifyStop (result);
-      this._destruct ();
-    }
+
+  asyncOpenCacheViaChannel : function () {
+    var url = this.imageNode.src;
+    var ios
+      = Components.classes ["@mozilla.org/network/io-service;1"]
+      .getService (Components.interfaces.nsIIOService);
+    var ssm
+      = Components.classes ["@mozilla.org/scriptsecuritymanager;1"]
+      .getService (Components.interfaces.nsIScriptSecurityManager);
+    // require gecko 36
+    var channel = ios.newChannel2 (url, null, null,
+        this.imageNode,
+        ssm.getSystemPrincipal (),
+        null,
+        Components.interfaces.nsILoadInfo.SEC_ALLOW_CROSS_ORIGIN_DATA_IS_NULL,
+        Components.interfaces.nsIContentPolicy.TYPE_IMAGE);
+
+    channel.loadFlags = Components.interfaces.nsIRequest.LOAD_FROM_CACHE;
+
+    var listener = {
+      cache : this,
+      destruct : function () {
+        this.cache = null;
+        this.pipe = null;
+      },
+      onStartRequest : function (request, context) {
+        this.pipe
+          = Components.classes ["@mozilla.org/pipe;1"]
+          .createInstance (Components.interfaces.nsIPipe);
+        this.pipe.init (true, false, null, 0xffffffff, null);
+        this.dataSize = 0;
+      },
+      onDataAvailable : function (request, context, inputStream, offset, count) {
+        var c = this.pipe.outputStream.writeFrom (inputStream, count);
+        this.dataSize += c;
+      },
+      onStopRequest : function (request, context, statusCode) {
+        this.pipe.outputStream.close ();
+        if (!Components.isSuccessCode (statusCode)) {
+          this.cache._notifyStop (statusCode);
+          this.cache._destruct ();
+          this.destruct ();
+          return;
+        }
+
+        var entry = {
+          mPipe : this.pipe,
+          mDataSize : this.dataSize,
+          get dataSize () {return this.mDataSize;},
+          openInputStream : function () {return this.mPipe.inputStream;},
+          close : function () {
+            this.mPipe = null;
+          },
+        };
+        this.cache._onCacheStreamAvailable (entry, this.pipe.inputStream, 0);
+        this.destruct ();
+      },
+    };
+    channel.asyncOpen (listener, null);
   },
 
   _onCacheStreamAvailable : function (entry, istream, result) {
@@ -338,17 +300,6 @@ Aima_AimaniNGCatCache.prototype = {
     }
     this._destruct ();
   },
-
-  onCacheEntryCheck : function (entry, appCache) {
-    try {
-      entry.dataSize;
-    }
-    catch (e if e.result == Components.results.NS_ERROR_IN_PROGRESS) {
-      return Components.interfaces.nsICacheEntryOpenCallback.RECHECK_AFTER_WRITE_FINISHED;
-    }
-    return Components.interfaces.nsICacheEntryOpenCallback.ENTRY_WANTED;
-  },
-  mainThreadOnly : true,
 
   // easy notification callback (same as nsIRequestObserver)
   _notify : function (result) {
@@ -508,9 +459,6 @@ var Aima_AimaniNGCat = {
     
   textHideNGCat : "\u6D88",
   textShowNGCat : "\u89E3",
-    
-  cacheService : null,     /* nsICasheStorageService  キャッシュサービス */
-  httpCacheStorage : null, /* nsICacheStorage  HTTP キャッシュストレージ */
     
   /**
    * 初期化
@@ -1135,20 +1083,6 @@ var Aima_AimaniNGCat = {
                     threadNum, server, dir, imageNum,
                     imageNode) {
     var param = Aima_Aimani.getDocumentParam (targetDocument);
-    if (Aima_AimaniNGCat.cacheService == null) {
-      Aima_AimaniNGCat.cacheService
-      = Components.classes ["@mozilla.org/netwerk/cache-storage-service;1"]
-      .getService (Components.interfaces.nsICacheStorageService);
-    }
-        
-    if (Aima_AimaniNGCat.httpCacheStorage == null) {
-      var scope = {};
-      Components.utils.import ("resource://gre/modules/LoadContextInfo.jsm", scope);
-      this.LoadContextInfo = scope.LoadContextInfo;
-      Aima_AimaniNGCat.httpCacheStorage
-      = Aima_AimaniNGCat.cacheService
-      .diskCacheStorage (this.LoadContextInfo.default, false);
-    }
         
     var ngcat = "null";
     if (imageNode.hasAttribute ("aima_aimani_ngcat")) {
