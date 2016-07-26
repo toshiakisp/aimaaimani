@@ -51,7 +51,9 @@ Aima_AimaniNGCatCache.prototype = {
   },
 
   cancel : function (status) {
-    status = status || Components.results.NS_BINDING_ABORTED;
+    if (arguments.length == 0) {
+      status = Components.results.NS_BINDING_ABORTED;
+    }
     if (this._canceled) {
       return;
     }
@@ -1174,34 +1176,70 @@ var Aima_AimaniNGCat = {
 
         param.ngcat_cacheManager.addNGCatCache (cache);
                 
-        var load;
-        var request;
-                
-        load
-          = cache.imageNode.QueryInterface
-          (Components.interfaces.nsIImageLoadingContent);
-        if (load) {
-          request
-            = load.getRequest
-            (Components.interfaces.nsIImageLoadingContent
-             .CURRENT_REQUEST);
-        }
-                
-        var errorStatus
-          = Components.interfaces.imgIRequest.STATUS_ERROR
-          | Components.interfaces.imgIRequest.STATUS_LOAD_PARTIAL;
+        var getImgRequest = function (img) {
+          var ILC = Components.interfaces.nsIImageLoadingContent;
+          var load;
+          try {
+            load = img.QueryInterface (ILC);
+          }
+          catch (e) {
+          }
+          return load ? load.getRequest (ILC.CURRENT_REQUEST) : null;
+        };
+        var complete
+          = Components.interfaces.imgIRequest.STATUS_LOAD_COMPLETE;
+
+        var request = getImgRequest (cache.imageNode);
                 
         if (!request
-            || request.imageStatus & errorStatus) {
+            || !(request.imageStatus & complete)) {
+          // ロード完了していない場合(未ロードorロード中orエラー)
+          // load/error イベントを待ってからハッシュ算出
           imageNode.style.visibility = "hidden";
+          var waiting_for_p2p = false;
           var cache_handler = function (event) {
             event.target.removeEventListener ("load", cache_handler);
             event.target.removeEventListener ("error", cache_handler);
             if (event.type == "load") {
               cache.start ();
+              return;
+            }
+            // on error
+            if (!waiting_for_p2p &&
+                /^akahuku:/.test (event.target.src) ) {
+              // 赤福P2Pによるsrc書き換えのため再度loadを待つ
+              waiting_for_p2p = true;
+              // error 2連続を避けるため間を空けて再監視
+              event.target.ownerDocument.defaultView
+              .setTimeout (function (img) {
+                img.addEventListener ("load", cache_handler, false);
+                img.addEventListener ("error", cache_handler, false);
+              }, 10, event.target);
+            }
+            else if (waiting_for_p2p) {
+              // P2P画像ロードに失敗
+              cache.cancel ();
             }
             else {
-              cache.cancel ();
+              // 赤福P2Pによるsrc書き換えを少し待つ
+              event.target.ownerDocument.defaultView
+              .setTimeout (function (img) {
+                if (/^akahuku:/.test (img.src)) {
+                  waiting_for_p2p = true;
+                  var request = getImgRequest (img);
+                  if (!request || !(request.imageStatus & complete)) {
+                    img.addEventListener ("load", cache_handler, false);
+                    img.addEventListener ("error", cache_handler, false);
+                  }
+                  else {
+                    cache.start ();
+                  }
+                }
+                else {
+                  // ダメ元でcacheを探してみる
+                  cache.start ();
+                }
+              }, 500, event.target);
             }
           };
           cache.imageNode.addEventListener ("load", cache_handler, false);
