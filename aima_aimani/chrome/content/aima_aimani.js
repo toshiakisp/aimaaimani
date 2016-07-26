@@ -7076,7 +7076,7 @@ var Aima_Aimani = {
         = Components.classes ["@mozilla.org/consoleservice;1"]
         .getService (Components.interfaces.nsIConsoleService);
     }
-    var stack = Components.stack.caller.caller;
+    var stack = Components.stack.caller;
     var flag = Components.interfaces.nsIScriptError.infoFlag;
     if (typeof message == "string") {
       if (/^!/.test (message)) {
