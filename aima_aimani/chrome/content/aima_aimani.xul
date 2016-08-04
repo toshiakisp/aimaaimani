@@ -6,11 +6,7 @@
 <overlay id="aima_aimaniOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/x-javascript"
-          src="chrome://aima_aimani/content/version.js" />
-  <script type="application/x-javascript"
-          src="chrome://aima_aimani/content/server.js" />
-  <script type="application/x-javascript"
-          src="chrome://aima_aimani/content/aima_aimani.js" />
+          src="chrome://aima_aimani/content/aima_aimani_xul.js" />
   
   <menupopup id="menu_ToolsPopup">
     <menuitem id="aima_aimani-tools-preferences"
@@ -31,11 +27,11 @@
     <menuitem id="aima_aimani-menuitem-content-ngnumber-selection-add"
               insertbefore="context-sep-bidi"
               hidden="true" label="[消]" enabled="true"
-              oncommand="Aima_Aimani.hideSelectedRes (true);" />
+              oncommand="Aima_AimaniXUL.hideSelectedResOrThread (true);" />
     <menuitem id="aima_aimani-menuitem-content-ngnumber-selection-delete"
               insertbefore="context-sep-bidi"
               hidden="true" label="[解除]" enabled="true"
-              oncommand="Aima_Aimani.hideSelectedRes (false);" />
+              oncommand="Aima_AimaniXUL.hideSelectedResOrThread (false);" />
   </popup>
   
   <statusbar id="status-bar" class="chromeclass-status">
