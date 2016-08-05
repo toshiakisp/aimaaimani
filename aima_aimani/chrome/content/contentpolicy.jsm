@@ -1,4 +1,11 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set ts=2 et sw=2 tw=80 filetype=javascript: */
+/**
+ * NG 画像ブロック用コンテントポリシー XPCOMモジュール
+ */
+var EXPORTED_SYMBOLS = [
+  "arAima_AimaniContentPolicy",
+];
 
 Components.utils.import ("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -249,4 +256,8 @@ arAima_AimaniContentPolicy.prototype = {
 
 var components = [arAima_AimaniContentPolicy];
 this.NSGetFactory = XPCOMUtils.generateNSGetFactory (components);
+
+// for registerXPCOM
+arAima_AimaniContentPolicy.prototype._xpcom_factory
+= NSGetFactory (arAima_AimaniContentPolicy.prototype.classID);
 
