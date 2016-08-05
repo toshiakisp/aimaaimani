@@ -4,7 +4,3 @@ overlay chrome://browser/content/browser.xul              chrome://aima_aimani/c
 overlay chrome://navigator/content/navigatorOverlay.xul   chrome://aima_aimani/content/aima_aimani.xul
 
 style chrome://global/content/customizeToolbar.xul chrome://aima_aimani/content/aima_aimani.css
-
-component   {812162d9-2c38-4012-a5e0-60205537cdad} components/arAima_AimaniContentPolicy.js
-contract    @unmht.org/aima-aimani-content-policy;1 {812162d9-2c38-4012-a5e0-60205537cdad}
-category    content-policy arAima_AimaniContentPolicy @unmht.org/aima-aimani-content-policy;1
