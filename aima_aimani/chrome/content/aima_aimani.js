@@ -21,14 +21,19 @@ var EXPORTED_SYMBOLS = [
   "Aima_AimaniServerName",
 ];
 
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+const Cr = Components.results;
+
 var loader
-= Components.classes ["@mozilla.org/moz/jssubscript-loader;1"]
-.getService (Components.interfaces.mozIJSSubScriptLoader);
+= Cc ["@mozilla.org/moz/jssubscript-loader;1"]
+.getService (Ci.mozIJSSubScriptLoader);
 
 loader.loadSubScript ("chrome://aima_aimani/content/version.js", this);
 loader.loadSubScript ("chrome://aima_aimani/content/server.js", this);
 
-Components.utils.import("resource://gre/modules/Timer.jsm");
+Cu.import("resource://gre/modules/Timer.jsm");
 
 /**
  * NG カタログの各画像のハッシュ算出器
@@ -82,7 +87,7 @@ Aima_AimaniNGCatCache.prototype = {
 
   cancel : function (status) {
     if (arguments.length == 0) {
-      status = Components.results.NS_BINDING_ABORTED;
+      status = Cr.NS_BINDING_ABORTED;
     }
     if (this._canceled) {
       return;
@@ -117,7 +122,7 @@ Aima_AimaniNGCatCache.prototype = {
       this.asyncOpenCacheViaChannel ();
       this._notifyStart ();
     }
-    catch (e) { Components.utils.reportError (e);
+    catch (e) { Cu.reportError (e);
       this._notifyStart ();
       this._notifyStop (e.result);
       this._destruct ();
@@ -127,20 +132,20 @@ Aima_AimaniNGCatCache.prototype = {
   asyncOpenCacheViaChannel : function () {
     var url = this.imageNode.src;
     var ios
-      = Components.classes ["@mozilla.org/network/io-service;1"]
-      .getService (Components.interfaces.nsIIOService);
+      = Cc ["@mozilla.org/network/io-service;1"]
+      .getService (Ci.nsIIOService);
     var ssm
-      = Components.classes ["@mozilla.org/scriptsecuritymanager;1"]
-      .getService (Components.interfaces.nsIScriptSecurityManager);
+      = Cc ["@mozilla.org/scriptsecuritymanager;1"]
+      .getService (Ci.nsIScriptSecurityManager);
     // require gecko 36
     var channel = ios.newChannel2 (url, null, null,
         this.imageNode,
         ssm.getSystemPrincipal (),
         null,
-        Components.interfaces.nsILoadInfo.SEC_ALLOW_CROSS_ORIGIN_DATA_IS_NULL,
-        Components.interfaces.nsIContentPolicy.TYPE_IMAGE);
+        Ci.nsILoadInfo.SEC_ALLOW_CROSS_ORIGIN_DATA_IS_NULL,
+        Ci.nsIContentPolicy.TYPE_IMAGE);
 
-    channel.loadFlags = Components.interfaces.nsIRequest.LOAD_FROM_CACHE;
+    channel.loadFlags = Ci.nsIRequest.LOAD_FROM_CACHE;
 
     var listener = {
       cache : this,
@@ -150,8 +155,8 @@ Aima_AimaniNGCatCache.prototype = {
       },
       onStartRequest : function (request, context) {
         this.pipe
-          = Components.classes ["@mozilla.org/pipe;1"]
-          .createInstance (Components.interfaces.nsIPipe);
+          = Cc ["@mozilla.org/pipe;1"]
+          .createInstance (Ci.nsIPipe);
         this.pipe.init (true, false, null, 0xffffffff, null);
         this.dataSize = 0;
       },
@@ -191,8 +196,8 @@ Aima_AimaniNGCatCache.prototype = {
     if (Components.isSuccessCode (result)) {
       try {
         var bstream
-        = Components.classes ["@mozilla.org/binaryinputstream;1"]
-        .createInstance (Components.interfaces.nsIBinaryInputStream);
+        = Cc ["@mozilla.org/binaryinputstream;1"]
+        .createInstance (Ci.nsIBinaryInputStream);
         bstream.setInputStream (istream);
         var bindata = bstream.readBytes (entry.dataSize);
         bstream.close ();
@@ -322,7 +327,7 @@ Aima_AimaniNGCatCache.prototype = {
         }
         this._notifyStop ();
       }
-      catch (e) { Components.utils.reportError (e);
+      catch (e) { Cu.reportError (e);
         this._notifyStop (e.result);
       }
     }
@@ -345,7 +350,7 @@ Aima_AimaniNGCatCache.prototype = {
         this.notificationTarget.onStartRequest (this, null);
       }
     }
-    catch (e) { Components.utils.reportError (e);
+    catch (e) { Cu.reportError (e);
     }
   },
   _notifyStart : function ()
@@ -355,7 +360,7 @@ Aima_AimaniNGCatCache.prototype = {
   },
   _notifyStop : function (result) {
     this._stopped = true;
-    this._notify (arguments.length == 0 ? Components.results.NS_OK : result);
+    this._notify (arguments.length == 0 ? Cr.NS_OK : result);
   },
 
 };
@@ -403,8 +408,8 @@ Aima_AimaniNGCatCacheManager.prototype = {
     }
     else {
       var numRestart = cache.numRestart ? cache.numRestart : 0;
-      if ((status == Components.results.NS_ERROR_CACHE_KEY_NOT_FOUND
-            || status == Components.results.NS_ERROR_FILE_NOT_FOUND)
+      if ((status == Cr.NS_ERROR_CACHE_KEY_NOT_FOUND
+            || status == Cr.NS_ERROR_FILE_NOT_FOUND)
           && numRestart < this.numMaxRetry) {
         cache.numRestart = numRestart + 1;
         try {
@@ -412,7 +417,7 @@ Aima_AimaniNGCatCacheManager.prototype = {
           this.caches.push (cache);
           return;
         }
-        catch (e) { Components.utils.reportError (e);
+        catch (e) { Cu.reportError (e);
         }
       }
 
@@ -432,8 +437,8 @@ Aima_AimaniNGCatCacheManager.prototype = {
   resultCodeToString : function (code) {
     var codeInHex = "(0x" + code.toString (16) + ")";
     var codeName = "";
-    for (var name in Components.results) {
-      if (code === Components.results [name]) {
+    for (var name in Cr) {
+      if (code === Cr [name]) {
         codeName = name + " ";
         break;
       }
@@ -460,7 +465,7 @@ Aima_AimaniNGCatCacheManager.prototype = {
       try {
         l [i].apply (null, [this, status]);
       }
-      catch (e) { Components.utils.reportError (e);
+      catch (e) { Cu.reportError (e);
       }
     }
   },
@@ -576,7 +581,7 @@ var Aima_AimaniNGCat = {
           }
         }
       }
-      catch (e) { Components.utils.reportError (e);
+      catch (e) { Cu.reportError (e);
       }
     }
         
@@ -590,7 +595,7 @@ var Aima_AimaniNGCat = {
             Akahuku.onHideEntireThread (targetDocument);
           }
         }
-        catch (e) { Components.utils.reportError (e);
+        catch (e) { Cu.reportError (e);
         }
       }
     }
@@ -1050,7 +1055,7 @@ var Aima_AimaniNGCat = {
           try {
             Akahuku.onHideEntireThread (targetDocument);
           }
-          catch (e) { Components.utils.reportError (e);
+          catch (e) { Cu.reportError (e);
           }
         }
       }, 10);
@@ -1144,7 +1149,7 @@ var Aima_AimaniNGCat = {
         param.ngcat_cacheManager.addNGCatCache (cache);
                 
         var getImgRequest = function (img) {
-          var ILC = Components.interfaces.nsIImageLoadingContent;
+          var ILC = Ci.nsIImageLoadingContent;
           var load;
           try {
             load = img.QueryInterface (ILC);
@@ -1154,7 +1159,7 @@ var Aima_AimaniNGCat = {
           return load ? load.getRequest (ILC.CURRENT_REQUEST) : null;
         };
         var complete
-          = Components.interfaces.imgIRequest.STATUS_LOAD_COMPLETE;
+          = Ci.imgIRequest.STATUS_LOAD_COMPLETE;
 
         var request = getImgRequest (cache.imageNode);
                 
@@ -1238,9 +1243,8 @@ var Aima_AimaniConverter = {
    */
   init : function () {
     Aima_AimaniConverter.converter
-    = Components
-    .classes ["@mozilla.org/intl/scriptableunicodeconverter"]
-    .getService (Components.interfaces.nsIScriptableUnicodeConverter);
+    = Cc ["@mozilla.org/intl/scriptableunicodeconverter"]
+    .getService (Ci.nsIScriptableUnicodeConverter);
   },
     
   /**
@@ -1308,7 +1312,7 @@ Aima_AimaniLocationInfo.prototype = {
       try {
         location = Akahuku.protocolHandler.deAkahukuURI (location);
       }
-      catch (e) { Components.utils.reportError (e);
+      catch (e) { Cu.reportError (e);
       }
     }
         
@@ -1437,10 +1441,10 @@ function Aima_AimaniStyle (name) {
   this.registeredData = null;
 }
 Aima_AimaniStyle.prototype = {
-  type : Components.interfaces.nsIStyleSheetService.USER_SHEET,
+  type : Ci.nsIStyleSheetService.USER_SHEET,
   getStyleSheetService : function () {
-    return Components.classes ["@mozilla.org/content/style-sheet-service;1"]
-      .getService (Components.interfaces.nsIStyleSheetService);
+    return Cc ["@mozilla.org/content/style-sheet-service;1"]
+      .getService (Ci.nsIStyleSheetService);
   },
   register : function () {
     if (this.registeredData) {
@@ -1466,8 +1470,8 @@ Aima_AimaniStyle.prototype = {
     var name = this.name ? "/*" + this.name.replace (/(\*\/|#)/,"") + "*/": "";
     var str = "data:text/css," + name + encodeURIComponent (this.styleText);
     var ios
-      = Components.classes ["@mozilla.org/network/io-service;1"]
-      .getService (Components.interfaces.nsIIOService);
+      = Cc ["@mozilla.org/network/io-service;1"]
+      .getService (Ci.nsIIOService);
     return ios.newURI (str, null, null);
   },
   setStyle : function (styleText) {
@@ -1809,7 +1813,6 @@ var Aima_Aimani = {
   },
 
   getContentFrameMessageManager : function (targetDocument) {
-    var Ci = Components.interfaces;
     return targetDocument.defaultView
       .QueryInterface (Ci.nsIInterfaceRequestor)
       .getInterface (Ci.nsIWebNavigation)
@@ -3255,7 +3258,7 @@ var Aima_Aimani = {
         }
       }
     }
-    catch (e) { Components.utils.reportError (e);
+    catch (e) { Cu.reportError (e);
     }
   },
     
@@ -3284,7 +3287,7 @@ var Aima_Aimani = {
           event.stopPropagation ();
         }
       }
-      catch (e) { Components.utils.reportError (e);
+      catch (e) { Cu.reportError (e);
       }
     }
   },
@@ -3308,7 +3311,7 @@ var Aima_Aimani = {
         }
       }
     }
-    catch (e) { Components.utils.reportError (e);
+    catch (e) { Cu.reportError (e);
     }
   },
     
@@ -3429,7 +3432,7 @@ var Aima_Aimani = {
         try {
           href = Akahuku.protocolHandler.deAkahukuURI (href);
         }
-        catch (e) { Components.utils.reportError (e);
+        catch (e) { Cu.reportError (e);
         }
       }
             
@@ -3480,7 +3483,7 @@ var Aima_Aimani = {
         Akahuku.onAima_Aimanied (targetDocument);
       }
     }
-    catch (e) { Components.utils.reportError (e);
+    catch (e) { Cu.reportError (e);
     }
   },
     
@@ -3554,7 +3557,7 @@ var Aima_Aimani = {
               Akahuku.onHideEntireThread (targetDocument);
             }
           }
-          catch (e) { Components.utils.reportError (e);
+          catch (e) { Cu.reportError (e);
           }
         }
                         
@@ -3615,7 +3618,7 @@ var Aima_Aimani = {
             header.appendChild (style);
           }
         }
-        catch (e) { Components.utils.reportError (e);
+        catch (e) { Cu.reportError (e);
         }
                 
         var enableNGWord = Aima_Aimani.enableNGWord;
@@ -6914,7 +6917,7 @@ var Aima_Aimani = {
             
       Aima_Aimani.deleteDocumentParam (targetDocument);
     }
-    catch (e){ Components.utils.reportError (e);
+    catch (e){ Cu.reportError (e);
     }
   },
     
@@ -6999,7 +7002,7 @@ var Aima_Aimani = {
         node = Aima_Aimani.findParentNode (node, "small");
       }
     }
-    catch (e) { Components.utils.reportError (e);
+    catch (e) { Cu.reportError (e);
     }
   },
     
@@ -7260,22 +7263,22 @@ var Aima_Aimani = {
   log : function (message) {
     if (!this._consoleService) {
       this._consoleService
-        = Components.classes ["@mozilla.org/consoleservice;1"]
-        .getService (Components.interfaces.nsIConsoleService);
+        = Cc ["@mozilla.org/consoleservice;1"]
+        .getService (Ci.nsIConsoleService);
     }
     var stack = Components.stack.caller;
-    var flag = Components.interfaces.nsIScriptError.infoFlag;
+    var flag = Ci.nsIScriptError.infoFlag;
     if (typeof message == "string") {
       if (/^!/.test (message)) {
-        flag = Components.interfaces.nsIScriptError.errorFlag;
+        flag = Ci.nsIScriptError.errorFlag;
       }
     }
     else if (message instanceof Error) {
-      flag = Components.interfaces.nsIScriptError.warningFlag;
+      flag = Ci.nsIScriptError.warningFlag;
     }
     var scriptError
-      = Components.classes ["@mozilla.org/scripterror;1"]
-      .createInstance (Components.interfaces.nsIScriptError);
+      = Cc ["@mozilla.org/scripterror;1"]
+      .createInstance (Ci.nsIScriptError);
     scriptError.init
       ("Aima_Aimani: " + String (message),
        stack.filename, null, stack.lineNumber, null,
@@ -7284,8 +7287,8 @@ var Aima_Aimani = {
   },
 
   executeSoon : function (func, optArgs) {
-    var tm = Components.classes ["@mozilla.org/thread-manager;1"]
-      .getService (Components.interfaces.nsIThreadManager);
+    var tm = Cc ["@mozilla.org/thread-manager;1"]
+      .getService (Ci.nsIThreadManager);
     var runnable = {
       run: function () {
         if (typeof optArgs === "undefined") {
@@ -7297,7 +7300,7 @@ var Aima_Aimani = {
       }
     };
     tm.mainThread.dispatch
-      (runnable, Components.interfaces.nsIThread.DISPATCH_NORMAL);
+      (runnable, Ci.nsIThread.DISPATCH_NORMAL);
   },
 
 };
@@ -7370,8 +7373,8 @@ var Aima_AimaniConfigManager = {
     }
 
     this.prefBranch
-    = Components.classes ["@mozilla.org/preferences-service;1"]
-    .getService (Components.interfaces.nsIPrefBranch);
+    = Cc ["@mozilla.org/preferences-service;1"]
+    .getService (Ci.nsIPrefBranch);
 
     if (!this.isParent) {
       this.prefBranch = new Aima_AimaniPrefBranchChild (this.prefBranch);
@@ -7448,7 +7451,7 @@ var Aima_AimaniConfigManager = {
       try {
         this.listeners [i].onPrefChanged ();
       }
-      catch (e) { Components.utils.reportError (e);
+      catch (e) { Cu.reportError (e);
       }
     }
   },
@@ -8229,8 +8232,8 @@ var Aima_AimaniConfigManager = {
 function Aima_AimaniPrefBranchChild (branch) {
   this.prefBranch = branch;
   this.messageManager
-    = Components.classes ['@mozilla.org/childprocessmessagemanager;1']
-    .getService (Components.interfaces.nsIMessageSender);
+    = Cc ['@mozilla.org/childprocessmessagemanager;1']
+    .getService (Ci.nsIMessageSender);
 };
 Aima_AimaniPrefBranchChild.prototype = {
   MESSAGE: "Aima_AimaniPrefBranchIPC",
@@ -8303,15 +8306,15 @@ Aima_AimaniPrefBranchIPCListener.prototype = {
 
   init : function () {
     var gppmm
-      = Components.classes  ['@mozilla.org/parentprocessmessagemanager;1']
-      .getService (Components.interfaces.nsIMessageListenerManager);
+      = Cc  ['@mozilla.org/parentprocessmessagemanager;1']
+      .getService (Ci.nsIMessageListenerManager);
     gppmm.addMessageListener (this.MESSAGE, this, false);
   },
 
   term : function () {
     var gppmm
-      = Components.classes  ['@mozilla.org/parentprocessmessagemanager;1']
-      .getService (Components.interfaces.nsIMessageListenerManager);
+      = Cc  ['@mozilla.org/parentprocessmessagemanager;1']
+      .getService (Ci.nsIMessageListenerManager);
     gppmm.removeMessageListener (this.MESSAGE, this);
     this.prefBranch = null;
   },
@@ -8343,7 +8346,7 @@ Aima_AimaniPrefBranchIPCListener.prototype = {
     var ret = {nsresult: 0, value: null, message: null};
     if (!func) {
       ret.message = "unknown method name:" + methodName;
-      ret.nsresult = Components.results.NS_ERROR_FAILURE;
+      ret.nsresult = Cr.NS_ERROR_FAILURE;
       return ret;
     }
     try {
@@ -8413,7 +8416,7 @@ var Aima_AimaniPopupManager = {
                     Aima_Aimani.popupMessageDelay,
                     managerdata);
     }
-    catch (e) { Components.utils.reportError (e);
+    catch (e) { Cu.reportError (e);
     }
   },
     
@@ -8446,7 +8449,7 @@ var Aima_AimaniPopupManager = {
         managerdata.popup = null;
       }
     }
-    catch (e) { Components.utils.reportError (e);
+    catch (e) { Cu.reportError (e);
     }
   },
     
