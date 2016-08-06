@@ -36,6 +36,20 @@ loader.loadSubScript ("chrome://aima_aimani/content/server.js", this);
 Cu.import("resource://gre/modules/Timer.jsm");
 
 /**
+ * 赤福との連携準備: 必要なモジュールへの参照をインポート
+ */
+try {
+  let tmp = {}
+  Cu.import("resource://akahuku/akahuku.jsm", tmp);
+  this.Akahuku = tmp.Akahuku;
+}
+catch (e if e.result == Cr.NS_ERROR_FILE_NOT_FOUND) {
+  // 赤福が無い or 非対応バージョン
+}
+catch (e) { Cu.reportError (e);
+}
+
+/**
  * NG カタログの各画像のハッシュ算出器
  */
 function Aima_AimaniNGCatCache () {
@@ -8548,5 +8562,4 @@ var Aima_AimaniPopupManager = {
     }
   }
 };
-
 
