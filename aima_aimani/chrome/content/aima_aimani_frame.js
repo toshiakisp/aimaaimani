@@ -3,7 +3,7 @@
 const Cu = Components.utils;
 const Cr = Components.results;
 
-Cu.import ("chrome://aima_aimani/content/aima_aimani.js");
+Cu.import ("chrome://aima_aimani/content/aima_aimani.jsm");
 
 Aima_Aimani.init ();
 

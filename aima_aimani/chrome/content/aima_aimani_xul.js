@@ -9,7 +9,7 @@
  *   Aima_AimaniConfigManager,
  */
 
-Components.utils.import ("chrome://aima_aimani/content/aima_aimani.js");
+Components.utils.import ("chrome://aima_aimani/content/aima_aimani.jsm");
 
 Components.utils.import ("chrome://aima_aimani/content/contentjob.jsm");
 

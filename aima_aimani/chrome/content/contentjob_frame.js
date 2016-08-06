@@ -5,7 +5,7 @@
  * メッセージ経由で受け付けるための frame script
  */
 
-Components.utils.import ("chrome://aima_aimani/content/aima_aimani.js");
+Components.utils.import ("chrome://aima_aimani/content/aima_aimani.jsm");
 
 Components.utils.import ("chrome://aima_aimani/content/contentjob.jsm");
 
