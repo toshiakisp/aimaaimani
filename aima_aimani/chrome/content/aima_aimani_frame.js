@@ -7,7 +7,21 @@ Cu.import ("chrome://aima_aimani/content/aima_aimani.jsm");
 
 Aima_Aimani.init ();
 
+// 赤福との処理順序の調整
+var applyAfterAkahuku = false;
+addEventListener ("AkahukuContentBeforeApplied", function (event) {
+  if (!applyAfterAkahuku) {
+    applyAfterAkahuku = true;
+    addEventListener ("AkahukuContentApplied", function (event) {
+      Aima_Aimani.onDOMContentLoaded (event);
+    });
+  }
+});
+
 addEventListener ("DOMContentLoaded", function (event) {
+  if (applyAfterAkahuku) {
+    return; // AkahukuContentApplied を待つ
+  }
   Aima_Aimani.onDOMContentLoaded (event);
 });
 
