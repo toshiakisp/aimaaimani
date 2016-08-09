@@ -37,17 +37,26 @@ Cu.import("resource://gre/modules/Timer.jsm");
 
 /**
  * 赤福との連携準備: 必要なモジュールへの参照をインポート
+ *
+ * XUL 側 Aima_Aimani からの不要なインポートを避けるために
+ * 必要になる時点でインポートする
  */
-try {
-  let tmp = {}
-  Cu.import("resource://akahuku/akahuku.jsm", tmp);
-  this.Akahuku = tmp.Akahuku;
-}
-catch (e if e.result == Cr.NS_ERROR_FILE_NOT_FOUND) {
-  // 赤福が無い or 非対応バージョン
-}
-catch (e) { Cu.reportError (e);
-}
+var tryImportAkahuku = (function (global) {
+  return function () {
+    // インポートに挑戦するのは一度だけ
+    global.tryImportAkahuku = function () {};
+    try {
+      let tmp = {}
+      Cu.import("resource://akahuku/akahuku.jsm", tmp);
+      global.Akahuku = tmp.Akahuku;
+    }
+    catch (e if e.result == Cr.NS_ERROR_FILE_NOT_FOUND) {
+      // 赤福が無い or 非対応バージョン
+    }
+    catch (e) { Cu.reportError (e);
+    }
+  };
+})(this);
 
 /**
  * NG カタログの各画像のハッシュ算出器
@@ -604,6 +613,7 @@ var Aima_AimaniNGCat = {
         
       if (Aima_Aimani.enableHideEntireThread) {
         try {
+          tryImportAkahuku ();
           if (typeof Akahuku != "undefined"
               && Akahuku.onHideEntireThread) {
             Akahuku.onHideEntireThread (targetDocument);
@@ -1065,6 +1075,7 @@ var Aima_AimaniNGCat = {
       param.ngcat_hideEntireThread_timerID
       = targetDocument.defaultView
       .setTimeout (function () {
+        tryImportAkahuku ();
         if (typeof Akahuku != "undefined") {
           try {
             Akahuku.onHideEntireThread (targetDocument);
@@ -1322,6 +1333,7 @@ Aima_AimaniLocationInfo.prototype = {
       this.isNotFound = true;
     }
         
+    tryImportAkahuku ();
     if (typeof Akahuku !== "undefined") {
       try {
         location = Akahuku.protocolHandler.deAkahukuURI (location);
@@ -3442,6 +3454,7 @@ var Aima_Aimani = {
             
       var needApply = false;
             
+      tryImportAkahuku ();
       if (typeof Akahuku != "undefined") {
         try {
           href = Akahuku.protocolHandler.deAkahukuURI (href);
@@ -3492,6 +3505,7 @@ var Aima_Aimani = {
     }
         
     try {
+      tryImportAkahuku ();
       if (typeof Akahuku != "undefined"
           && Akahuku.onAima_Aimanied) {
         Akahuku.onAima_Aimanied (targetDocument);
@@ -3566,6 +3580,7 @@ var Aima_Aimani = {
                         
         if (Aima_Aimani.enableHideEntireThread) {
           try {
+            tryImportAkahuku ();
             if (typeof Akahuku != "undefined"
                 && Akahuku.onHideEntireThread) {
               Akahuku.onHideEntireThread (targetDocument);
