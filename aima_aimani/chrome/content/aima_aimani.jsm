@@ -518,6 +518,8 @@ var Aima_AimaniNGCat = {
     
   textHideNGCat : "\u6D88",
   textShowNGCat : "\u89E3",
+
+  useAkahukuCustomEvents : false, /* Boolean ハンドラ呼び出しではなく赤福のカスタムイベントに応じて更新するか */
     
   /**
    * 初期化
@@ -3589,6 +3591,26 @@ var Aima_Aimani = {
           catch (e) { Cu.reportError (e);
           }
         }
+
+        // カスタムイベントによる赤福との連携の準備
+        var appending_container
+          = targetDocument.getElementById ("akahuku_appending_container");
+        if (appending_container) {
+          var onAppendOrReAppend = function (event) {
+            Aima_Aimani.useAkahukuCustomEvents = true;
+            Aima_Aimani.applyNGNumberForCatalogueCell (event.target);
+            if (td.style.display == "none") {
+              event.preventDefault (); // 非表示にするために必要
+            }
+          };
+          appending_container.addEventListener
+            ("AkahukuContentAppend", onAppendOrReAppend, false);
+          appending_container.addEventListener
+            ("AkahukuContentReAppend", onAppendOrReAppend, false);
+        }
+        else {
+          Aima_Aimani.log ("! no akahuku_appending_container found");
+        }
                         
         var unhideCatalogue = (function (param) { return function () {
           var targetDocument = param.targetDocument;
@@ -3680,6 +3702,18 @@ var Aima_Aimani = {
             Aima_AimaniConfigManager.saveNGThumbnail ();
           }
         }
+
+        // カスタムイベントによる赤福との連携の準備
+        var onResAppend = function (event) {
+          Aima_Aimani.useAkahukuCustomEvents = true;
+          var hidden
+            = Aima_Aimani.applyNGNumberForRes (event.target);
+          if (hidden && Aima_Aimani.enableHideEntireThread) {
+            event.preventDefault ();
+          }
+        };
+        targetDocument.addEventListener
+          ("AkahukuContentAppend", onResAppend, false);
       }
                     
       if (Aima_Aimani.enableHideThreadStyle) {
@@ -4801,6 +4835,15 @@ var Aima_Aimani = {
    *          カタログの td 要素
    */
   hideNGNumberCatalogueHandler : function (targetNode) {
+    if (Aima_Aimani.useAkahukuCustomEvents) {
+      return;
+    }
+    Aima_Aimani.applyNGNumberForCatalogueCell (targetNode);
+  },
+  /**
+   * カタログのセルの NG 番号等を非表示にする
+   */
+  applyNGNumberForCatalogueCell : function (targetNode) {
     if (Aima_Aimani.enableAll
         && (Aima_Aimani.enableNGNumber
             || Aima_AimaniNGCat.enableNGCat
@@ -5272,13 +5315,26 @@ var Aima_Aimani = {
    *         対象のドキュメント
    */
   hideNGNumberHandler : function (targetNode, targetDocument) {
+    if (Aima_Aimani.useAkahukuCustomEvents) {
+      return;
+    }
+    Aima_Aimani.applyNGNumberForRes (targetNode, targetDocument);
+  },
+  /**
+   * レスの NG 番号等を非表示にする
+   *
+   * @param  HTMLTableCellElement targetNode
+   * @param  HTMLDocument targetDocument [optional]
+   * @return Boolean 非表示にしたか
+   */
+  applyNGNumberForRes : function (targetNode, targetDocument) {
     if (Aima_Aimani.enableAll) {
       var hide = false;
       var result = 0;
       
       targetNode = Aima_Aimani.getMessageBQ (targetNode);
       if (targetNode.length == 0) {
-        return;
+        return false;
       }
       targetNode = targetNode [0];
       if (!targetDocument) {
@@ -5290,7 +5346,7 @@ var Aima_Aimani = {
       
       container = Aima_Aimani.getMessageContainer (targetNode);
       if (!container) {
-        return;
+        return false;
       }
       var tmp = container.main.nextSibling;
       if (tmp
@@ -5345,8 +5401,13 @@ var Aima_Aimani = {
         for (var i = 0; i < container.nodes.length; i ++) {
           container.nodes [i].style.display = "";
         }
+        return false;
+      }
+      else {
+        return true;
       }
     }
+    return false;
   },
     
   /**
