@@ -8,10 +8,10 @@ Cu.import ("chrome://aima_aimani/content/aima_aimani.jsm");
 Aima_Aimani.init ();
 
 // 赤福との処理順序の調整
-var applyAfterAkahuku = false;
-addEventListener ("AkahukuContentBeforeApplied", function (event) {
-  if (!applyAfterAkahuku) {
-    applyAfterAkahuku = true;
+var waitCustomEvents = false;
+addEventListener ("AkahukuFrameLoaded", function (event) {
+  if (!waitCustomEvents) {
+    waitCustomEvents = true;
     addEventListener ("AkahukuContentApplied", function (event) {
       Aima_Aimani.onDOMContentLoaded (event);
     });
@@ -19,10 +19,14 @@ addEventListener ("AkahukuContentBeforeApplied", function (event) {
 });
 
 addEventListener ("DOMContentLoaded", function (event) {
-  if (applyAfterAkahuku) {
-    return; // AkahukuContentApplied を待つ
-  }
-  Aima_Aimani.onDOMContentLoaded (event);
+  // 古い赤福との互換性のため
+  // DOMContentLoaded の dispatch が完全に終わるのを待つ
+  event.target.defaultView.setTimeout (function () {
+    if (waitCustomEvents) {
+      return; // AkahukuContentApplied を待つ
+    }
+    Aima_Aimani.onDOMContentLoaded (event);
+  }, 0);
 });
 
 addEventListener ("unload", function (event) {
