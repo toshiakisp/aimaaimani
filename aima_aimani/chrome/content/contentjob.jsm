@@ -14,7 +14,7 @@ const Ci = Components.interfaces;
 
 
 // コンテントジョブを提供する frame script
-const frameScript = "chrome://aima_aimani/content/contentjob_frame.jsm";
+const frameScript = "chrome://aima_aimani/content/contentjob_frame.js";
 
 var callbacks = new Map ();
 
