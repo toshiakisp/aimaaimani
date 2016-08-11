@@ -1327,7 +1327,7 @@ Aima_AimaniLocationInfo.prototype = {
    *         対象のドキュメント
    */
   init : function (targetDocument) {
-    var location = targetDocument.location.href;
+    var location = targetDocument.documentURI;
     var title = targetDocument.title;
     var path = ""; /* 板のディレクトリ以下のパス */
         
@@ -1388,7 +1388,7 @@ Aima_AimaniLocationInfo.prototype = {
     else if (Aima_Aimani.enableBoardExternal) {
       for (var i = 0; i < Aima_Aimani.boardExternalList.length; i ++) {
         if (Aima_Aimani.boardExternalList [i][1] & 2) {
-          if (targetDocument.location.href.indexOf
+          if (targetDocument.documentURI.indexOf
               (Aima_Aimani.boardExternalList [i][0]) == 0) {
             this.server
             = Aima_Aimani.boardExternalList [i][0]
@@ -1396,7 +1396,7 @@ Aima_AimaniLocationInfo.prototype = {
             .replace (/\/$/, "");
             this.dir = "?";
             path
-            = targetDocument.location.href.substr
+            = targetDocument.documentURI.substr
             (Aima_Aimani.boardExternalList [i][0].length);
                     
             this.isMonaca
@@ -1406,7 +1406,7 @@ Aima_AimaniLocationInfo.prototype = {
           }
         }
         else {
-          if (targetDocument.location.href.match
+          if (targetDocument.documentURI.match
               (Aima_Aimani.boardExternalList [i][0])) {
             this.server = RegExp.$1;
             this.dir = RegExp.$2;
@@ -1797,7 +1797,7 @@ var Aima_Aimani = {
     var mm = this.getContentFrameMessageManager (targetDocument);
     if (mm) {
       var data = {
-        url: targetDocument.location.href,
+        url: targetDocument.documentURI,
         info: {
           isFutaba : info.isFutaba,
           isMonaca : info.isMonaca,
@@ -1831,7 +1831,7 @@ var Aima_Aimani = {
         // Chrome process に通知
         var mm = this.getContentFrameMessageManager (targetDocument);
         if (mm) {
-          var data = {url: targetDocument.location.href};
+          var data = {url: targetDocument.documentURI};
           mm.sendAsyncMessage ("Aima_Aimani:deleteDocumentParam", data);
         }
         break;
@@ -3450,7 +3450,7 @@ var Aima_Aimani = {
       return;
     }
         
-    var href = targetDocument.location.href;
+    var href = targetDocument.documentURI;
         
     if (Aima_Aimani.enableAll) {
             
@@ -3502,36 +3502,39 @@ var Aima_Aimani = {
       }
             
       if (needApply) {
-        Aima_Aimani.applyAll (targetDocument);
+        if (Aima_Aimani.applyAll (targetDocument)) {
+
+          try {
+            tryImportAkahuku ();
+            if (typeof Akahuku != "undefined"
+                && Akahuku.onAima_Aimanied) {
+              Akahuku.onAima_Aimanied (targetDocument);
+            }
+          }
+          catch (e) { Cu.reportError (e);
+          }
+        }
       }
-    }
-        
-    try {
-      tryImportAkahuku ();
-      if (typeof Akahuku != "undefined"
-          && Akahuku.onAima_Aimanied) {
-        Akahuku.onAima_Aimanied (targetDocument);
-      }
-    }
-    catch (e) { Cu.reportError (e);
     }
   },
     
   /**
    * 全てを適用
+   *
+   * @return Boolean 実際に適用したか
    */
   applyAll : function (targetDocument) {
-    var href = targetDocument.location.href;
+    var href = targetDocument.documentURI;
         
     var info = new Aima_AimaniLocationInfo (targetDocument);
                 
     if (href.match (/futaba\.php$/)) {
       /* レス送信のインラインフレームの場合、なにもしない */
-      return;
+      return false;
     }
                 
     if (info.isNotFound) {
-      return;
+      return false;
     }
                 
     if (Aima_Aimani.nearestExpireTime != 0) {
@@ -3545,13 +3548,13 @@ var Aima_Aimani = {
       /* 板を制限する場合はチェックする */
       var name = info.server + ":" + info.dir;
       if (name in Aima_Aimani.boardSelectExList) {
-        return;
+        return false;
       }
     }
                 
     if (Aima_Aimani.getDocumentParam (targetDocument)) {
       /* 多重適用を避ける */
-      return;
+      return false;
     }
                 
     Aima_Aimani.addDocumentParam (targetDocument, info);
@@ -3767,6 +3770,7 @@ var Aima_Aimani = {
         }
       }
     }
+    return true;
   },
 
   /**
@@ -3780,7 +3784,7 @@ var Aima_Aimani = {
       return;
     }
 
-    var base = targetDocument.location.href;
+    var base = targetDocument.documentURI;
 
     base = base
     .replace (/\/res\/([0-9]+)\.html?$/, "/")
