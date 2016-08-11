@@ -3599,7 +3599,7 @@ var Aima_Aimani = {
           var onAppendOrReAppend = function (event) {
             Aima_Aimani.useAkahukuCustomEvents = true;
             Aima_Aimani.applyNGNumberForCatalogueCell (event.target);
-            if (td.style.display == "none") {
+            if (event.target.style.display == "none") {
               event.preventDefault (); // 非表示にするために必要
             }
           };
@@ -3607,9 +3607,6 @@ var Aima_Aimani = {
             ("AkahukuContentAppend", onAppendOrReAppend, false);
           appending_container.addEventListener
             ("AkahukuContentReAppend", onAppendOrReAppend, false);
-        }
-        else {
-          Aima_Aimani.log ("! no akahuku_appending_container found");
         }
                         
         var unhideCatalogue = (function (param) { return function () {
@@ -3708,7 +3705,7 @@ var Aima_Aimani = {
           Aima_Aimani.useAkahukuCustomEvents = true;
           var hidden
             = Aima_Aimani.applyNGNumberForRes (event.target);
-          if (hidden && Aima_Aimani.enableHideEntireThread) {
+          if (hidden && Aima_Aimani.enableHideEntireRes) {
             event.preventDefault ();
           }
         };
