@@ -307,7 +307,7 @@ Aima_AimaniNGCatCache.prototype = {
           Aima_Aimani.hideCatalogue
           (this.targetNode.ownerDocument,
            this.anchor,
-           6, false);
+           Aima_Aimani.REASON_NG_CAT, false);
                     
           Aima_AimaniNGCat.addNGCat (imageWidth, imageHeight,
                                      hash,
@@ -315,7 +315,7 @@ Aima_AimaniNGCatCache.prototype = {
                     
           Aima_Aimani.addNGNumber (this.threadNum,
                                    this.server, this.dir,
-                                   ngcat, 6, this.imageNum);
+                                   ngcat, Aima_Aimani.REASON_NG_CAT, this.imageNum);
                     
           Aima_Aimani.setText (this.anchor,
                                Aima_Aimani.bracketLeft
@@ -596,13 +596,13 @@ var Aima_AimaniNGCat = {
                 var imageNum = RegExp.$2;
                 Aima_Aimani.addNGNumber (threadNum,
                                          info.server, info.dir,
-                                         ngcat, 6, imageNum);
+                                         ngcat, Aima_Aimani.REASON_NG_CAT, imageNum);
               }
             }
                         
             Aima_Aimani.hideCatalogue
               (targetDocument, nodes [i],
-               6, Aima_Aimani.enableHideEntireThread);
+               Aima_Aimani.REASON_NG_CAT, Aima_Aimani.enableHideEntireThread);
           }
         }
       }
@@ -1028,12 +1028,12 @@ var Aima_AimaniNGCat = {
                 
         Aima_Aimani.addNGNumber (threadNum,
                                  server, dir,
-                                 ngcat, 6, imageNum);
+                                 ngcat, Aima_Aimani.REASON_NG_CAT, imageNum);
             
         Aima_Aimani.hideCatalogue
           (targetDocument,
            imageNode,
-           6,
+           Aima_Aimani.REASON_NG_CAT,
            Aima_Aimani.enableHideEntireThread);
             
         name
@@ -1313,12 +1313,7 @@ Aima_AimaniLocationInfo.prototype = {
   server : "",         /* String  サーバ名 */
   dir : "",            /* String  ディレクトリ名 */
     
-  threadRule : 0,      /* Number  スレッドルール
-                        *   1: 文字レス非表示
-                        *   2: sage のみ表示
-                        *   4: sage 以外表示
-                        *   8: サムネを小さく表示
-                        *  16: 画像レス非表示 */
+  threadRule : 0,      /* Number  スレッドルール */
     
   /**
    * アドレス情報を設定する
@@ -1643,14 +1638,20 @@ var Aima_Aimani = {
                                      *             NG 番号_スレッドルール
                                      *
                                      * Number    理由
-                                     *           0: NG 番号
-                                     *           1: NG ワード
-                                     *           2: NG サムネ
-                                     *           3: 文字スレ
-                                     *           6: NG カタログ
-                                     *           9: 強制表示 */
+                                     */
   NGNumberExpire : 4000,            /* Number  有効期限 */
     
+  REASON_NONE : -1,
+  REASON_NG_NUMBER : 0, // NG 番号
+  REASON_NG_WORD :   1, // NG ワード
+  REASON_NG_THUMB :  2, // NG サムネ
+  REASON_TEXT_THRE : 3, // 文字スレ
+  REASON_TEXT_RES :  4, // 文字レス (not in list)
+  REASON_NO_SAGE :   5, // sage 以外 (not in list)
+  REASON_NG_CAT :    6, // NG カタログ
+  REASON_SAGE :      7, // sage 以外 (not in list)
+  REASON_FORCE :     9, // 強制表示
+
   /* [スレッドルール] タブの設定 */
   enableThreadRule : false,           /* Boolean  スレッドルール */
   ThreadRuleList : [],                /* Array スレッドルール
@@ -1661,6 +1662,12 @@ var Aima_Aimani = {
   ThreadRuleExpire : 4000,            /* Number  有効期限 */
   ThreadRuleMiniThumbSize : 32,       /* Number  小さいサムネのサイズ */
   enableThreadRuleMiniThumbHover : false, /* Boolean  マウスを乗せた時だけ拡大 */
+
+  THREADRULE_NO_TEXTRES : (1<<0), // 1: 文字レス非表示
+  THREADRULE_SAGE_ONLY :  (1<<1), // 2: sage のみ表示
+  THREADRULE_NO_SAGE :    (1<<2), // 4: sage 以外表示
+  THREADRULE_MINI_THUMB : (1<<3), // 8: サムネを小さく表示
+  THREADRULE_NO_IMG_RES : (1<<4), //16: 画像レス非表示
     
   /* [文字スレ非表示] */
   enableMiniThumb : false, /* Boolean  小サムネ */
@@ -1938,7 +1945,7 @@ var Aima_Aimani = {
               = Aima_Aimani.hideThread
               (targetDocument,
                target,
-               2, false);
+               Aima_Aimani.REASON_NG_THUMB, false);
                         
             if (update) {
               Aima_Aimani.addNGThumbnail (width, height, bytes,
@@ -1948,7 +1955,7 @@ var Aima_Aimani = {
               Aima_Aimani.addNGNumber (num, info.server, info.dir,
                                        width + "_" + height + "_"
                                        + bytes + "_" + ext,
-                                       2, imageNum);
+                                       Aima_Aimani.REASON_NG_THUMB, imageNum);
                             
             }
             text = Aima_Aimani.textShowThumbnail;
@@ -1964,7 +1971,7 @@ var Aima_Aimani = {
                 newNode
                   = Aima_Aimani.createWarning
                   (targetDocument,
-                   Aima_Aimani.textReasons [0]);
+                   Aima_Aimani.textReasons [Aima_Aimani.REASON_NG_NUMBER]);
                 target.parentNode.insertBefore (newNode,
                                                 target);
               }
@@ -2001,11 +2008,11 @@ var Aima_Aimani = {
               = Aima_Aimani.hideThread
               (targetDocument,
                target,
-               0, false);
+               Aima_Aimani.REASON_NG_NUMBER, false);
                         
             if (update) {
               Aima_Aimani.addNGNumber (num, info.server, info.dir,
-                                       "", 0, imageNum);
+                                       "", Aima_Aimani.REASON_NG_NUMBER, imageNum);
             }
                         
             text = Aima_Aimani.textShowNumber;
@@ -2060,7 +2067,7 @@ var Aima_Aimani = {
             tmpNode
               = Aima_Aimani
               .hideRes (targetDocument, target,
-                        2,
+                        Aima_Aimani.REASON_NG_THUMB,
                         Aima_Aimani.enableHideEntireRes
                         && Aima_Aimani.enableHideEntireResInstant,
                         num, imageNum, false);
@@ -2074,7 +2081,7 @@ var Aima_Aimani = {
                                        info.server, info.dir, 
                                        width + "_" + height + "_"
                                        + bytes + "_" + ext,
-                                       2, imageNum);
+                                       Aima_Aimani.REASON_NG_THUMB, imageNum);
             }
                         
             text = Aima_Aimani.textShowThumbnail;
@@ -2083,14 +2090,14 @@ var Aima_Aimani = {
             tmpNode
               = Aima_Aimani
               .hideRes (targetDocument, target,
-                        0,
+                        Aima_Aimani.REASON_NG_NUMBER,
                         Aima_Aimani.enableHideEntireRes
                         && Aima_Aimani.enableHideEntireResInstant,
                         num, imageNum, false);
                         
             if (update) {
               Aima_Aimani.addNGNumber (num, info.server, info.dir,
-                                       "", 0, imageNum);
+                                       "", Aima_Aimani.REASON_NG_NUMBER, imageNum);
             }
                         
             text = Aima_Aimani.textShowNumber;
@@ -2115,11 +2122,11 @@ var Aima_Aimani = {
         }
         else if (subtype == "catalogue") {
           Aima_Aimani.hideCatalogue (targetDocument, target,
-                                     0, false);
+                                     Aima_Aimani.REASON_NG_NUMBER, false);
                     
           if (update) {
             Aima_Aimani.addNGNumber (num, info.server, info.dir,
-                                     "", 0, imageNum);
+                                     "", Aima_Aimani.REASON_NG_NUMBER, imageNum);
           }
                     
           Aima_Aimani.setText (target,
@@ -2139,14 +2146,14 @@ var Aima_Aimani = {
             var hash = RegExp.$3;
                         
             Aima_Aimani.hideCatalogue (targetDocument, target,
-                                       6, false);
+                                       Aima_Aimani.REASON_NG_CAT, false);
                         
             Aima_AimaniNGCat.addNGCat (width, height, hash,
                                        "");
                         
             if (update) {
               Aima_Aimani.addNGNumber (num, info.server, info.dir,
-                                       additional, 6, imageNum);
+                                       additional, Aima_Aimani.REASON_NG_CAT, imageNum);
             }
                         
             Aima_Aimani.setText (target,
@@ -2205,7 +2212,7 @@ var Aima_Aimani = {
           }
         }
         else if (subtype == "textres") {
-          info.threadRule |= 1;
+          info.threadRule |= Aima_Aimani.THREADRULE_NO_TEXTRES;
           Aima_Aimani.apply (targetDocument,
                              false,
                              false,
@@ -2231,7 +2238,7 @@ var Aima_Aimani = {
           }
         }
         else if (subtype == "imageres") {
-          info.threadRule |= 16;
+          info.threadRule |= Aima_Aimani.THREADRULE_NO_IMG_RES;
           Aima_Aimani.apply (targetDocument,
                              false,
                              false,
@@ -2257,7 +2264,7 @@ var Aima_Aimani = {
           }
         }
         else if (subtype == "sageonly") {
-          info.threadRule |= 2;
+          info.threadRule |= Aima_Aimani.THREADRULE_SAGE_ONLY;
           Aima_Aimani.apply (targetDocument,
                              false,
                              false,
@@ -2283,7 +2290,7 @@ var Aima_Aimani = {
           }
         }
         else if (subtype == "notsage") {
-          info.threadRule |= 4;
+          info.threadRule |= Aima_Aimani.THREADRULE_NO_SAGE;
           Aima_Aimani.apply (targetDocument,
                              false,
                              false,
@@ -2309,7 +2316,7 @@ var Aima_Aimani = {
           }
         }
         else if (subtype == "minithumb") {
-          info.threadRule |= 8;
+          info.threadRule |= Aima_Aimani.THREADRULE_MINI_THUMB;
           Aima_Aimani.apply (targetDocument,
                              false,
                              false,
@@ -2525,7 +2532,7 @@ var Aima_Aimani = {
           }
         }
         else if (subtype == "textres") {
-          info.threadRule ^= 1;
+          info.threadRule ^= Aima_Aimani.THREADRULE_NO_TEXTRES;
                     
           Aima_Aimani.showThreadRule (targetDocument);
                     
@@ -2547,7 +2554,7 @@ var Aima_Aimani = {
           span.parentNode.removeChild (span);
         }
         else if (subtype == "imageres") {
-          info.threadRule ^= 16;
+          info.threadRule ^= Aima_Aimani.THREADRULE_NO_IMG_RES;
                     
           Aima_Aimani.showThreadRule (targetDocument);
                     
@@ -2569,7 +2576,7 @@ var Aima_Aimani = {
           span.parentNode.removeChild (span);
         }
         else if (subtype == "sageonly") {
-          info.threadRule ^= 2;
+          info.threadRule ^= Aima_Aimani.THREADRULE_SAGE_ONLY;
                     
           Aima_Aimani.showThreadRule (targetDocument);
                     
@@ -2591,7 +2598,7 @@ var Aima_Aimani = {
           span.parentNode.removeChild (span);
         }
         else if (subtype == "notsage") {
-          info.threadRule ^= 4;
+          info.threadRule ^= Aima_Aimani.THREADRULE_NO_SAGE;
                     
           Aima_Aimani.showThreadRule (targetDocument);
                     
@@ -2613,7 +2620,7 @@ var Aima_Aimani = {
           span.parentNode.removeChild (span);
         }
         else if (subtype == "minithumb") {
-          info.threadRule ^= 8;
+          info.threadRule ^= Aima_Aimani.THREADRULE_MINI_THUMB;
                     
           Aima_Aimani.apply (targetDocument,
                              false,
@@ -2654,7 +2661,7 @@ var Aima_Aimani = {
               newNode
                 = Aima_Aimani.createWarning
                 (targetDocument,
-                 Aima_Aimani.textReasons [9]);
+                 Aima_Aimani.textReasons [Aima_Aimani.REASON_FORCE]);
               target.parentNode.insertBefore (newNode,
                                               target);
             }
@@ -2695,7 +2702,7 @@ var Aima_Aimani = {
           = Aima_Aimani.hideThread
           (targetDocument,
            target,
-           9, false);
+           Aima_Aimani.REASON_FORCE, false);
                     
           var newNode
           = Aima_Aimani.createAnchor
@@ -2713,19 +2720,19 @@ var Aima_Aimani = {
           tmpNode
           = Aima_Aimani
           .hideRes (targetDocument, target,
-                    9,
+                    Aima_Aimani.REASON_FORCE,
                     Aima_Aimani.enableHideEntireRes
                     && Aima_Aimani.enableHideEntireResInstant,
                     num, imageNum, true);
         }
         else if (subtype == "catalogue") {
           Aima_Aimani.hideCatalogue (targetDocument, target,
-                                     0, false);
+                                     Aima_Aimani.REASON_NG_NUMBER, false);
                     
           if (update) {
             Aima_Aimani.deleteNGNumber (num, info.server, info.dir);
             Aima_Aimani.addNGNumber (num, info.server, info.dir,
-                                     "", 0, imageNum);
+                                     "", Aima_Aimani.REASON_NG_NUMBER, imageNum);
           }
           Aima_Aimani.setText (target,
                                Aima_Aimani.bracketLeft
@@ -2779,7 +2786,7 @@ var Aima_Aimani = {
           if (update) {
             Aima_Aimani.deleteNGNumber (num, info.server, info.dir);
             Aima_Aimani.addNGNumber (num, info.server, info.dir,
-                                     "", 9, imageNum);
+                                     "", Aima_Aimani.REASON_FORCE, imageNum);
           }
                     
           text = Aima_Aimani.textForceHideNumber;
@@ -2807,7 +2814,7 @@ var Aima_Aimani = {
           if (update) {
             Aima_Aimani.deleteNGNumber (num, info.server, info.dir);
             Aima_Aimani.addNGNumber (num, info.server, info.dir,
-                                     "", 9, imageNum);
+                                     "", Aima_Aimani.REASON_FORCE, imageNum);
           }
         }
       }
@@ -3839,13 +3846,7 @@ var Aima_Aimani = {
    * @param  String depend
    *         依存関係
    * @param  Number reason
-   *         理由
-   *           0: NG 番号
-   *           1: NG ワード
-   *           2: NG サムネ
-   *           3: 文字スレ
-   *           6: NG カタログ
-   *           9: 強制表示
+   *         理由 (REASON_*)
    * @param  Number imageNum
    *         画像の番号
    */
@@ -4058,13 +4059,7 @@ var Aima_Aimani = {
    * @param  HTMLElement targetNode
    *         スレッドに含まれるノード
    * @param  Number reason
-   *         非表示にする理由
-   *           0: NG 番号
-   *           1: NG ワード
-   *           2: NG サムネ
-   *           3: 文字スレ
-   *           6: NG カタログ
-   *           9: 強制表示解除
+   *         非表示にする理由 (REASON_*)
    * @param  Boolean entire
    *         無かった事にするかどうか
    * @return HTMLElement
@@ -4167,15 +4162,7 @@ var Aima_Aimani = {
    * @param  HTMLElement targetNode
    *         レスに含まれるノード
    * @param  Number reason
-   *         非表示にする理由
-   *           0: NG 番号
-   *           1: NG ワード
-   *           2: NG サムネ
-   *           4: 文字レス
-   *           5: sage 以外
-   *           6: NG カタログ
-   *           7: sage
-   *           9: 強制表示解除
+   *         非表示にする理由 (REASON_*)
    * @param  Boolean entire
    *         無かった事にするかどうか
    * @param  Number num
@@ -4342,12 +4329,7 @@ var Aima_Aimani = {
    * @param  HTMLElement targetNode
    *         スレッドに含まれるノード
    * @param  Number reason
-   *         非表示にする理由
-   *           0: NG 番号
-   *           1: NG ワード
-   *           2: NG サムネ
-   *           3: 文字スレ
-   *           6: NG カタログ
+   *         非表示にする理由 (REASON_*)
    * @param  Boolean entire
    *         無かった事にするかどうか
    */
@@ -4762,7 +4744,7 @@ var Aima_Aimani = {
         if (ngword) {
           Aima_Aimani.addNGNumber (num, server, dir,
                                    ngword,
-                                   1, imageNum);
+                                   Aima_Aimani.REASON_NG_WORD, imageNum);
                     
           return 1;
         }
@@ -4788,7 +4770,7 @@ var Aima_Aimani = {
           Aima_Aimani.addNGNumber (num, server, dir,
                                    item [0] + "_" + item [1]
                                    + "_" + item [2] + "_" + item [3],
-                                   2, imageNum);
+                                   Aima_Aimani.REASON_NG_THUMB, imageNum);
                     
           return 1;
         }
@@ -4821,7 +4803,9 @@ var Aima_Aimani = {
   changeNGNumberSidebarHandler : function (server, dir,
                                            num, imageNum, hide) {
     if (hide) {
-      Aima_Aimani.addNGNumber (num, server, dir, "", 0, imageNum);
+      Aima_Aimani.addNGNumber
+        (num, server, dir, "",
+         Aima_Aimani.REASON_NG_NUMBER, imageNum);
     }
     else {
       Aima_Aimani.deleteNGNumber (num, server, dir);
@@ -4944,7 +4928,7 @@ var Aima_Aimani = {
           node = node.nextSibling;
         }
                 
-        var hide = -1;
+        var reason = Aima_Aimani.REASON_NONE;
                 
         if (!ngwordOnly && Aima_Aimani.enableNGNumber) {
           var item;
@@ -4956,9 +4940,9 @@ var Aima_Aimani = {
           if (item) {
             /* NG 番号にあった場合 */
                         
-            hide = item [4];
-            if (hide != 9) {
-              if (hide == 6 && imageNode) {
+            reason = item [4];
+            if (reason != Aima_Aimani.REASON_FORCE) {
+              if (reason == Aima_Aimani.REASON_NG_CAT && imageNode) {
                 /* NG カタログ */
                 imageNode.setAttribute
                   ("aima_aimani_ngcat", item [3]);
@@ -4969,7 +4953,7 @@ var Aima_Aimani = {
               Aima_Aimani.hideCatalogue
                 (targetDocument,
                  targetAnchor,
-                 hide,
+                 reason,
                  Aima_Aimani.enableHideEntireThread);
                             
               result = 1;
@@ -5002,7 +4986,7 @@ var Aima_Aimani = {
           }
         }
                 
-        if (hide == -1) {
+        if (reason == Aima_Aimani.REASON_NONE) {
           var enableNGWord = Aima_Aimani.enableNGWord;
           var name = info.server + ":" + info.dir;
           if (name in Aima_Aimani.NGWordBoardSelectExList) {
@@ -5013,11 +4997,11 @@ var Aima_Aimani = {
               && imageNum == 0 && Aima_Aimani.enableTextThread) {
             /* 文字スレの場合 */
                         
-            hide = 3;
+            reason = Aima_Aimani.REASON_TEXT_THRE;
             if (Aima_Aimani.enableHideStyle) {
               Aima_Aimani.addNGNumber (threadNum,
                                        info.server, info.dir,
-                                       "", 3, imageNum);
+                                       "", reason, imageNum);
             }
                         
             result = 1;
@@ -5025,7 +5009,7 @@ var Aima_Aimani = {
             Aima_Aimani
               .hideCatalogue (targetDocument,
                               targetAnchor,
-                              3,
+                              reason,
                               Aima_Aimani.enableHideEntireThread);
           }
           else if (enableNGWord) {
@@ -5079,14 +5063,14 @@ var Aima_Aimani = {
                 /* NG ワードがあった場合 */
                 Aima_Aimani.addNGNumber (threadNum,
                                          info.server, info.dir,
-                                         ngword, 1, imageNum);
+                                         ngword, Aima_Aimani.REASON_NG_WORD, imageNum);
                         
                 result = 1;
                                 
                 Aima_Aimani.hideCatalogue
                   (targetDocument,
                    targetAnchor,
-                   1,
+                   Aima_Aimani.REASON_NG_WORD,
                    Aima_Aimani.enableHideEntireThread);
               }
             }
@@ -5094,14 +5078,17 @@ var Aima_Aimani = {
         }
                 
         if (!ngwordOnly
-            && (hide == -1 || hide == 0 || hide == 6 || hide == 9)
+            && (reason == Aima_Aimani.REASON_NONE
+              || reason == Aima_Aimani.REASON_NG_NUMBER
+              || reason == Aima_Aimani.REASON_NG_CAT
+              || reason == Aima_Aimani.REASON_FORCE)
             && Aima_Aimani.enableNGNumber) {
           var name, text;
-          if (hide == 0) {
+          if (reason == Aima_Aimani.REASON_NG_NUMBER) {
             name = "show_catalogue_" + threadNum + "_" + imageNum;
             text = Aima_Aimani.textShowCatalogue;
           }
-          else if (hide == 9) {
+          else if (reason == Aima_Aimani.REASON_FORCE) {
             name
               = "forcehide_catalogue_"
               + threadNum + "_" + imageNum;
@@ -5467,7 +5454,7 @@ var Aima_Aimani = {
     var imageBytes = 0;
     var imageExt = 0;
     
-    var hide = -1;
+    var hide_reason = Aima_Aimani.REASON_NONE;
     
     var ngword = "";
     var ngword_subject = "";
@@ -5667,7 +5654,7 @@ var Aima_Aimani = {
         item = null;
       }
       if (item) {
-        hide = item [4];
+        hide_reason = item [4];
       }
     }
         
@@ -5677,24 +5664,25 @@ var Aima_Aimani = {
       if (nodes [i].getAttribute ("color") == "#ff0000"
           && Aima_Aimani.getInnerHTML2 (nodes [i])
           .match (/^\u7BA1\u7406\u4EBA$/)) {
-        hide = -1;
+        hide_reason = Aima_Aimani.REASON_NONE;
         admin = true;
       }
     }
         
-    if (hide != -1 && hide != 9) {
+    if (hide_reason != Aima_Aimani.REASON_NONE
+        && hide_reason != Aima_Aimani.REASON_FORCE) {
       /* NG 番号にあった場合 */
             
       if (isRes) {
         tmpNode
         = Aima_Aimani
         .hideRes (targetDocument, targetNode,
-                  hide, Aima_Aimani.enableHideEntireRes,
-                  num, imageNum, hide != 0);
+                  hide_reason, Aima_Aimani.enableHideEntireRes,
+                  num, imageNum, hide_reason != Aima_Aimani.REASON_NG_NUMBER);
                 
         if (tmpNode) {
           var newNode;
-          if (hide == 0) {
+          if (hide_reason == Aima_Aimani.REASON_NG_NUMBER) {
             newNode
               = Aima_Aimani.createAnchor
               (targetDocument,
@@ -5709,9 +5697,9 @@ var Aima_Aimani = {
         tmpNode
         = Aima_Aimani
         .hideThread (targetDocument, targetNode,
-                     hide, Aima_Aimani.enableHideEntireThread);
+                     hide_reason, Aima_Aimani.enableHideEntireThread);
                 
-        if (hide == 0 && tmpNode) {
+        if (hide_reason == Aima_Aimani.REASON_NG_NUMBER && tmpNode) {
           var newNode;
           newNode
             = Aima_Aimani.createAnchor
@@ -5731,7 +5719,7 @@ var Aima_Aimani = {
         result = 1;
       }       
     }
-    else if (!admin && hide == -1) {
+    else if (!admin && hide_reason == Aima_Aimani.REASON_NONE) {
       if (imageNum == 0) {
         /* 文字スレ、文字レスの場合 */
                 
@@ -5739,14 +5727,14 @@ var Aima_Aimani = {
           /* 文字レスの場合 */
                     
           if (enableThreadRule && info.isReply
-              && info.threadRule & 1) {
+              && info.threadRule & Aima_Aimani.THREADRULE_NO_TEXTRES) {
             Aima_Aimani
             .hideRes (targetDocument, targetNode,
-                      4,
+                      Aima_Aimani.REASON_TEXT_RES,
                       Aima_Aimani.enableHideEntireRes,
                       num, imageNum, true);
                         
-            hide = 2;
+            hide_reason = 2;//FIXME: REASON_NG_THUMB ?
             result = 2;
           }
         }
@@ -5756,17 +5744,17 @@ var Aima_Aimani = {
           if (enableTextThread
               && (!Aima_Aimani.enableShowTextThreadReply
                   || info.isNormal)) {
+            hide_reason = Aima_Aimani.REASON_TEXT_THRE;
             if (Aima_Aimani.enableHideStyle) {
               Aima_Aimani.addNGNumber (num,
                                        info.server, info.dir,
-                                       "", 3, 0);
+                                       "", hide_reason, 0);
             }
                         
-            hide = 3;
             threadTmpNode
             = Aima_Aimani
             .hideThread (targetDocument, targetNode,
-                         3,
+                         hide_reason,
                          Aima_Aimani.enableHideEntireThread);
             noNode = null;
             linkNode = null;
@@ -5779,14 +5767,14 @@ var Aima_Aimani = {
           /* 画像レスの場合 */
                     
           if (enableThreadRule && info.isReply
-              && info.threadRule & 16) {
+              && info.threadRule & Aima_Aimani.THREADRULE_NO_IMG_RES) {
             Aima_Aimani
             .hideRes (targetDocument, targetNode,
-                      4,
+                      Aima_Aimani.REASON_TEXT_RES,
                       Aima_Aimani.enableHideEntireRes,
                       num, imageNum, true);
                         
-            hide = 2;
+            hide_reason = 2; // FIXME: REASON_NG_THUMB ?
             result = 2;
           }
         }
@@ -5794,7 +5782,7 @@ var Aima_Aimani = {
         if (Aima_Aimani.enableMiniThumb
             || (enableThreadRule && info.isReply && isRes)) {
           if (Aima_Aimani.enableMiniThumb
-              || info.threadRule & 8) {
+              || info.threadRule & Aima_Aimani.THREADRULE_MINI_THUMB) {
             var w, h, s;
             w = imageNode.getAttribute ("width")
             || imageNode.width;
@@ -5836,6 +5824,7 @@ var Aima_Aimani = {
                                    imageBytes, imageExt);
           if (item) {
             /* NG サムネの場合 */
+            hide_reason = Aima_Aimani.REASON_NG_THUMB;
             item [5] ++;
                         
             Aima_Aimani.addNGNumber (num,
@@ -5843,13 +5832,12 @@ var Aima_Aimani = {
                                      item [0] + "_" + item [1]
                                      + "_" + item [2] + "_"
                                      + item [3],
-                                     2, imageNum);
+                                     hide_reason, imageNum);
                         
-            hide = 2;
             if (isRes) {
               Aima_Aimani
                 .hideRes (targetDocument, targetNode,
-                          2,
+                          hide_reason,
                           Aima_Aimani.enableHideEntireRes,
                           num, imageNum, true);
               result = 2 | 4;
@@ -5858,7 +5846,7 @@ var Aima_Aimani = {
               threadTmpNode
                 = Aima_Aimani
                 .hideThread (targetDocument, targetNode,
-                             2,
+                             hide_reason,
                              Aima_Aimani
                              .enableHideEntireThread);
               noNode = null;
@@ -5870,36 +5858,36 @@ var Aima_Aimani = {
       }
             
       if (enableThreadRule && info.isReply && isRes
-          && info.threadRule & 2) {
+          && info.threadRule & Aima_Aimani.THREADRULE_SAGE_ONLY) {
 
         if (ngword_mail.indexOf ("sage") == -1) {
           Aima_Aimani
           .hideRes (targetDocument, targetNode,
-                    5,
+                    Aima_Aimani.REASON_NO_SAGE,
                     Aima_Aimani.enableHideEntireRes,
                     num, imageNum, true);
                     
-          hide = 2;
+          hide_reason = 2; // FIXME: REASON_NG_THUMB ?
           result = 2;
         }
       }
             
       if (enableThreadRule && info.isReply && isRes
-          && info.threadRule & 4) {
+          && info.threadRule & Aima_Aimani.THREADRULE_NO_SAGE) {
 
         if (ngword_mail.indexOf ("sage") != -1) {
           Aima_Aimani
           .hideRes (targetDocument, targetNode,
-                    7,
+                    Aima_Aimani.REASON_SAGE,
                     Aima_Aimani.enableHideEntireRes,
                     num, imageNum, true);
                     
-          hide = 2;
+          hide_reason = 2; // FIXME: REASON_NG_THUMB ?
           result = 2;
         }
       }
       
-      if (hide == -1 && enableNGWord) {
+      if (hide_reason == Aima_Aimani.REASON_NONE && enableNGWord) {
         /* どれにもあてはまらない場合、NG ワードを検索する */
         
         var ngword = "";
@@ -5972,15 +5960,15 @@ var Aima_Aimani = {
         }
         if (ngword) {
           /* NG ワードがあった場合 */
+          hide_reason = Aima_Aimani.REASON_NG_WORD;
           Aima_Aimani.addNGNumber (num,
                                    info.server, info.dir,
-                                   ngword, 1, imageNum);
+                                   ngword, hide_reason, imageNum);
                     
-          hide = 1;
           if (isRes) {
             Aima_Aimani
               .hideRes (targetDocument, targetNode,
-                        1, Aima_Aimani.enableHideEntireRes,
+                        hide_reason, Aima_Aimani.enableHideEntireRes,
                         num, imageNum, true);
             result = 2 | 4;
           }
@@ -5988,7 +5976,7 @@ var Aima_Aimani = {
             threadTmpNode
             = Aima_Aimani
             .hideThread (targetDocument, targetNode,
-                         1, Aima_Aimani.enableHideEntireThread);
+                         hide_reason, Aima_Aimani.enableHideEntireThread);
             noNode = null;
             linkNode = null;
             result = 1 | 4;
@@ -6003,7 +5991,7 @@ var Aima_Aimani = {
                 
         var name = "";
         var text = "";
-        if (hide == 9) {
+        if (hide_reason == Aima_Aimani.REASON_FORCE) {
           text = Aima_Aimani.textForceHideNumber;
           if (isRes) {
             name = "forcehide_res_" + num + "_" + imageNum;
@@ -6012,11 +6000,13 @@ var Aima_Aimani = {
             name = "forcehide_thread_" + num + "_" + imageNum;
           }
         }
-        else if (hide != -1 && !isRes) {
+        else if (hide_reason != Aima_Aimani.REASON_NONE && !isRes) {
           text = Aima_Aimani.textForceShowNumber;
           name = "forceshow_thread_" + num + "_" + imageNum;
         }
-        else if (hide != -1 && hide != 0 && isRes) {
+        else if (hide_reason != Aima_Aimani.REASON_NONE
+            && hide_reason != Aima_Aimani.REASON_NG_NUMBER
+            && isRes) {
           text = Aima_Aimani.textForceHideNumber;
           name = "forcehide_res_" + num + "_" + imageNum;
         }
@@ -6068,7 +6058,8 @@ var Aima_Aimani = {
         }
       }
             
-      if (hide == -1 || hide == 9) {
+      if (hide_reason == Aima_Aimani.REASON_NONE
+          || hide_reason == Aima_Aimani.REASON_FORCE) {
         /* 該当なし, もしくは強制表示 */
                 
         if (noNode && !isRes && enableThreadRule && info.isReply) {
@@ -6699,7 +6690,8 @@ var Aima_Aimani = {
     for (var i = 0; i < nodes.length; i ++) {
       if (hide) {
         Aima_Aimani.hideCatalogue
-          (targetDocument, nodes [i], 0,
+          (targetDocument, nodes [i],
+           Aima_Aimani.REASON_NG_NUMBER,
            Aima_Aimani.enableHideEntireThread);
       }
       else {
@@ -7027,7 +7019,7 @@ var Aima_Aimani = {
       var info = param.location_info;
 
       if (Aima_Aimani.enableMiniThumb
-          || info.threadRule & 8) {
+          || info.threadRule & Aima_Aimani.THREADRULE_MINI_THUMB) {
         var node = event.target;
         var isReply;
         if (node
