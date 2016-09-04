@@ -2187,7 +2187,7 @@ var Aima_Aimani = {
                 while (node) {
                   if (node.nodeName.toLowerCase () == "img"
                       && node.getAttribute ("src").match
-                      (/cat\/([0-9]+)/)) {
+                      (/(?:cat|thumb)\/([0-9]+)/)) {
                     var imageNode = node;
                     break;
                   }
@@ -4920,7 +4920,7 @@ var Aima_Aimani = {
         var node = targetAnchor.firstChild;
         while (node) {
           if (node.nodeName.toLowerCase () == "img"
-              && node.getAttribute ("src").match (/cat\/([0-9]+)/)) {
+              && node.getAttribute ("src").match (/(?:cat|thumb)\/([0-9]+)/)) {
             imageNum = parseInt (RegExp.$1);
             imageNode = node;
             break;
