@@ -9,7 +9,7 @@ var Aima_AimaniServerData = {
     "\u91CE\u7403",
     "\u91CE\u7403",
     "\u91CE\u7403",
-    3000, true
+    1500, true
     ],
   "zip:12" : [ /* サッカー */
     "\u30B5\u30C3\u30AB\u30FC",
@@ -23,7 +23,7 @@ var Aima_AimaniServerData = {
     "\u9EBB\u96C0",
     2000, true
     ],
-    
+
   "may:26" : [ /* うま */
     "\u3046\u307E",
     "\u3046\u307E",
@@ -36,7 +36,7 @@ var Aima_AimaniServerData = {
     "\u306D\u3053",
     2000, true
     ],
-  "up:d" : [ /* どうぶつ */
+  "dat:d" : [ /* どうぶつ */
     "\u3069\u3046\u3076\u3064",
     "\u3069\u3046\u3076\u3064",
     "\u3069\u3046\u3076\u3064",
@@ -48,8 +48,8 @@ var Aima_AimaniServerData = {
     "\u3057\u3087\u304F\u3076\u3064",
     1000, true
     ],
-    
-  "up:w" : [ /* 虫 */
+
+  "dat:w" : [ /* 虫 */
     "\u866B",
     "\u866B",
     "\u866B",
@@ -57,11 +57,17 @@ var Aima_AimaniServerData = {
     ],
   "dat:49" : [ /* アクアリウム */
     "\u30A2\u30AF\u30A2\u30EA\u30A6\u30E0",
-    "\u30A2\u30AF\u30A2\u30EA\u30A6\u30E0",
+    "\u30A2\u30AF\u30A2",
     "\u30A2\u30AF\u30A2\u30EA\u30A6\u30E0",
     2000, true
     ],
-  "up:t" : [ /* 料理 */
+  "dec:62" : [ /* アウトドア */
+    "\u30A2\u30A6\u30C8\u30C9\u30A2",
+    "\u30A2\u30A6\u30C8\u30C9\u30A2",
+    "\u30A2\u30A6\u30C8\u30C9\u30A2",
+    10000, true
+    ],
+  "dat:t" : [ /* 料理 */
     "\u6599\u7406",
     "\u6599\u7406",
     "\u6599\u7406",
@@ -79,25 +85,25 @@ var Aima_AimaniServerData = {
     "\u30E9\u30FC\u30E1\u30F3",
     2000, true
     ],
-  "up:e" : [ /* のりもの */
+  "dat:e" : [ /* のりもの */
     "\u306E\u308A\u3082\u306E",
     "\u306E\u308A\u3082\u306E",
     "\u306E\u308A\u3082\u306E",
     2000, true
     ],
-  "up:j" : [ /* 二輪 */
+  "dat:j" : [ /* 二輪 */
     "\u4E8C\u8F2A",
     "\u4E8C\u8F2A",
     "\u4E8C\u8F2A",
-    1000, true
+    2000, true
     ],
   "nov:37" : [ /* 自転車 */
     "\u81EA\u8EE2\u8ECA",
     "\u81EA\u8EE2\u8ECA",
     "\u81EA\u8EE2\u8ECA",
-    1500, true,
+    2000, true,
     ],
-    
+
   "dat:45" : [ /* カメラ */
     "\u30AB\u30E1\u30E9",
     "\u30AB\u30E1\u30E9",
@@ -110,13 +116,13 @@ var Aima_AimaniServerData = {
     "\u5BB6\u96FB",
     2000, true
     ],
-  "up:r" : [ /* 鉄道 */
+  "dat:r" : [ /* 鉄道 */
     "\u9244\u9053",
     "\u9244\u9053",
     "\u9244\u9053",
     2000, true
     ],
-  "tmp:img2" : [ /* 二次元 */
+  "dat:img2" : [ /* 二次元 */
     "\u4E8C\u6B21\u5143",
     "\u4E8C\u6B21\u5143",
     "\u4E8C\u6B21\u5143\u753B\u50CF\u63B2\u793A\u677F",
@@ -132,19 +138,19 @@ var Aima_AimaniServerData = {
     "\u4E8C\u6B21\u5143\u88CF jun",
     "\u8679\u88CF jun",
     "\u4E8C\u6B21\u5143\u88CF",
-    6000, true
+    8000, true
     ],
   "may:b" : [ /* 二次元裏 may */
     "\u4E8C\u6B21\u5143\u88CF may",
     "\u8679\u88CF may",
     "\u4E8C\u6B21\u5143\u88CF",
-    20000, true
+    50000, true
     ],
   "img:b" : [ /* 二次元裏 img */
     "\u4E8C\u6B21\u5143\u88CF img",
     "\u8679\u88CF img",
     "\u4E8C\u6B21\u5143\u88CF",
-    6000, true
+    10000, true,
     ],
   "dat:b" : [ /* 二次元裏 dat */
     "\u4E8C\u6B21\u5143\u88CF dat",
@@ -164,31 +170,31 @@ var Aima_AimaniServerData = {
     "dec\u3066\u3059\u3068",
     100, true
     ],
-  "dat:23" : [ /* スピグラ */
-    "\u30B9\u30D4\u30B0\u30E9",
-    "\u30B9\u30D4\u30B0\u30E9",
-    "\u30B9\u30D4\u30B0\u30E9",
-    200, true
-    ],
   "may:id" : [ /* 二次元ID */
     "\u4E8C\u6B21\u5143\uFF29\uFF24",
     "\u4E8C\u6B21\u5143\uFF29\uFF24",
     "\u4E8C\u6B21\u5143\uFF29\uFF24",
     3000, true
     ],
-    
-  "dec:18" : [ /* 二次元実況 */
-    "\u4E8C\u6B21\u5143\u5B9F\u6CC1",
-    "\u5B9F\u6CC1",
-    "\u4E8C\u6B21\u5143\u5B9F\u6CC1",
-    10000, true
+  "dat:23" : [ /* スピグラ */
+    "\u30B9\u30D4\u30B0\u30E9",
+    "\u30B9\u30D4\u30B0\u30E9",
+    "\u30B9\u30D4\u30B0\u30E9",
+    200, true
     ],
-  "dec:24" : [ /* 二次元実況裏 */
-    "\u4E8C\u6B21\u5143\u5B9F\u6CC1\u88CF",
-    "\u5B9F\u6CC1\u88CF",
-    "\u4E8C\u6B21\u5143\u5B9F\u6CC1\u88CF",
-    10000, true
+  "dec:58" : [ // 二次元転載不可
+    "\u4E8C\u6B21\u5143\u8EE2\u8F09\u4E0D\u53EF",
+    "\u8EE2\u8F09\u4E0D\u53EF",
+    "\u4E8C\u6B21\u5143\u8EE2\u8F09\u4E0D\u53EF",
+    3000, true
     ],
+  "dec:59" : [ // 二次元転載可
+    "\u4E8C\u6B21\u5143\u8EE2\u8F09\u53EF",
+    "\u8EE2\u8F09\u53EF",
+    "\u4E8C\u6B21\u5143\u8EE2\u8F09\u53EF",
+    3000, true
+    ],
+
   "dat:16" : [ /* 二次元ネタ */
     "\u4E8C\u6B21\u5143\u30CD\u30BF",
     "\u4E8C\u6B21\u5143\u30CD\u30BF",
@@ -213,6 +219,66 @@ var Aima_AimaniServerData = {
     "\u30CD\u30C8\u30B2",
     8000, true
     ],
+  "dec:56" : [ /* ソシャゲ */
+    "\u30BD\u30B7\u30E3\u30B2",
+    "\u30BD\u30B7\u30E3\u30B2",
+    "\u30BD\u30FC\u30B7\u30E3\u30EB\u30B2\u30FC\u30E0",
+    3000, true
+    ],
+  "dec:60" : [ /* 艦これ */
+    "\u8266\u3053\u308C",
+    "\u8266\u3053\u308C",
+    "\u8266\u3053\u308C",
+    10000, true
+    ],
+  "dec:69" : [ /* モアイ */
+    "\u30E2\u30A2\u30A4",
+    "\u30E2\u30A2\u30A4",
+    "\u30E2\u30A2\u30A4",
+    10000, true
+    ],
+  "dec:65" : [ /* 刀剣乱舞 */
+    "\u5200\u5263\u4E71\u821E",
+    "\u5200\u5263\u4E71\u821E",
+    "\u5200\u5263\u4E71\u821E",
+    10000, true
+    ],
+  "dec:64" : [ /* 占い */
+    "\u5360\u3044",
+    "\u5360\u3044",
+    "\u5360\u3044",
+    10000, true
+    ],
+  "dec:66" : [ /* ファッション */
+    "\u30D5\u30A1\u30C3\u30B7\u30E7\u30F3",
+    "\u30D5\u30A1\u30C3\u30B7\u30E7\u30F3",
+    "\u30D5\u30A1\u30C3\u30B7\u30E7\u30F3",
+    10000, true
+    ],
+  "dec:67" : [ /* 旅行 */
+    "\u65C5\u884C",
+    "\u65C5\u884C",
+    "\u65C5\u884C",
+    10000, true
+    ],
+  "dec:68" : [ /* 子育て */
+    "\u5B50\u80B2\u3066",
+    "\u5B50\u80B2\u3066",
+    "\u5B50\u80B2\u3066",
+    10000, true
+    ],
+  "may:webm" : [ /* webm */
+    "webm",
+    "webm",
+    "webm",
+    1000, true
+    ],
+  "dec:61" : [ /* ソニー */
+    "\u30BD\u30CB\u30FC",
+    "\u30BD\u30CB\u30FC",
+    "\u30BD\u30CB\u30FC",
+    10000, true
+    ],
   "dat:10" : [ /* ネットキャラ */
     "\u30CD\u30C3\u30C8\u30AD\u30E3\u30E9",
     "\u30CD\u30C3\u30C8\u30AD\u30E3\u30E9",
@@ -225,7 +291,7 @@ var Aima_AimaniServerData = {
     "\u306A\u308A\u304D\u308A",
     4000, true
     ],
-    
+
   "zip:11" : [ /* 自作絵 */
     "\u81EA\u4F5C\u7D75",
     "\u81EA\u4F5C\u7D75",
@@ -242,13 +308,13 @@ var Aima_AimaniServerData = {
     "\u5973\u88C5",
     "\u5973\u88C5",
     "\u5973\u88C5",
-    500, true
+    100, true
     ],
   "zip:15" : [ /* ばら */
     "\u3070\u3089",
     "\u3070\u3089",
     "\u3070\u3089",
-    1000, true
+    300, true
     ],
   "zip:7" : [ /* ゆり */
     "\u3086\u308A",
@@ -260,7 +326,7 @@ var Aima_AimaniServerData = {
     "\u3084\u304A\u3044",
     "\u3084\u304A\u3044",
     "\u3084\u304A\u3044",
-    2000, true
+    500, true
     ],
   "cgi:o" : [ /* 二次元グロ */
     "\u4E8C\u6B21\u5143\u30B0\u30ED",
@@ -280,7 +346,7 @@ var Aima_AimaniServerData = {
     "\u3048\u308D\u3052",
     700, true
     ],
-    
+
   "zip:3" : [ /* 自作PC */
     "\u81EA\u4F5CPC",
     "\u81EA\u4F5CPC",
@@ -297,7 +363,13 @@ var Aima_AimaniServerData = {
     "\u308D\u307C",
     "\u308D\u307C",
     "\u308D\u307C",
-    1500, true
+    3000, true
+    ],
+  "dec:63" : [ /* 映画 */
+    "\u6620\u753B",
+    "\u6620\u753B",
+    "\u6620\u753B",
+    10000, true
     ],
   "dat:44" : [ /* おもちゃ */
     "\u304A\u3082\u3061\u3083",
@@ -305,7 +377,7 @@ var Aima_AimaniServerData = {
     "\u304A\u3082\u3061\u3083",
     4000, true
     ],
-  "up:v" : [ /* 模型 */
+  "dat:v" : [ /* 模型 */
     "\u6A21\u578B",
     "\u6A21\u578B",
     "\u6A21\u578B",
@@ -323,19 +395,13 @@ var Aima_AimaniServerData = {
     "\u30D5\u30A3\u30AE\u30E5\u30A2",
     4000, true
     ],
-  "dat:22" : [ /* 人形 */
-    "\u4EBA\u5F62",
-    "\u4EBA\u5F62",
-    "\u4EBA\u5F62\u30FB\u30C9\u30FC\u30EB",
-    3000, true
-    ],
-  "up:x" : [ /* 3DCG */
+  "dat:x" : [ /* 3DCG */
     "3DCG",
     "3DCG",
     "\u4E09\u6B21\u5143\uFF23\uFF27",
     500, true
     ],
-    
+
   "nov:35" : [ /* 政治 */
     "\u653F\u6CBB",
     "\u653F\u6CBB",
@@ -396,36 +462,42 @@ var Aima_AimaniServerData = {
     "\u4E8C\u6B21\u5143\u58C1\u7D19",
     1000, true
     ],
-  
+
   "may:40" : [ /* 東方 */
     "\u6771\u65B9",
     "\u6771\u65B9",
     "\u6771\u65B9",
     3000, true
     ],
+  "dec:55" : [ /* 東方裏 */
+    "\u6771\u65B9\u88CF",
+    "\u6771\u65B9\u88CF",
+    "\u6771\u65B9\u88CF",
+    3000, true
+    ],
   "zip:p" : [ /* お絵かき */
     "\u304A\u7D75\u304B\u304D",
     "\u304A\u7D75\u304B\u304D",
     "\u304A\u7D75\u304B\u304D",
-    4000, false
+    4000, true
     ],
   "nov:q" : [ /* 落書き */
     "\u843D\u66F8\u304D",
     "\u843D\u66F8\u304D",
     "\u843D\u66F8\u304D",
-    2000, false
+    2000, true
     ],
   "cgi:u" : [ /* 落書き裏 */
     "\u843D\u66F8\u304D\u88CF",
     "\u843D\u66F8\u304D\u88CF",
     "\u843D\u66F8\u304D\u88CF",
-    2000, false
+    2000, true
     ],
-  "www:oe" : [ /* お絵sql */
+  "jun:oe" : [ /* お絵sql */
     "\u304A\u7D75sql",
     "\u304A\u7D75sql",
     "\u304A\u7D75sql",
-    1000, false
+    1000, true
     ],
   "zip:6" : [ /* ニュース表 */
     "\u30CB\u30E5\u30FC\u30B9\u8868",
@@ -433,17 +505,41 @@ var Aima_AimaniServerData = {
     "\u30CB\u30E5\u30FC\u30B9\u8868",
     5000, false
     ],
+  "dec:53" : [ /* 発電 */
+    "\u767A\u96FB",
+    "\u767A\u96FB",
+    "\u767A\u96FB",
+    300, true
+    ],
+  "dec:52" : [ /* 地震 */
+    "\u5730\u9707",
+    "\u5730\u9707",
+    "\u5730\u9707",
+    3000, true
+    ],
   "img:9" : [ /* 雑談 */
     "\u96D1\u8AC7",
     "\u96D1\u8AC7",
     "\u96D1\u8AC7",
-    1000, false
+    500, true
     ],
-  "www:junbi" : [ /* 準備 */
+  "dec:70" : [ /* 新板提案 */
+    "\u65b0\u677f\u63d0\u6848",
+    "\u65b0\u677f\u63d0\u6848",
+    "\u65b0\u677f\u63d0\u6848",
+    10000, true
+    ],
+  "ipv6:54" : [ /* IPv6 */
+    "IPv6",
+    "IPv6",
+    "IPv6",
+    1000, true
+    ],
+  "jun:junbi" : [ /* 準備 */
     "\u6E96\u5099",
     "\u6E96\u5099",
     "\u6E96\u5099",
-    500, false
+    300, false
     ],
 
   "may:layout" : [ /* レイアウト */
@@ -451,7 +547,14 @@ var Aima_AimaniServerData = {
     "\u30EC\u30A4\u30A2\u30A6\u30C8",
     "\u30EC\u30A4\u30A2\u30A6\u30C8",
     2000, true
-    ]
+    ],
+
+  "www:hinan" : [ /* 避難所 */
+    "\u907F\u96E3\u6240",
+    "\u907F\u96E3\u6240",
+    "\u907F\u96E3\u6240",
+    10000, true,
+    ],
 };
 var Aima_AimaniServerName = new Object ();
 var Aima_AimaniMaxNum = new Object ();
