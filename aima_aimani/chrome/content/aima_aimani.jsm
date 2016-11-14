@@ -1340,7 +1340,7 @@ Aima_AimaniLocationInfo.prototype = {
     }
         
     if (location.match
-        (/^http:\/\/([^\/]+\/|(?:www\.)?logch\.info\/(?:proxy|logs)\/)?([^\.\/]+)\.2chan\.net(:[0-9]+)?\/(may\/b|[^\/]+)\/(.*)$/)) {
+        (/^https?:\/\/([^\/]+\/|(?:www\.)?logch\.info\/(?:proxy|logs)\/)?([^\.\/]+)\.2chan\.net(:[0-9]+)?\/(may\/b|[^\/]+)\/(.*)$/)) {
       /* RegExp.$1: 双助のアドレス */
       this.server = RegExp.$2;
       /* RegExp.$3: ポート番号 */
@@ -3473,9 +3473,9 @@ var Aima_Aimani = {
       }
             
       if (href.match
-          (/^http:\/\/([^\/]+\/|(?:www\.)?logch\.info\/(?:proxy|logs)\/)?(tmp|up|img|cgi|zip|dat|may|nov|jun|dec|feb)\.2chan.net(:[0-9]+)?\/(may\/b|[^\/]+)\//)
+          (/^https?:\/\/([^\/]+\/|(?:www\.)?logch\.info\/(?:proxy|logs)\/)?(tmp|up|img|cgi|zip|dat|may|nov|jun|dec|feb)\.2chan.net(:[0-9]+)?\/(may\/b|[^\/]+)\//)
           || href.match
-          (/^http:\/\/([^\/|(?:www\.)?logch\.info\/(?:proxy|logs)\/]+\/)?(www)\.2chan\.net(:[0-9]+)?\/(h|oe)\//)) {
+          (/^https?:\/\/([^\/|(?:www\.)?logch\.info\/(?:proxy|logs)\/]+\/)?(www)\.2chan\.net(:[0-9]+)?\/(h|oe)\//)) {
         needApply = true;
       }
       if (href.match
@@ -6849,7 +6849,7 @@ var Aima_Aimani = {
               continue;
             }
             prefix
-              = "http://" + Aima_Aimani.NGNumberList [i][1]
+              = "//" + Aima_Aimani.NGNumberList [i][1]
               + ".2chan.net/" + Aima_Aimani.NGNumberList [i][2]
               + "/";
             if (prefix != prevPrefix) {
@@ -6857,7 +6857,8 @@ var Aima_Aimani = {
                 style += "}";
               }
               style
-                += "@-moz-document url-prefix(" + prefix
+                += "@-moz-document url-prefix(http:" + prefix
+                + "), url-prefix(https:" + prefix
                 + ") {";
               prevPrefix = prefix;
             }
@@ -6906,11 +6907,12 @@ var Aima_Aimani = {
               var dir = RegExp.$2;
               
               prefix
-              = "http://" + server
+              = "//" + server
               + ".2chan.net/" + dir
               + "/";
               style
-              += "@-moz-document url-prefix(" + prefix
+              += "@-moz-document url-prefix(http:" + prefix
+              + "), url-prefix(https:" + prefix
               + ") {";
                             
               style
@@ -6929,9 +6931,11 @@ var Aima_Aimani = {
             if (name.match (/^([^:]+):(.+)$/)) {
               var server = RegExp.$1;
               var dir = RegExp.$2;
-              prefix = "http://" + server + ".2chan.net/" + dir + "/";
+              prefix = "//" + server + ".2chan.net/" + dir + "/";
               style
-                += "@-moz-document url-prefix(" + prefix + ") {"
+                += "@-moz-document url-prefix(http:" + prefix
+                + "), url-prefix(https:" + prefix
+                + ") {"
                 // ハッシュ計算未成功
                 + "td small.aima_aimani_generated"
                 + "[name^='hide_ngcat_'][name$='_null?']"
@@ -6951,11 +6955,12 @@ var Aima_Aimani = {
               var dir = RegExp.$2;
                             
               prefix
-              = "http://" + server
+              = "//" + server
               + ".2chan.net/" + dir
               + "/futaba.php?mode=cat";
               style
-              += "@-moz-document url-prefix(" + prefix
+              += "@-moz-document url-prefix(http:" + prefix
+              + "), url-prefix(https:" + prefix
               + ") {";
                             
               style
