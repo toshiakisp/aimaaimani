@@ -1,6 +1,0 @@
-content aima_aimani  chrome/content/
-
-overlay chrome://browser/content/browser.xul              chrome://aima_aimani/content/aima_aimani.xul
-overlay chrome://navigator/content/navigatorOverlay.xul   chrome://aima_aimani/content/aima_aimani.xul
-
-style chrome://global/content/customizeToolbar.xul chrome://aima_aimani/content/aima_aimani.css

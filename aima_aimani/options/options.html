@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>合間合間に 設定</title>
+    <link href="options.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <h3>合間合間に 設定</h3>
+    <form>
+
+      <div class="box-orient-horizontal">
+        <label><input type="checkbox" name="all">全機能</label>
+        <span class="spacer"></span>
+        <a class="text-link" href="">合間合間に</a>
+        <label id="version">Ver.</label>
+      </div>
+      <div class="box-orient-horizontal border">
+        <label><input type="checkbox" name="ng_word">NG ワード</label>
+        <label><input type="checkbox" name="ng_thumbnail">NG サムネ</label>
+        <label><input type="checkbox" name="ng_cat">NG カタログ</label>
+        <label><input type="checkbox" name="ng_number">NG 番号</label>
+        <label><input type="checkbox" name="thread_rule">スレッドルール</label>
+        <label><input type="checkbox" name="mini_thumb">小サムネ</label>
+        <label><input type="checkbox" name="text_thread">文字スレ非表示</label>
+      </div>
+
+      <div class="tab-box">
+        <input type="radio" name="tabs-radio" id="tab_1" checked>
+        <input type="radio" name="tabs-radio" id="tab_2">
+        <input type="radio" name="tabs-radio" id="tab_3">
+        <input type="radio" name="tabs-radio" id="tab_4">
+        <input type="radio" name="tabs-radio" id="tab_5">
+        <input type="radio" name="tabs-radio" id="tab_6">
+        <input type="radio" name="tabs-radio" id="tab_7">
+        <input type="radio" name="tabs-radio" id="tab_8">
+        <div class="tabs">
+          <label class="tab" for="tab_1">一般</label>
+          <label class="tab" for="tab_2">NG ワード</label>
+          <label class="tab" for="tab_3">NG サムネ</label>
+          <label class="tab" for="tab_4">NG カタログ</label>
+          <label class="tab" for="tab_5">NG 番号</label>
+          <label class="tab" for="tab_6">スレッドルール</label>
+          <label class="tab" for="tab_7">板</label>
+          <label class="tab" for="tab_8">その他</label>
+        </div>
+        <div class="tabpanels">
+
+          <div class="tabpanel orient-horizontal" data-tab="tab_1">
+            <div class="box-orient-vertical">
+              <div class="groupbox-orient-vertical">
+                <div class="caption">消し方</div>
+                <label><input type="checkbox" name="hide_warning">
+                  警告を表示しない</label>
+                <label><input type="checkbox" name="hide_style">
+                  NG 番号で本文をロード中にも表示しない</label>
+                <label><input type="checkbox" name="hide_thread_style">
+                  ロード完了するまでスレを表示しない</label>
+                <label><input type="checkbox" name="hide_cat_style">
+                  ロード完了するまでカタログを表示しない</label>
+                <label><input type="checkbox" name="catalogue_unlink">
+                  カタログで消したスレのリンクも消す</label>
+                <label><input type="checkbox" name="show_textthread_reply">
+                  レス送信モードでは文字スレを表示する</label>
+              </div>
+              <div class="groupbox-orient-vertical">
+                <div class="caption">ポップアップ</div>
+                <label><input type="checkbox" name="popup_message">
+                  本文をポップアップする</label>
+                <div class="box-orient-horizontal sub">
+                  <label>表示まで
+                  <input type="text" name="popup_message.delay.show" placeholder="数値..." pattern="[0-9]*(\.[0-9]*)?" size="6">
+                  [ms]</label>
+                </div>
+              </div>
+            </div>
+            <div class="box-orient-vertical">
+              <div class="groupbox-orient-vertical">
+                <div class="caption">NG 番号の操作</div>
+                <label><input type="checkbox" name="ng_number.catalogue">
+                  カタログに [消] ボタン</label>
+                <label><input type="checkbox" name="bracket">
+                  カタログのボタンに括弧を付ける</label>
+                <label><input type="checkbox" name="easyng">
+                  カタログに [一括 NG] ボタン</label>
+                <div class="box-orient-vertical sub">
+                  <div class="box-orient-vertical">
+                    <label><input type="radio" name="easyng.type" value="all_open" checked="true">全部</label>
+                    <label><input type="radio" name="easyng.type" value="all_close">全部 (閉じておく)</label>
+                    <label><input type="radio" name="easyng.type" value="num_cat">NG 番号、NG カタログの [消] のみ</label>
+                    <label><input type="radio" name="easyng.type" value="num">NG 番号の [消] のみ</label>
+                  </div>
+                  <label><input type="checkbox" name="easyng.startup">
+                    ロード時に NG 番号オン</label>
+                </div>
+                <label><input type="checkbox" name="ng_number.bottom">
+                  0 〜 10 ページでスレの末尾に [消] ボタン</label>
+                <label><input type="checkbox" name="ng_number.selection">
+                  選択範囲を [消]／[削除]</label>
+              </div>
+              <div class="groupbox-orient-vertical">
+                <div class="caption">無かった事にする</div>
+                <label><input type="checkbox" name="hide_entire_thread">
+                  スレを無かった事にする</label>
+                <label><input type="checkbox" name="hide_entire_res">
+                  レスを無かった事にする</label>
+                <div class="box-orient-vertical sub">
+                  <label><input type="checkbox" name="hide_entire_res_instant">
+                    即無かった事にする</label>
+                </div>
+                <div class="label-warning">無かった事にした場合、自分には見えていないスレや</div>
+                <div class="label-warning">見えていないレスが存在する事になります</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabpanel orient-vertical" data-tab="tab_2">
+            <div class="box-orient-horizontal">
+              <div class="box-orient-vertical">
+                <input type="text" name="ng_word_word">
+                <div class="box-orient-horizontal">
+                  <label><input type="checkbox" name="ng_word_regexp">
+                    正規表現</label>
+                  <label><input type="checkbox" name="ng_word_ignore_case">
+                    大文字/小文字を区別しない</label>
+                </div>
+                <div class="box-orient-horizontal">
+                  範囲:
+                  <label><input type="checkbox" name="ng_word_message">
+                    本文</label>
+                  <label><input type="checkbox" name="ng_word_mail">
+                    メル欄など</label>
+                </div>
+                <div class="box-orient-horizontal">
+                  対象:
+                  <label><input type="checkbox" name="ng_word_thread">
+                    スレ</label>
+                  <label><input type="checkbox" name="ng_word_res">
+                    レス</label>
+                  <label><input type="checkbox" name="ng_word_cat">
+                    カタログ</label>
+                </div>
+                <div class="box-orient-horizontal">
+                  期限:
+                  <div class="box-orient-horizontal">
+                    <label><input type="radio" name="ng_word_expire" value="none" checked="true">なし</label>
+                    <label><input type="radio" name="ng_word_expire" value="1day">1日</label>
+                    <label><input type="radio" name="ng_word_expire" value="3day">3日</label>
+                    <label><input type="radio" name="ng_word_expire" value="date">
+                      時間:
+                      <input type="text" name="ng_word_expire_date">
+                    </label>
+                  </div>
+                </div>
+                <div>時間の例: 2007/01/01 00:00:00, 1 日 (1 日後, 1 d), 1 時間 (1 h), 1 分 (1 m), 1 秒 (1 s)</div>
+                <div class="label-warning" id="ng_word_illegal"></div>
+                <table id="ng_word_list" class="listbox seltype-multiple" style="width: 100%" border="1">
+                  <tr class="listhead">
+                    <td class="listheader" style="min-width: 8em; width: auto;">NG ワード</td>
+                    <td class="listheader" style="min-width: 4em;">正規</td>
+                    <td class="listheader" style="min-width: 4em;">i</td>
+                    <td class="listheader" style="min-width: 4em;">本文</td>
+                    <td class="listheader" style="min-width: 4em;">メ欄</td>
+                    <td class="listheader" style="min-width: 4em;">スレ</td>
+                    <td class="listheader" style="min-width: 4em;">レス</td>
+                    <td class="listheader" style="min-width: 4em;">カタ</td>
+                    <td class="listheader" style="min-width: 4em;">期限</td>
+                    <td class="listheader" style="min-width: 8em;"></td>
+                  </tr>
+                  <tr class="listcols">
+                  </tr>
+                </table>
+              </div>
+              <div class="box-orient-vertical">
+                <button type="button" id="ng_word_add">追加</button>
+                <button type="button" id="ng_word_modify">修正</button>
+                <button type="button" id="ng_word_moveup">上に</button>
+                <button type="button" id="ng_word_movedown">下に</button>
+                <button type="button" id="ng_word_delete">削除</button>
+              </div>
+            </div>
+            <div class="box-orient-horizontal align-center">
+              <div class="box-orient-vertical">
+                動作する
+                <table id="ng_word_board_select_in_list" class="listbox seltype-multiple"
+                  style="height: 5em" border="1">
+                  <tr class="listhead">
+                    <td class="listheader flex-1">板</td>
+                    <td class="listheader"></td>
+                  </tr>
+                  <tr class="listcols">
+                    <td class="listcol"></td>
+                    <td class="listcol"></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="box-orient-horizontal">
+                <div class="box-orient-vertical">
+                  <button type="button" id="ng_word_board_select_add">←</button>
+                  <button type="button" id="ng_word_board_select_delete">→</button>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                動作しない
+                <table id="ng_word_board_select_ex_list" class="listbox seltype-multiple"
+                  style="height: 5em" border="1">
+                  <tr class="listhead">
+                    <td class="listheader flex-1">板</td>
+                    <td class="listheader"></td>
+                  </tr>
+                  <tr class="listcols">
+                    <td class="listcol"></td>
+                    <td class="listcol"></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <label><input type="checkbox" name="ng_word.cont">
+              本文で同じ言葉の繰り返しを NG ワードにする</label>
+            <div class="sub box-orient-horizontal align-center">
+              <label><input type="text" name="ng_word.cont.length" size="6" placeholder="数値..." pattern="[0-9]*">
+                文字以上が</label>
+              <label><input type="text" name="ng_word.cont.count" size="6" placeholder="数値..." pattern="[0-9]*">
+                回以上</label>
+            </div>
+          </div>
+
+          <div class="tabpanel orient-vertical" data-tab="tab_3">
+            <div class="box-orient-horizontal">
+              <div class="box-orient-vertical">
+                <div class="box-orient-horizontal align-center">
+                  <label>幅
+                    <input type="text" name="ng_thumbnail_width" size="6" placeholder="数値..." pattern="[0-9]*">
+                  </label>
+                  <label>高さ
+                    <input type="text" name="ng_thumbnail_height" size="6" placeholder="数値..." pattern="[0-9]*">
+                  </label>
+                  <label>バイト数
+                    <input type="text" name="ng_thumbnail_bytes" size="6" placeholder="数値..." pattern="[0-9]*">
+                  </label>
+                  <label>-
+                    <input type="text" name="ng_thumbnail_bytes2" size="6" placeholder="数値..." pattern="[0-9]*">
+                  </label>
+                  <label>拡張子
+                    <input type="text" name="ng_thumbnail_ext" size="6">
+                  </label>
+                </div>
+                <div class="box-orient-horizontal align-center">
+                  <label>コメント
+                    <input type="text" name="ng_thumbnail_comment" size="24">
+                  </label>
+                  <label>回数
+                    <input type="text" name="ng_thumbnail_count" size="6" placeholder="数値..." pattern="[0-9]*">
+                  </label>
+                  <label>最終更新日時
+                    <input type="text" name="ng_thumbnail_date" readonly="readonly">
+                  </label>
+                  <input type="hidden" name="ng_thumbnail_date_value">
+                </div>
+                <div class="label-warning" name="ng_thumbnail_illegal"></div>
+                <div class="listbox" id="ng_thumbnail_list"
+                         data-seltype="multiple">
+                  <listhead>
+                    <listheader label="幅" />
+                    <listheader label="高さ" />
+                    <listheader label="バイト数" />
+                    <listheader label="拡張子" />
+                    <listheader label="コメント" />
+                    <listheader label="回数" />
+                    <listheader label="更新" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 10em;" flex="1" />
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                <button id="ng_thumbnail_add">追加</button>
+                <button id="ng_thumbnail_modify">修正</button>
+                <button id="ng_thumbnail_moveup">上に</button>
+                <button id="ng_thumbnail_movedown">下に</button>
+                <button id="ng_thumbnail_delete">削除</button>
+                <button id="ng_thumbnail_sort">回数でソート</button>
+                <button id="ng_thumbnail_sort_1">幅でソート</button>
+                <button id="ng_thumbnail_sort_2">高さでソート</button>
+                <button id="ng_thumbnail_sort_3">サイズでソート</button>
+                <button id="ng_thumbnail_sort_4">バイト数でソート</button>
+                <button id="ng_thumbnail_sort_5">更新でソート</button>
+                <button id="ng_thumbnail_sort_10">並びを反転</button>
+              </div>
+            </div>
+            <div class="box-orient-horizontal align-center">
+              <div class="box-orient-vertical">
+                動作する
+                <listbox id="ng_thumbnail_board_select_in_list" flex="1"
+                         rows="5" seltype="multiple">
+                  <listhead>
+                    <listheader label="板" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol flex="1" />
+                    <listcol />
+                  </listcols>
+                </listbox>
+              </div>
+              <div class="box-orient-horizontal align-center">
+                <div class="box-orient-vertical">
+                  <button id="ng_thumbnail_board_select_add">←</button>
+                  <button id="ng_thumbnail_board_select_delete">→</button>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                動作しない
+                <div class="listbox" id="ng_thumbnail_board_select_ex_list"
+                  data-rows="5" data-seltype="multiple">
+                  <listhead>
+                    <listheader label="板" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol flex="1" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="tabpanel orient-vertical" data-tab="tab_4">
+            <div class="box-orient-horizontal">
+              <div class="box-orient-vertical">
+                <div class="box-orient-horizontal align-center">
+                  <label>幅
+                    <input type="text" name="ng_cat_width" size="6" placeholder="数値..." pattern="[0-9]*">
+                  </label>
+                  <label>高さ
+                    <input type="text" name="ng_cat_height" size="6" placeholder="数値..." pattern="[0-9]*">
+                  </label>
+                  <label>MD5 ハッシュ
+                    <input type="text" name="ng_cat_hash">
+                  </label>
+                </div>
+                <div class="box-orient-horizontal align-center">
+                  <label>コメント
+                    <input type="text" name="ng_cat_comment" size="24">
+                  </label>
+                  <label>回数
+                    <input type="text" name="ng_cat_count" size="6" placeholder="数値..." pattern="[0-9]*">
+                  </label>
+                  <label>最終更新日時
+                    <input type="text" name="ng_cat_date" readonly="readonly">
+                  </label>
+                  <input type="hidden" name="ng_cat_date_value">
+                </div>
+                <div class="label-warning" id="ng_cat_illegal"></div>
+                <div class="listbox" id="ng_cat_list" data-seltype="multiple">
+                  <listhead>
+                    <listheader label="幅" />
+                    <listheader label="高さ" />
+                    <listheader label="MD5 ハッシュ" />
+                    <listheader label="コメント" />
+                    <listheader label="回数" />
+                    <listheader label="更新" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 20em;" flex="1" />
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 6em;" flex="1" />
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                <button id="ng_cat_add">追加</button>
+                <button id="ng_cat_modify">修正</button>
+                <button id="ng_cat_moveup">上に</button>
+                <button id="ng_cat_movedown">下に</button>
+                <button id="ng_cat_delete">削除</button>
+                <button id="ng_cat_sort_0">回数でソート</button>
+                <button id="ng_cat_sort_1">幅でソート</button>
+                <button id="ng_cat_sort_2">高さでソート</button>
+                <button id="ng_cat_sort_3">サイズでソート</button>
+                <button id="ng_cat_sort_4">更新でソート</button>
+                <button id="ng_cat_sort_10">並びを反転</button>
+              </div>
+            </div>
+            <div class="box-orient-horizontal align-center">
+              <div class="box-orient-vertical">
+                動作する
+                <div class="listbox" id="ng_cat_board_select_in_list"
+                  data-rows="5" data-seltype="multiple">
+                  <listhead>
+                    <listheader label="板" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol flex="1" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+              <div class="box-orient-horizontal align-center">
+                <div class="box-orient-vertical">
+                  <button id="ng_cat_board_select_add">←</button>
+                  <button id="ng_cat_board_select_delete">→</button>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                動作しない
+                <div class="listbox" id="ng_cat_board_select_ex_list"
+                  data-rows="5" data-seltype="multiple">
+                  <listhead>
+                    <listheader label="板" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol flex="1" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+            </div>
+            <label><input type="checkbox" name="ng_cat.no_button">
+              [消] ボタンを表示しない</label>
+            <div class="box-orient-horizontal">
+              <label><input type="checkbox" name="ng_cat.auto">
+                同じ画像のスレが 3 秒以内に</label>
+              <label><input type="text" name="ng_cat.auto.threshold" size="6" placeholder="数値..." pattern="[0-9]*">
+                個立ったら自動で登録する</label>
+            </div>
+          </div>
+
+
+          <div class="tabpanel orient-vertical" data-tab="tab_5">
+            <div class="box-orient-horizontal">
+              <div class="box-orient-vertical">
+                <div class="box-orient-horizontal">
+                  <input type="textbox" name="ng_number_number">
+                  <div class="menulist" id="ng_number_server">
+                    <div class="menupopup" id="ng_number_server_menu">
+                    </div>
+                  </div>
+                </div>
+                <div class="label-warning" id="ng_number_illegal"></div>
+                <div class="listbox" id="ng_number_list"
+                  data-seltype="multiple">
+                  <listhead>
+                    <listheader label="NG 番号" />
+                    <listheader label="画像" />
+                    <listheader label="板名" />
+                    <listheader label="種類" />
+                    <listheader label="依存情報" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol style="min-width: 10em;" flex="1" />
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                <button id="ng_number_add">追加</button>
+                <button id="ng_number_modify">修正</button>
+                <button id="ng_number_moveup">上に</button>
+                <button id="ng_number_movedown">下に</button>
+                <button id="ng_number_delete">削除</button>
+              </div>
+            </div>
+            <label>有効期限</label>
+            <input type="textbox" name="ng_number.expire">
+          </div>
+
+
+          <div class="tabpanel orient-vertical" data-tab="tab_6">
+            <div class="box-orient-horizontal">
+              <div class="box-orient-vertical">
+                <div class="box-orient-horizontal">
+                  <input type="textbox" name="thread_rule_number" class="flex-1">
+                  <div class="menulist" id="thread_rule_server">
+                    <div class="menupopup" id="thread_rule_server_menu">
+                    </div>
+                  </div>
+                </div>
+                <div class="box-orient-horizontal">
+                  <label><input type="checkbox" name="thread_rule_text_res">
+                    文字レス非表示</label>
+                  <label><input type="checkbox" name="thread_rule_image_res">
+                    画像レス非表示</label>
+                  <label><input type="checkbox" name="thread_rule_sage_only">
+                    非 sage レス非表示</label>
+                  <label><input type="checkbox" name="thread_rule_not_sage">
+                    sage レス非表示</label>
+                  <label><input type="checkbox" name="thread_rule_mini_thumb">
+                    サムネを小さく表示</label>
+                </div>
+                <div class="label-warning" id="thread_rule_illegal"></div>
+                <div class="listbox" id="thread_rule_list"
+                  data-seltype="multiple">
+                  <listhead>
+                    <listheader label="NG 番号" />
+                    <listheader label="板名" />
+                    <listheader label="文字レス" />
+                    <listheader label="画像レス" />
+                    <listheader label="非sage" />
+                    <listheader label="sage" />
+                    <listheader label="小サムネ" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol style="min-width: 6em;" />
+                    <listcol style="min-width: 6em;" />
+                    <listcol style="min-width: 6em;" />
+                    <listcol style="min-width: 6em;" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                <button id="thread_rule_add">追加</button>
+                <button id="thread_rule_modify">修正</button>
+                <button id="thread_rule_moveup">上に</button>
+                <button id="thread_rule_movedown">下に</button>
+                <button id="thread_rule_delete">削除</button>
+              </div>
+            </div>
+            <div class="box-orient-horizontal align-center">
+              <label>小さいサムネのサイズ
+                <input type="textbox" name="thread_rule.mini_thumb.size" placeholder="数値..." pattern="[0-9]*(\.[0-9]*)?">
+              </label>
+              <label>
+                <input type="checkbox" name="thread_rule.mini_thumb.hover">
+                マウスを乗せた時だけ拡大
+              </label>
+            </div>
+            <label>有効期限</label>
+            <input type="textbox" name="thread_rule.expire">
+          </div>
+
+
+          <div class="tabpanel orient-vertical" data-tab="tab_7">
+            <div class="groupbox-orient-horizontal align-center">
+              <div class="caption">
+                <input type="checkbox" name="board_select">
+                動作する板を指定する
+              </div>
+              <div class="box-orient-vertical">
+                <label>動作する</label>
+                <div class="listbox" id="board_select_in_list"
+                  data-rows="5" data-seltype="multiple">
+                  <listhead>
+                    <listheader label="板" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol flex="1" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+              <div class="box-orient-horizontal align-center">
+                <div class="box-orient-vertical">
+                  <button id="board_select_add">←</button>
+                  <button id="board_select_delete">→</button>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                <label>動作しない</label>
+                <div class="listbox" id="board_select_ex_list"
+                  data-rows="5" data-seltype="multiple">
+                  <listhead>
+                    <listheader label="板" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol flex="1" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+            </div>
+            <div class="groupbox-orient-horizontal">
+              <div class="caption">
+                <input type="checkbox" name="board_external">
+                外部の板でも動作させる
+              </div>
+              <div class="box-orient-vertical">
+                <div class="box-orient-horizontal align-center">
+                  <label id="board_external_pattern_label">パターン
+                    <input type="textbox" name="board_external_pattern flex-1">
+                  </label>
+                </div>
+                <div class="box-orient-horizontal align-center">
+                  <label><input type="checkbox" name="board_external_monaca">
+                    monaca.php</label>
+                  <label><input type="checkbox" name="board_external_prefix">
+                    前方一致</label>
+                </div>
+                <label id="board_external_sample1">
+                  前方一致でないパターンは $1: サーバ名、 $2: ディレクトリ名、 $3: パス となるようにしてください</label>
+                <label id="board_external_sample2">
+                  例: ^http://([^\.]+)\.2chan\.net/([^/]+)/(.*)$</label>
+                <div class="label-warning" id="board_external_illegal"></div>
+                <div class="listbox" id="board_external_list"
+                  data-rows="4" data-seltype="multiple">
+                  <listhead>
+                    <listheader label="パターン/プレフィックス" />
+                    <listheader label="monaca.php" />
+                    <listheader label="前方一致" />
+                    <listheader label="" />
+                  </listhead>
+                  <listcols>
+                    <listcol style="min-width: 8em;" flex="1" />
+                    <listcol style="min-width: 8em;" />
+                    <listcol style="min-width: 8em;" />
+                    <listcol />
+                  </listcols>
+                </div>
+              </div>
+              <div class="box-orient-vertical">
+                <button id="board_external_add">追加</button>
+                <button id="board_external_modify">修正</button>
+                <button id="board_external_moveup">上に</button>
+                <button id="board_external_movedown">下に</button>
+                <button id="board_external_delete">削除</button>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="tabpanel orient-vertical" data-tab="tab_8">
+            <div class="groupbox-orient-vertical">
+              <div class="caption">ステータスバー</div>
+              <label><input type="checkbox" name="statusbar.preferences">
+                設定ダイアログのアイコンを表示する</label>
+              <label><input type="checkbox" name="statusbar.ng_word">
+                NG ワードに追加のアイコンを表示する</label>
+            </div>
+            <div class="groupbox-orient-vertical">
+              <div class="caption">ツールバー</div>
+              <label class="label-warning">
+                Firefox では、このチェックボックスは使わずに
+              </label>
+              <label class="label-warning">
+                ツールバーのカスタマイズから追加してください
+              </label>
+              <label><input type="checkbox" name="toolbar.preferences">
+                設定ダイアログのアイコンを表示する</label>
+              <label><input type="checkbox" name="toolbar.ng_word">
+                NG ワードに追加のアイコンを表示する</label>
+              <label>変更は次回ウィンドウを開いた時から反映されます</label>
+            </div>
+            <div class="groupbox-orient-vertical">
+              <div class="caption">設定のインポート／エクスポート／初期化</div>
+              <div class="box-orient-horizontal">
+                <button id="import">インポート</button>
+                <button id="export">エクスポート</button>
+                <button id="init">初期化</button>
+              </div>
+              <div id="import_export_message"></div>
+              <input type="hidden" name="import_export_error">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="box-orient-vertical align-end">
+        <div class="box-orient-horizontal">
+          <button type="button" id="save-button" disabled="true">保存</button>
+          <button type="button" id="cancel-button" disabled="true">キャンセル</button>
+        </div>
+      </div>
+    </form>
+
+    <script src="options.js"></script>
+
+  </body>
+
+</html>
+

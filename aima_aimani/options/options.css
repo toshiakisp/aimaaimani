@@ -1,0 +1,191 @@
+
+body {
+  -moz-user-select: none;
+  user-select: none;
+  --main-bg-color: #ebebeb;
+  background-color: var(--main-bg-color);
+}
+
+.box-orient-vertical {
+  display: flex;
+  flex-direction: column;
+}
+.box-orient-horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.align-center {
+  align-items: center;
+}
+.align-end {
+  align-items: flex-end;
+}
+.align-start {
+  align-items: flex-start;
+}
+.align-strech {
+  align-items: stretch;
+}
+
+
+.box-orient-vertical.sub,
+.box-orient-horizontal.sub {
+  margin-left: 1em;
+}
+.box-orient-vertical.sub + *,
+.box-orient-horizontal.sub + * {
+  margin-top: 0.5em;
+}
+
+.box-orient-vertical>*{
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.box-orient-horizontal>*{
+  margin-left: 2px;
+  margin-right: 2px;
+}
+.box-orient-horizontal {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.box-orient-horizontal > .spacer {
+  margin-left: auto;
+}
+
+.border {
+  padding: 5px;
+  border: 2px groove lightgray;
+}
+
+.groupbox-orient-vertical,
+.groupbox-orient-horizontal {
+  position: relative;
+  display: flex;
+  padding: 0.5em;
+  margin-top: calc(0.5em + 4px);
+  margin-bottom: calc(0.5em + 4px);
+  border: 2px groove lightgray;
+}
+.groupbox-orient-vertical {
+  flex-direction: column;
+}
+.groupbox-orient-horizontal {
+  flex-direction: row;
+}
+.groupbox-orient-vertical>.caption:first-of-type,
+.groupbox-orient-horizontal>.caption:first-of-type {
+  display: inline;
+  position: absolute;
+  top: -1em;
+  background-color: var(--main-bg-color);
+  padding: 0 0.2em;
+  margin: 0;
+}
+
+/* Tab control */
+
+.tab-box {
+  --main-bg-color: white;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+.tab-box>.tabs:first-of-type {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+  margin-bottom: 0;
+  position: relative;
+}
+.tab-box>.tabs>*{
+  display: none;
+}
+.tab-box>.tabs>.tab {
+  display: inline-block;
+  border-color: gray;
+  border-style: solid;
+  border-width: 1px 1px 0 1px;
+  margin: 0 -1px 0 0;
+  padding: 0 6px;
+  position: relative;
+}
+.tab-box>.tabs>.tab:first-of-type {
+  border-left-width: 1px;
+}
+.tab-box>.tabs>.tab:hover {
+  background-color: #E3F0FA;
+}
+.tab-box>.tabs>.tab.selected:first-of-type,
+.tab-box>.tabs>.tab.selected:first-of-type:hover {
+  background-color: var(--main-bg-color);
+}
+.tab-box>.tabpanels {
+  position: relative;
+  background-color: var(--main-bg-color);
+}
+.tab-box>.tabpanels>.tabpanel {
+  margin-top: 0;
+  padding: 8px;
+  border: 1px solid gray;
+  min-height: 50vh;
+}
+
+.tabpanel.orient-horizontal {
+  display: flex;
+  flex-direction: row;
+}
+.tabpanel.orient-vertical {
+  display: flex;
+  flex-direction: column;
+}
+.tabpanel.orient-horizontal > .groupbox-orient-vertical,
+.tabpanel.orient-horizontal > .groupbox-orient-horizontal,
+.tabpanel.orient-horizontal > .box-orient-vertical,
+.tabpanel.orient-horizontal > .box-orient-horizontal {
+  margin-right: 0.5em;
+}
+.tabpanel.orient-vertical > .groupbox-orient-vertical,
+.tabpanel.orient-vertical > .groupbox-orient-horizontal,
+.tabpanel.orient-vertical > .box-orient-vertical,
+.tabpanel.orient-vertical > .box-orient-horizontal {
+  /* margin-bottom: 0.5em; */
+}
+
+/* CSS Tab switching */
+.tab-box > input[type="radio"] {
+  display: none;
+}
+input#tab_1:checked ~ .tabs > label[for="tab_1"],
+input#tab_2:checked ~ .tabs > label[for="tab_2"],
+input#tab_3:checked ~ .tabs > label[for="tab_3"],
+input#tab_4:checked ~ .tabs > label[for="tab_4"],
+input#tab_5:checked ~ .tabs > label[for="tab_5"],
+input#tab_6:checked ~ .tabs > label[for="tab_6"],
+input#tab_7:checked ~ .tabs > label[for="tab_7"],
+input#tab_8:checked ~ .tabs > label[for="tab_8"],
+input#tab_9:checked ~ .tabs > label[for="tab_9"] {
+  background-color: var(--main-bg-color);
+  padding-bottom: 3px;
+}
+.tab-box > .tabpanels > .tabpanel {
+  display: none;
+}
+input#tab_1:checked ~ .tabpanels > .tabpanel[data-tab="tab_1"],
+input#tab_2:checked ~ .tabpanels > .tabpanel[data-tab="tab_2"],
+input#tab_3:checked ~ .tabpanels > .tabpanel[data-tab="tab_3"],
+input#tab_4:checked ~ .tabpanels > .tabpanel[data-tab="tab_4"],
+input#tab_5:checked ~ .tabpanels > .tabpanel[data-tab="tab_5"],
+input#tab_6:checked ~ .tabpanels > .tabpanel[data-tab="tab_6"],
+input#tab_7:checked ~ .tabpanels > .tabpanel[data-tab="tab_7"],
+input#tab_8:checked ~ .tabpanels > .tabpanel[data-tab="tab_8"],
+input#tab_9:checked ~ .tabpanels > .tabpanel[data-tab="tab_9"] {
+  display: flex;
+}
+
+/* Misc. */
+.label-warning {
+  color: red;
+}
+

@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "version": "3.3.57.sp_rev.4pre",
+  "default_locale": "en",
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
+  "author": "toshiaki.sp",
+  "homepage_url": "https://toshiakisp.github.io/akahuku-firefox-sp/",
+
+  "applications": {
+    "gecko": {
+      "id": "aimaaimani@toshiakisp.github.io",
+      "strict_min_version": "57.0a1",
+      "strict_max_version": "57.*",
+      "update_url": "https://toshiakisp.github.io/akahuku-firefox-sp/aimaaimani_update.json"
+    }
+  },
+
+  "icons": {
+    "32": "chrome/content/icon.png"
+  },
+
+  "permissions": [
+    "storage"
+  ],
+
+  "background": {
+    "scripts": [
+      "background/pref.js",
+      "background/pref_default.js"
+    ]
+  },
+
+  "options_ui": {
+    "open_in_tab": true,
+    "page": "options/options.html"
+  }
+}
+
