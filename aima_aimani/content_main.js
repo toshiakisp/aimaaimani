@@ -1,48 +1,44 @@
-/* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/**
+ * Content script main (run_at document_start)
+ */
 
-const Cu = Components.utils;
-const Cr = Components.results;
+if (document.readyState == "loading") {
+  Promise.all ([// wait for all parallel async initializations
+    Aima_Aimani.asyncInit (),
+    new Promise (function (resolve, reject) {
 
-Cu.import ("chrome://aima_aimani/content/aima_aimani.jsm");
+      // 赤福との処理順序の調整
+      var waitCustomEvents = false;
+      window.addEventListener ("AkahukuFrameLoaded", (event) => {
+        if (!waitCustomEvents) {
+          waitCustomEvents = true;
+          window.addEventListener ("AkahukuContentApplied", (event) => {
+            resolve (event);
+          });
+        }
+      });
 
-Aima_Aimani.init ();
-
-// 赤福との処理順序の調整
-var waitCustomEvents = false;
-addEventListener ("AkahukuFrameLoaded", function (event) {
-  if (!waitCustomEvents) {
-    waitCustomEvents = true;
-    addEventListener ("AkahukuContentApplied", function (event) {
-      Aima_Aimani.onDOMContentLoaded (event);
-    });
-  }
-});
-
-addEventListener ("DOMContentLoaded", function (event) {
-  // 古い赤福との互換性のため
-  // DOMContentLoaded の dispatch が完全に終わるのを待つ
-  event.target.defaultView.setTimeout (function () {
-    if (waitCustomEvents) {
-      return; // AkahukuContentApplied を待つ
-    }
+      window.addEventListener ("DOMContentLoaded", (event) => {
+        // 古い赤福との互換性のため
+        // DOMContentLoaded の dispatch が完全に終わるのを待つ
+        event.target.defaultView.setTimeout (() => {
+          if (waitCustomEvents) {
+            return; // AkahukuContentApplied を待つ
+          }
+          resolve (event);
+        }, 0);
+      });
+    }),
+  ]).then ((values) => {
+    // 全ての初期化が終了したのちに
+    var event = values [1];
     Aima_Aimani.onDOMContentLoaded (event);
-  }, 0);
-});
-
-addEventListener ("unload", function (event) {
-});
-
-// XPCOMモジュールを現プロセスに動的登録
-Cu.import ("chrome://aima_aimani/content/XPCOM.jsm");
-Cu.import ("chrome://aima_aimani/content/contentpolicy.jsm");
-try {
-  registerXPCOM (arAima_AimaniContentPolicy);
-  Aima_Aimani.log ("arAima_AimaniContentPolicy is registered.");
+  });
 }
-catch (e if e.result == Cr.NS_ERROR_FACTORY_EXISTS) {
-  // 既に登録済み
-}
-catch (e) {
-  Cu.reportError (e);
+else {
+  //TODO:既存のロード済みコンテンツに適用された場合
+  console.warn ("Aima_Aimani: content scripts aborted because of",
+      "document.readyState =", document.readyState,
+      document.documentURI);
 }
 

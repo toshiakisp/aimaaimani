@@ -1,62 +1,15 @@
-/* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-/* vim: set ts=2 et sw=2 tw=80 filetype=javascript: */
 /**
- * Aima_Aimani JavaScript module (ready for frame scripts)
+ * Aima_Aimani objects for WE content_scripts environment
  */
-var EXPORTED_SYMBOLS = [
-  // constructors
-  "Aima_AimaniNGCatCache",
-  "Aima_AimaniNGCatCacheManager",
-  "Aima_AimaniLocationInfo",
-  "Aima_AimaniStyle",
-  "Aima_AimaniDocumentParam",
-  "Aima_AimaniPopupManagerData",
-  // singletons
-  "Aima_AimaniNGCat",
-  "Aima_AimaniConverter",
-  "Aima_Aimani",
-  "Aima_AimaniConfigManager",
-  "Aima_AimaniPopupManager",
-  "Aima_AimaniVersion",
-  "Aima_AimaniServerName",
-];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-const Cr = Components.results;
-
-var loader
-= Cc ["@mozilla.org/moz/jssubscript-loader;1"]
-.getService (Ci.mozIJSSubScriptLoader);
-
-loader.loadSubScript ("chrome://aima_aimani/content/version.js", this);
-loader.loadSubScript ("chrome://aima_aimani/content/server.js", this);
-
-Cu.import("resource://gre/modules/Timer.jsm");
+function reportError (e) {
+  console.error (e);
+};
 
 /**
- * 赤福との連携準備: 必要なモジュールへの参照をインポート
- *
- * XUL 側 Aima_Aimani からの不要なインポートを避けるために
- * 必要になる時点でインポートする
+ * 赤福との連携準備 (dummy)
  */
-var tryImportAkahuku = (function (global) {
-  return function () {
-    // インポートに挑戦するのは一度だけ
-    global.tryImportAkahuku = function () {};
-    try {
-      let tmp = {}
-      Cu.import("resource://akahuku/akahuku.jsm", tmp);
-      global.Akahuku = tmp.Akahuku;
-    }
-    catch (e if e.result == Cr.NS_ERROR_FILE_NOT_FOUND) {
-      // 赤福が無い or 非対応バージョン
-    }
-    catch (e) { Cu.reportError (e);
-    }
-  };
-})(this);
+var tryImportAkahuku = function () {};
 
 /**
  * NG カタログの各画像のハッシュ算出器
@@ -86,12 +39,12 @@ Aima_AimaniNGCatCache.prototype = {
   _destruct : function () {
     if (this._restarting) {
       this._restarting = false;
-      Aima_Aimani.executeSoon (function (that) {
+      window.setTimeout (function (that) {
         that._started = false;
         that._canceled = false;
         that._stopped = false;
         that.start ();
-      }, [this]);
+      }, 10, this);
       return;
     }
     if (this.imageNode) {
@@ -110,7 +63,7 @@ Aima_AimaniNGCatCache.prototype = {
 
   cancel : function (status) {
     if (arguments.length == 0) {
-      status = Cr.NS_BINDING_ABORTED;
+      status = -1; //ABORTED;
     }
     if (this._canceled) {
       return;
@@ -145,7 +98,7 @@ Aima_AimaniNGCatCache.prototype = {
       this.asyncOpenCacheViaChannel ();
       this._notifyStart ();
     }
-    catch (e) { Cu.reportError (e);
+    catch (e) { reportError (e);
       this._notifyStart ();
       this._notifyStop (e.result);
       this._destruct ();
@@ -154,78 +107,16 @@ Aima_AimaniNGCatCache.prototype = {
 
   asyncOpenCacheViaChannel : function () {
     var url = this.imageNode.src;
-    var ios
-      = Cc ["@mozilla.org/network/io-service;1"]
-      .getService (Ci.nsIIOService);
-    var ssm
-      = Cc ["@mozilla.org/scriptsecuritymanager;1"]
-      .getService (Ci.nsIScriptSecurityManager);
-    // require gecko 36
-    var channel = ios.newChannel2 (url, null, null,
-        this.imageNode,
-        ssm.getSystemPrincipal (),
-        null,
-        Ci.nsILoadInfo.SEC_ALLOW_CROSS_ORIGIN_DATA_IS_NULL,
-        Ci.nsIContentPolicy.TYPE_IMAGE);
-
-    channel.loadFlags = Ci.nsIRequest.LOAD_FROM_CACHE;
-
-    var listener = {
-      cache : this,
-      destruct : function () {
-        this.cache = null;
-        this.pipe = null;
-      },
-      onStartRequest : function (request, context) {
-        this.pipe
-          = Cc ["@mozilla.org/pipe;1"]
-          .createInstance (Ci.nsIPipe);
-        this.pipe.init (true, false, null, 0xffffffff, null);
-        this.dataSize = 0;
-      },
-      onDataAvailable : function (request, context, inputStream, offset, count) {
-        var c = this.pipe.outputStream.writeFrom (inputStream, count);
-        this.dataSize += c;
-      },
-      onStopRequest : function (request, context, statusCode) {
-        this.pipe.outputStream.close ();
-        if (!Components.isSuccessCode (statusCode)) {
-          this.cache._notifyStop (statusCode);
-          this.cache._destruct ();
-          this.destruct ();
-          return;
-        }
-
-        var entry = {
-          mPipe : this.pipe,
-          mDataSize : this.dataSize,
-          get dataSize () {return this.mDataSize;},
-          openInputStream : function () {return this.mPipe.inputStream;},
-          close : function () {
-            this.mPipe = null;
-          },
-        };
-        this.cache._onCacheStreamAvailable (entry, this.pipe.inputStream, 0);
-        this.destruct ();
-      },
-    };
-    channel.asyncOpen (listener, null);
+    // Not implemented yet
+    this._onCacheDataAvailable (null, -1);
   },
 
-  _onCacheStreamAvailable : function (entry, istream, result) {
+  _onCacheStreamAvailable : function (bindata, result) {
     if (this._canceled) {
       return;
     }
-    if (Components.isSuccessCode (result)) {
+    if (result == 0) {
       try {
-        var bstream
-        = Cc ["@mozilla.org/binaryinputstream;1"]
-        .createInstance (Ci.nsIBinaryInputStream);
-        bstream.setInputStream (istream);
-        var bindata = bstream.readBytes (entry.dataSize);
-        bstream.close ();
-        entry.close ();
-                
         var hash = Aima_AimaniNGCat.md5 (bindata);
                 
         var imageWidth = this.imageNode.getAttribute ("width")
@@ -350,7 +241,7 @@ Aima_AimaniNGCatCache.prototype = {
         }
         this._notifyStop ();
       }
-      catch (e) { Cu.reportError (e);
+      catch (e) { reportError (e);
         this._notifyStop (e.result);
       }
     }
@@ -373,7 +264,7 @@ Aima_AimaniNGCatCache.prototype = {
         this.notificationTarget.onStartRequest (this, null);
       }
     }
-    catch (e) { Cu.reportError (e);
+    catch (e) { reportError (e);
     }
   },
   _notifyStart : function ()
@@ -383,7 +274,7 @@ Aima_AimaniNGCatCache.prototype = {
   },
   _notifyStop : function (result) {
     this._stopped = true;
-    this._notify (arguments.length == 0 ? Cr.NS_OK : result);
+    this._notify (arguments.length == 0 ? 0 : result);
   },
 
 };
@@ -426,13 +317,13 @@ Aima_AimaniNGCatCacheManager.prototype = {
     if (!spliced) {
       throw new Error ("Aima_AimaniNGCatCacheManager.onStopRequest: not registered");
     }
-    if (Components.isSuccessCode (status)) {
+    if (status == 0) {
       this.countSuccess ++;
     }
     else {
       var numRestart = cache.numRestart ? cache.numRestart : 0;
-      if ((status == Cr.NS_ERROR_CACHE_KEY_NOT_FOUND
-            || status == Cr.NS_ERROR_FILE_NOT_FOUND)
+      var retryableStatus = false; //TODO
+      if (retryableStatus
           && numRestart < this.numMaxRetry) {
         cache.numRestart = numRestart + 1;
         try {
@@ -440,7 +331,7 @@ Aima_AimaniNGCatCacheManager.prototype = {
           this.caches.push (cache);
           return;
         }
-        catch (e) { Cu.reportError (e);
+        catch (e) { reportError (e);
         }
       }
 
@@ -460,12 +351,6 @@ Aima_AimaniNGCatCacheManager.prototype = {
   resultCodeToString : function (code) {
     var codeInHex = "(0x" + code.toString (16) + ")";
     var codeName = "";
-    for (var name in Cr) {
-      if (code === Cr [name]) {
-        codeName = name + " ";
-        break;
-      }
-    }
     return codeName + codeInHex;
   },
 
@@ -488,7 +373,7 @@ Aima_AimaniNGCatCacheManager.prototype = {
       try {
         l [i].apply (null, [this, status]);
       }
-      catch (e) { Cu.reportError (e);
+      catch (e) { reportError (e);
       }
     }
   },
@@ -606,7 +491,7 @@ var Aima_AimaniNGCat = {
           }
         }
       }
-      catch (e) { Cu.reportError (e);
+      catch (e) { reportError (e);
       }
     }
         
@@ -621,7 +506,7 @@ var Aima_AimaniNGCat = {
             Akahuku.onHideEntireThread (targetDocument);
           }
         }
-        catch (e) { Cu.reportError (e);
+        catch (e) { reportError (e);
         }
       }
     }
@@ -1082,7 +967,7 @@ var Aima_AimaniNGCat = {
           try {
             Akahuku.onHideEntireThread (targetDocument);
           }
-          catch (e) { Cu.reportError (e);
+          catch (e) { reportError (e);
           }
         }
       }, 10);
@@ -1175,23 +1060,8 @@ var Aima_AimaniNGCat = {
 
         param.ngcat_cacheManager.addNGCatCache (cache);
                 
-        var getImgRequest = function (img) {
-          var ILC = Ci.nsIImageLoadingContent;
-          var load;
-          try {
-            load = img.QueryInterface (ILC);
-          }
-          catch (e) {
-          }
-          return load ? load.getRequest (ILC.CURRENT_REQUEST) : null;
-        };
-        var complete
-          = Ci.imgIRequest.STATUS_LOAD_COMPLETE;
-
-        var request = getImgRequest (cache.imageNode);
-                
-        if (!request
-            || !(request.imageStatus & complete)) {
+        if (!cache.imageNode.complete
+            || cache.imageNode.naturalWidth == 0) {
           // ロード完了していない場合(未ロードorロード中orエラー)
           // load/error イベントを待ってからハッシュ算出
           imageNode.style.visibility = "hidden";
@@ -1225,8 +1095,7 @@ var Aima_AimaniNGCat = {
               .setTimeout (function (img) {
                 if (/^akahuku:/.test (img.src)) {
                   waiting_for_p2p = true;
-                  var request = getImgRequest (img);
-                  if (!request || !(request.imageStatus & complete)) {
+                  if (!img.complete || img.naturalWidth == 0) {
                     img.addEventListener ("load", cache_handler, false);
                     img.addEventListener ("error", cache_handler, false);
                   }
@@ -1263,17 +1132,6 @@ var Aima_AimaniNGCat = {
  * 文字コード変換器
  */
 var Aima_AimaniConverter = {
-  converter : null, /* nsIScriptableUnicodeConverter  文字コード変換器 */
-    
-  /**
-   * 初期化処理
-   */
-  init : function () {
-    Aima_AimaniConverter.converter
-    = Cc ["@mozilla.org/intl/scriptableunicodeconverter"]
-    .getService (Ci.nsIScriptableUnicodeConverter);
-  },
-    
   /**
    * UTF-8 から UTF-16 に変換する
    *
@@ -1283,8 +1141,7 @@ var Aima_AimaniConverter = {
    *         UTF-16 に変換した文字列
    */
   convertFromUTF8 : function (text) {
-    Aima_AimaniConverter.converter.charset = "UTF-8";
-    return Aima_AimaniConverter.converter.ConvertToUnicode (text);
+    return decodeURIComponent (escape (text));
   }
 };
 
@@ -1335,7 +1192,7 @@ Aima_AimaniLocationInfo.prototype = {
       try {
         location = Akahuku.protocolHandler.deAkahukuURI (location);
       }
-      catch (e) { Cu.reportError (e);
+      catch (e) { reportError (e);
       }
     }
         
@@ -1461,41 +1318,13 @@ Aima_AimaniLocationInfo.prototype = {
 function Aima_AimaniStyle (name) {
   this.name = name;
   this.styleText = "";
-  this.registeredData = null;
 }
 Aima_AimaniStyle.prototype = {
-  type : Ci.nsIStyleSheetService.USER_SHEET,
-  getStyleSheetService : function () {
-    return Cc ["@mozilla.org/content/style-sheet-service;1"]
-      .getService (Ci.nsIStyleSheetService);
-  },
   register : function () {
-    if (this.registeredData) {
-      return;
-    }
-    var sss = this.getStyleSheetService ();
-    var uri = this.getDataURI ();
-    this.registeredData = {uri: uri, type: this.type};
-    sss.loadAndRegisterSheet (uri, this.type);
+    // Not implemented yet
   },
   unregister : function () {
-    if (this.registeredData) {
-      var sss = this.getStyleSheetService ();
-      var uri = this.registeredData.uri;
-      var type = this.registeredData.type;
-      if (sss.sheetRegistered (uri, type)) {
-        sss.unregisterSheet (uri, type);
-      }
-      this.registeredData = null;
-    }
-  },
-  getDataURI : function () {
-    var name = this.name ? "/*" + this.name.replace (/(\*\/|#)/,"") + "*/": "";
-    var str = "data:text/css," + name + encodeURIComponent (this.styleText);
-    var ios
-      = Cc ["@mozilla.org/network/io-service;1"]
-      .getService (Ci.nsIIOService);
-    return ios.newURI (str, null, null);
+    // Not implemented yet
   },
   setStyle : function (styleText) {
     this.styleText = styleText;
@@ -1750,30 +1579,15 @@ var Aima_Aimani = {
     ",#akahuku_catalog_reorder_container2 + table",
 
   /**
-   * 初期化
+   * 初期化(非同期)
    */
-  init : function () {
+  asyncInit : function () {
     if (Aima_Aimani.initialized) {
       return;
     }
     Aima_Aimani.initialized = true;
 
-    Aima_AimaniConfigManager.init ();
-    Aima_AimaniConverter.init ();
-  },
-
-  /**
-   * 初期化(Chrome process)
-   */
-  initAsParent : function () {
-    if (Aima_Aimani.initialized) {
-      return;
-    }
-    Aima_Aimani.initialized = true;
-    Aima_Aimani.isParent = true;
-
-    Aima_AimaniConfigManager.initAsParent ();
-    Aima_AimaniConverter.init ();
+    return Aima_AimaniConfigManager.asyncInit ();
   },
 
   term : function () {
@@ -1800,12 +1614,14 @@ var Aima_Aimani = {
     Aima_Aimani.documentParams.push (param);
     Aima_Aimani.latestParam = param;
 
-    // Chrome process (XUL) に通知
-    var mm = this.getContentFrameMessageManager (targetDocument);
-    if (mm) {
-      var data = {
-        url: targetDocument.documentURI,
-        info: {
+    // Background に通知
+    /*
+    browser.runtime.sendMessage ({
+      "target": "manager.js",
+      "command": "addDocumentParam",
+      "args": [
+        targetDocument.documentURI,
+        {
           isFutaba : info.isFutaba,
           isMonaca : info.isMonaca,
           isNormal : info.isNormal,
@@ -1816,9 +1632,12 @@ var Aima_Aimani = {
           server : info.server,
           dir : info.dir,
         },
-      };
-      mm.sendAsyncMessage ("Aima_Aimani:addDocumentParam", data);
-    }
+      ]
+    }).then (() => {
+    }, (e) => {
+      reportError (e);
+    });
+    */
   },
     
   /**
@@ -1835,26 +1654,21 @@ var Aima_Aimani = {
         tmp.destruct ();
         tmp = null;
 
-        // Chrome process に通知
-        var mm = this.getContentFrameMessageManager (targetDocument);
-        if (mm) {
-          var data = {url: targetDocument.documentURI};
-          mm.sendAsyncMessage ("Aima_Aimani:deleteDocumentParam", data);
-        }
+        // Background に通知
+        /*
+        browser.runtime.sendMessage ({
+          "target": "manager.js",
+          "command": "deleteDocumentParam",
+          "args": [targetDocument.documentURI]
+        }).then (() => {
+        }, (e) => {
+          reportError (e);
+        });
+        */
         break;
       }
     }
     Aima_Aimani.latestParam = null;
-  },
-
-  getContentFrameMessageManager : function (targetDocument) {
-    return targetDocument.defaultView
-      .QueryInterface (Ci.nsIInterfaceRequestor)
-      .getInterface (Ci.nsIWebNavigation)
-      .QueryInterface (Ci.nsIInterfaceRequestor)
-      .QueryInterface (Ci.nsIDocShell)
-      .QueryInterface (Ci.nsIInterfaceRequestor)
-      .getInterface (Ci.nsIContentFrameMessageManager);
   },
     
   /*
@@ -3293,7 +3107,7 @@ var Aima_Aimani = {
         }
       }
     }
-    catch (e) { Cu.reportError (e);
+    catch (e) { reportError (e);
     }
   },
     
@@ -3322,7 +3136,7 @@ var Aima_Aimani = {
           event.stopPropagation ();
         }
       }
-      catch (e) { Cu.reportError (e);
+      catch (e) { reportError (e);
       }
     }
   },
@@ -3346,7 +3160,7 @@ var Aima_Aimani = {
         }
       }
     }
-    catch (e) { Cu.reportError (e);
+    catch (e) { reportError (e);
     }
   },
     
@@ -3468,7 +3282,7 @@ var Aima_Aimani = {
         try {
           href = Akahuku.protocolHandler.deAkahukuURI (href);
         }
-        catch (e) { Cu.reportError (e);
+        catch (e) { reportError (e);
         }
       }
             
@@ -3509,6 +3323,8 @@ var Aima_Aimani = {
       }
             
       if (needApply) {
+        console.log ("Aima_Aimani.applyAll() for ",
+            targetDocument.documentURI);
         if (Aima_Aimani.applyAll (targetDocument)) {
 
           try {
@@ -3518,7 +3334,7 @@ var Aima_Aimani = {
               Akahuku.onAima_Aimanied (targetDocument);
             }
           }
-          catch (e) { Cu.reportError (e);
+          catch (e) { reportError (e);
           }
         }
       }
@@ -3598,7 +3414,7 @@ var Aima_Aimani = {
               Akahuku.onHideEntireThread (targetDocument);
             }
           }
-          catch (e) { Cu.reportError (e);
+          catch (e) { reportError (e);
           }
         }
 
@@ -3676,7 +3492,7 @@ var Aima_Aimani = {
             header.appendChild (style);
           }
         }
-        catch (e) { Cu.reportError (e);
+        catch (e) { reportError (e);
         }
                 
         var enableNGWord = Aima_Aimani.enableNGWord;
@@ -7005,7 +6821,7 @@ var Aima_Aimani = {
             
       Aima_Aimani.deleteDocumentParam (targetDocument);
     }
-    catch (e){ Cu.reportError (e);
+    catch (e){ reportError (e);
     }
   },
     
@@ -7090,7 +6906,7 @@ var Aima_Aimani = {
         node = Aima_Aimani.findParentNode (node, "small");
       }
     }
-    catch (e) { Cu.reportError (e);
+    catch (e) { reportError (e);
     }
   },
     
@@ -7347,48 +7163,20 @@ var Aima_Aimani = {
     }
   },
 
-  _consoleService : null,
   log : function (message) {
-    if (!this._consoleService) {
-      this._consoleService
-        = Cc ["@mozilla.org/consoleservice;1"]
-        .getService (Ci.nsIConsoleService);
-    }
-    var stack = Components.stack.caller;
-    var flag = Ci.nsIScriptError.infoFlag;
+    var flag = "info";
     if (typeof message == "string") {
       if (/^!/.test (message)) {
-        flag = Ci.nsIScriptError.errorFlag;
+        flag = "error";
       }
     }
     else if (message instanceof Error) {
-      flag = Ci.nsIScriptError.warningFlag;
+      flag = "warn";
     }
     var scriptError
       = Cc ["@mozilla.org/scripterror;1"]
       .createInstance (Ci.nsIScriptError);
-    scriptError.init
-      ("Aima_Aimani: " + String (message),
-       stack.filename, null, stack.lineNumber, null,
-       flag, "chrome javascript");
-    this._consoleService.logMessage (scriptError);
-  },
-
-  executeSoon : function (func, optArgs) {
-    var tm = Cc ["@mozilla.org/thread-manager;1"]
-      .getService (Ci.nsIThreadManager);
-    var runnable = {
-      run: function () {
-        if (typeof optArgs === "undefined") {
-          func.apply (null);
-        }
-        else {
-          func.apply (null, optArgs);
-        }
-      }
-    };
-    tm.mainThread.dispatch
-      (runnable, Ci.nsIThread.DISPATCH_NORMAL);
+    console [flag] ("Aima_Aimani: " + String (message));
   },
 
 };
@@ -7398,41 +7186,40 @@ var Aima_Aimani = {
  *   Inherits From: nsIObserver
  */
 var Aima_AimaniConfigManager = {
-  prefBranch : null,    /* nsIPrefBranch pref サービス */
+  prefBranch : null, /* PrefJSSyncProxy */
   initialized : false,
-  isParent : false,
-  ipcListener : null,
   listeners : [],
   prefChangedTimerID : null,
     
   /**
-   * 初期化処理
+   * 初期化処理(非同期)
+   * @return Promise<Object>
    */
-  init : function (frame) {
+  asyncInit : function () {
     if (this.initialized) {
       return;
     }
     this.initialized = true;
 
-    this.loadPrefBranch (frame);
+    return this.loadPrefBranch ()
+    .then (() => {
+      // 設定を取得する
+      this.getConfigurationFromPreferencesAll ();
+      this.getConfigurationFromPreferences ();
+      this.getConfigurationFromPreferencesBoardExternal ();
 
-    // 設定を取得する
-    this.getConfigurationFromPreferencesAll ();
-    this.getConfigurationFromPreferences ();
-    this.getConfigurationFromPreferencesBoardExternal ();
-
-    // ダイアログからの設定の変更を監視する
-    this.prefBranch.addObserver ("aima_aimani.", this, false);
+      // ダイアログからの設定の変更を監視する
+      this.prefBranch.addObserver ("aima_aimani.", this, false);
+    });
   },
 
   /**
-   * 初期化処理 (Chrome process)
+   * 初期化処理 (Chrome process) FIXME:move somewhere
    */
   initAsParent : function () {
     if (this.initialized) {
       return;
     }
-    this.isParent = true;
     this.loadPrefBranch ();
 
     var version = "";
@@ -7460,20 +7247,8 @@ var Aima_AimaniConfigManager = {
       return;
     }
 
-    this.prefBranch
-    = Cc ["@mozilla.org/preferences-service;1"]
-    .getService (Ci.nsIPrefBranch);
-
-    if (!this.isParent) {
-      this.prefBranch = new Aima_AimaniPrefBranchChild (this.prefBranch);
-    }
-
-    if (this.isParent) {
-      // 書き込み要求を Chrome process で処理するためのリスナ登録
-      var listener = new Aima_AimaniPrefBranchIPCListener (this.prefBranch);
-      listener.init ();
-      this.ipcListener = listener;
-    }
+    this.prefBranch = new PrefJSSyncProxy ("aima_aimani.");
+    return this.prefBranch.asyncInit ();
   },
     
   /**
@@ -7483,18 +7258,14 @@ var Aima_AimaniConfigManager = {
     // 設定の変更の監視を解除する
     if (this.prefBranch) {
       this.prefBranch.removeObserver ("aima_aimani.", this);
+      this.prefBranch.term ();
     }
     this.prefBranch = null;
-
-    if (this.ipcListener) {
-      this.ipcListener.term ();
-    }
-    this.ipcListener = null;
 
     this.listeners = [];
 
     if (this.prefChangedTimerID) {
-      clearTimeout (this.prefChangedTimerID);
+      window.clearTimeout (this.prefChangedTimerID);
     }
     this.prefChangedTimerID = null;
 
@@ -7517,9 +7288,9 @@ var Aima_AimaniConfigManager = {
       /* 設定の変更の場合 */
 
       if (this.prefChangedTimerID) {
-        clearTimeout (this.prefChangedTimerID);
+        window.clearTimeout (this.prefChangedTimerID);
       }
-      this.prefChangedTimerID = setTimeout (function (that) {
+      this.prefChangedTimerID = window.setTimeout (function (that) {
         that.prefChangedTimerID = null;
         that.onPrefChanged ();
       }, 200, this);
@@ -7539,7 +7310,7 @@ var Aima_AimaniConfigManager = {
       try {
         this.listeners [i].onPrefChanged ();
       }
-      catch (e) { Cu.reportError (e);
+      catch (e) { reportError (e);
       }
     }
   },
@@ -8315,136 +8086,110 @@ var Aima_AimaniConfigManager = {
 };
 
 /**
- * e10s用 nsIPrefBranch もどき(child process)
+ * Proxy between sync old API and async storage in background/pref.js
  */
-function Aima_AimaniPrefBranchChild (branch) {
-  this.prefBranch = branch;
-  this.messageManager
-    = Cc ['@mozilla.org/childprocessmessagemanager;1']
-    .getService (Ci.nsIMessageSender);
+function PrefJSSyncProxy (base) {
+  this._base = base || "";
+  this._cache = new Map ();
+  this._ready = false;
 };
-Aima_AimaniPrefBranchChild.prototype = {
-  MESSAGE: "Aima_AimaniPrefBranchIPC",
-
-  sendIPCMessage : function (methodName, args) {
-    var data = {method: methodName, args: args};
-
-    var rets = this.messageManager.sendSyncMessage (this.MESSAGE, data);
-    if (rets.length !== 1) {
-      Aima_Aimani.log ("! no response from IPC sync message: "+methodName);
-      return undefined;
-    }
-    var ret = rets [0];
-    if (ret !== null && typeof ret == "object"
-        && "nsresult" in ret && "value" in ret && "message" in ret) {
-      if (Components.isSuccessCode (ret.nsresult)) {
-        return ret.value;
+PrefJSSyncProxy.prototype = {
+  asyncInit : function () {
+    console.log ("PrefJSSyncProxy.asyncInit() sending message to pref.js; "
+        + document.documentURI);
+    return browser.runtime.sendMessage ({
+      "target": "pref.js",
+      "command": "get",
+      "args": [null] // all prefs
+    }).then ((prefs) => {
+      console.log ("PrefJSSyncProxy.asyncInit(): prefs are retrieved."
+        + " @ " + document.documentURI);
+      this._cache.clear ();
+      for (let key in prefs) {
+        this._cache.set (key, prefs [key]);
       }
-      else {
-        throw Components.Exception
-          (ret.message, ret.nsresult, Components.stack.caller);
-      }
-    }
-    Aima_Aimani.log ("! invalid response from IPC sync message: "+methodName);
-    return undefined;
+      this._ready = true;
+      return this;
+    }, (e) => {
+      console.error ("PrefJSSyncProxy.asyncInit(): pref.js get failed @ "
+        + document.documentURI, e);
+      // 少し待ってから再取得を試みる
+      return new Promise ((resolve, reject) => {
+        window.setTimeout (() => {
+          this.asyncInit ().then (() => {
+            resolve (this);
+          }, (e) => {
+            reject (e);
+          });
+        }, 1000);
+      });
+    });
   },
-
-  // nsIPrefBranch methods only possible in chrome process
+  term : function () {
+    this._cache.clear ();
+    this._ready = false;
+  },
 
   setBoolPref : function (prefName, value) {
-    this.sendIPCMessage ("setBoolPref", [prefName, value]);
+    this._setPref (prefName, value);
   },
   setCharPref : function (prefName, value) {
-    this.sendIPCMessage ("setCharPref", [prefName, value]);
+    this._setPref (prefName, value);
   },
   setIntPref : function (prefName, value) {
-    this.sendIPCMessage ("setIntPref", [prefName, value]);
+    this._setPref (prefName, value);
   },
   clearUserPref : function (prefName) {
-    this.sendIPCMessage ("clearUserPref", [prefName]);
+    throw new Error ("NotYetImplemented");
   },
-
-  // e10s-ready nsIPrefBranch methods
-
   getBoolPref : function (prefName) {
-    return this.prefBranch.getBoolPref (prefName);
+    return this._getPref (prefName) || false;//FIXME
   },
   getCharPref : function (prefName) {
-    return this.prefBranch.getCharPref (prefName);
+    return this._getPref (prefName) || "";//FIXME
   },
   getIntPref : function (prefName) {
-    return this.prefBranch.getIntPref (prefName);
+    return this._getPref (prefName) || 0;//FIXME
   },
   prefHasUserValue : function (prefName) {
-    return this.prefBranch.prefHasUserValue (prefName);
+    return true;
   },
   addObserver : function (name, observer, flag) {
-    this.prefBranch.addObserver (name, observer, flag);
+    // Not yet implemented
   },
   removeObserver : function (name, observer) {
-    this.prefBranch.removeObserver (name, observer);
-  },
-};
-
-function Aima_AimaniPrefBranchIPCListener (branch) {
-  this.prefBranch = branch;
-};
-Aima_AimaniPrefBranchIPCListener.prototype = {
-  MESSAGE: Aima_AimaniPrefBranchChild.prototype.MESSAGE,
-
-  init : function () {
-    var gppmm
-      = Cc  ['@mozilla.org/parentprocessmessagemanager;1']
-      .getService (Ci.nsIMessageListenerManager);
-    gppmm.addMessageListener (this.MESSAGE, this, false);
+    // Not yet implemented
   },
 
-  term : function () {
-    var gppmm
-      = Cc  ['@mozilla.org/parentprocessmessagemanager;1']
-      .getService (Ci.nsIMessageListenerManager);
-    gppmm.removeMessageListener (this.MESSAGE, this);
-    this.prefBranch = null;
+  _normalizePrefName : function (prefName) {
+    if (this._base && prefName.startsWith (this._base)) {
+      return prefName.substr (this._base.length);
+    }
+    return prefName;
   },
+  _getPref : function (prefName) {
+    prefName = this._normalizePrefName (prefName);
+    if (!this._ready) {
+      console.warn ("_getPref(\"" + prefName + "\") called but not ready");
+    }
+    return this._cache.get (prefName);
+  },
+  _setPref : function (prefName, value) {
+    prefName = this._normalizePrefName (prefName);
+    this._cache.set (prefName, value);
 
-  // nsIMessageListener.receiveMessage
-  receiveMessage : function (message) {
-    if (message.name !== this.MESSAGE) {
-      return;
-    }
-
-    var methodName = message.data.method;
-    var args = message.data.args;
-    var func = null;
-    switch (methodName) {
-      case "setBoolPref":
-        func = this.prefBranch.setBoolPref;
-        break;
-      case "setCharPref":
-        func = this.prefBranch.setCharPref;
-        break;
-      case "setIntPref":
-        func = this.prefBranch.setIntPref;
-        break;
-      case "clearUserPref":
-        func = this.prefBranch.clearUserPref;
-        break;
-    }
-
-    var ret = {nsresult: 0, value: null, message: null};
-    if (!func) {
-      ret.message = "unknown method name:" + methodName;
-      ret.nsresult = Cr.NS_ERROR_FAILURE;
-      return ret;
-    }
-    try {
-      ret.value = func.apply (this.prefBranch, args);
-    }
-    catch (e) {
-      ret.nsresult = e.result;
-      ret.message = e.message;
-    }
-    return ret;
+    var bag = {};
+    bag [prefName] = value;
+    browser.runtime.sendMessage ({
+      "target": "pref.js",
+      "command": "set",
+      "args": [bag]
+    }).then ((prefs) => {
+      console.log ("Aima_Aimani: Pref.set done "+prefName);
+      this._cache.set (prefName, prefs [prefName]);
+    }, (e) => {
+      console.warn ("Aima_Aimani: Pref.set "+prefName+" failed. ", e);
+    });
   },
 };
 
@@ -8504,7 +8249,7 @@ var Aima_AimaniPopupManager = {
                     Aima_Aimani.popupMessageDelay,
                     managerdata);
     }
-    catch (e) { Cu.reportError (e);
+    catch (e) { reportError (e);
     }
   },
     
@@ -8537,7 +8282,7 @@ var Aima_AimaniPopupManager = {
         managerdata.popup = null;
       }
     }
-    catch (e) { Cu.reportError (e);
+    catch (e) { reportError (e);
     }
   },
     

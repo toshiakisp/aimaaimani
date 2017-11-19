@@ -24,6 +24,25 @@
     "storage"
   ],
 
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "css": [
+        "aima_aimani.css"
+      ],
+      "js": [
+        "version.js",
+        "server.js",
+        "aima_aimani.js",
+        "content_main.js"
+      ]
+    }
+  ],
+
   "background": {
     "scripts": [
       "background/pref.js",
