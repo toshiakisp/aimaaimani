@@ -5475,8 +5475,29 @@ var Aima_Aimani = {
     while (node
            && node.nodeName.toLowerCase () != "hr") {
       var prevNode = node.previousSibling;
+      var nodeName = node.nodeName.toLowerCase ();
             
-      if (node.nodeName.toLowerCase () == "#text") {
+      if (num == 0 && nodeName == "span" && node.className == "cno") {
+        if (node.textContent.indexOf ("No.") != -1
+            && node.textContent.match (/No\.([0-9]+)/)) {
+          // スレ番号、レス番号の場合
+          num = parseInt (RegExp.$1);
+          noNode = node;
+        }
+      }
+      else if (nodeName == "span" && node.className == "cnw") {
+        if (node.textContent.indexOf ("ID:") != -1
+            && node.textContent.match (/ID:([^ ]+)/)) {
+          // ID の場合
+          ngword_id = RegExp.$1;
+        }
+        if (node.textContent.indexOf ("IP:") != -1
+            && node.textContent.match (/IP:([^ ]+)/)) {
+          // IP アドレス の場合
+          ngword_ip = RegExp.$1;
+        }
+      }
+      else if (nodeName == "#text") {
         if (num == 0
             && node.nodeValue.indexOf ("No.") != -1
             && node.nodeValue.match (/No\.([0-9]+)/)) {
@@ -5486,19 +5507,21 @@ var Aima_Aimani = {
           noNode = node;
         }
                 
-        if (node.nodeValue.indexOf ("ID:") != -1
+        if (ngword_id == ""
+            && node.nodeValue.indexOf ("ID:") != -1
             && node.nodeValue.match (/ID:([^ ]+)/)) {
           /* ID の場合 */
           ngword_id = RegExp.$1;
         }
                 
-        if (node.nodeValue.indexOf ("IP:") != -1
+        if (ngword_ip == ""
+            && node.nodeValue.indexOf ("IP:") != -1
             && node.nodeValue.match (/IP:([^ ]+)/)) {
           /* IP アドレス の場合 */
           ngword_ip = RegExp.$1;
         }
       }
-      else if (node.nodeName.toLowerCase () == "a") {
+      else if (nodeName == "a") {
         var href;
         href = node.getAttribute ("href");
                 
@@ -5566,7 +5589,45 @@ var Aima_Aimani = {
           }
         }
       }
-      else if (node.nodeName.toLowerCase () == "font") {
+      else if (nodeName == "span" && node.className == "csb") {
+        // subject
+        ngword_subject = Aima_Aimani.getInnerText (node);
+        ngword_subject = ngword_subject.replace (/ $/, "");
+      }
+      else if (nodeName == "span" && node.className == "cnm") {
+        // name (and mail)
+        var nodes = node.getElementsByTagName ("a");
+        for (var i = 0; i < nodes.length; i ++) {
+          var href = nodes [i].getAttribute ("href");
+          if (/^mailto:/.test (href)) {
+            ngword_mail = href.replace (/^mailto:/, "");
+          }
+        }
+        if (!ngword_mail) {
+          nodes = node.getElementsByTagName ("font");
+          for (var i = 0; i < nodes.length; i ++) {
+            var color = nodes [i].getAttribute ("color");
+            var color2 = nodes [i].style.color;
+            if (("className" in nodes [i]
+                 && nodes [i].className == "akahuku_shown_mail")
+                || color == "blue" || color2 == "blue") {
+              ngword_mail = Aima_Aimani.getInnerText (nodes [i]);
+              ngword_mail
+                = ngword_mail
+                .replace (/^\[/, "")
+                .replace (/\]$/, "");
+              if (nodes [i].previousElementSibling) {
+                ngword_name = Aima_Aimani.getInnerText (nodes [i].previousElementSibling);
+              }
+              break;
+            }
+          }
+        }
+        if (!ngword_name) {
+          ngword_name = Aima_Aimani.getInnerText (node);
+        }
+      }
+      else if (nodeName == "font") {
         var color = node.getAttribute ("color");
         var color2 = node.style.color;
         var className = "className" in node ? node.className : "";
